@@ -28,6 +28,25 @@ A production-ready, secure, and scalable Model Context Protocol (MCP) server des
 - **Database Support** - PostgreSQL with read replicas and Redis caching
 - **Message Queue Integration** - RabbitMQ/Kafka for async processing
 
+## Installation
+
+### NPM Package Installation
+
+#### Server Package
+```bash
+npm install @perfecxion/secure-mcp-server
+```
+
+#### Client SDK
+```bash
+npm install @perfecxion/secure-mcp-client
+```
+
+### Docker Installation
+```bash
+docker pull perfecxion/secure-mcp-server:latest
+```
+
 ## Quick Start
 
 ### Prerequisites
@@ -37,12 +56,42 @@ A production-ready, secure, and scalable Model Context Protocol (MCP) server des
 - Redis 7+
 - (Optional) Kubernetes cluster for production deployment
 
+### Using NPM Package
+
+```javascript
+import { SecureMCPServer } from '@perfecxion/secure-mcp-server';
+
+const server = new SecureMCPServer({
+  port: 3000,
+  auth: {
+    jwt: { secret: process.env.JWT_SECRET },
+    apiKeys: true
+  }
+});
+
+await server.start();
+```
+
+### Using Client SDK
+
+```javascript
+import { SecureMCPClient } from '@perfecxion/secure-mcp-client';
+
+const client = new SecureMCPClient({
+  serverUrl: 'https://mcp.example.com',
+  apiKey: 'your-api-key'
+});
+
+await client.connect();
+const tools = await client.listTools();
+```
+
 ### Local Development
 
 1. **Clone the repository**
 ```bash
-git clone https://github.com/enterprise/secure-mcp-server.git
-cd secure-mcp-server
+git clone https://github.com/perfecxion-ai/secure-mcp.git
+cd secure-mcp
 ```
 
 2. **Install dependencies**

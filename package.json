@@ -1,5 +1,5 @@
 {
-  "name": "secure-mcp-server",
+  "name": "@perfecxion/secure-mcp-server",
   "version": "1.0.0",
   "description": "Enterprise-grade Model Context Protocol server with advanced security and scalability",
   "main": "dist/index.js",
@@ -98,9 +98,18 @@
     "node": ">=20.0.0",
     "npm": ">=10.0.0"
   },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/enterprise/secure-mcp-server.git"
+    "url": "https://github.com/perfecxion-ai/secure-mcp.git"
   },
   "keywords": [
     "mcp",
