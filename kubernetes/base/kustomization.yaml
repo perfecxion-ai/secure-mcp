@@ -1,0 +1,55 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: secure-mcp
+
+commonLabels:
+  app.kubernetes.io/managed-by: kustomize
+  app.kubernetes.io/part-of: secure-mcp-server
+  app.kubernetes.io/version: "1.0.0"
+
+commonAnnotations:
+  deployment.timestamp: "2024-01-01T00:00:00Z"
+
+resources:
+  - namespace.yaml
+  - priorityclass.yaml
+  - podsecuritypolicy.yaml
+  - configmap.yaml
+  - secret.yaml
+  - rbac.yaml
+  - networkpolicy.yaml
+  - deployment.yaml
+  - service.yaml
+  - ingress.yaml
+  - hpa.yaml
+  - pdb.yaml
+
+images:
+  - name: secure-mcp-server
+    newTag: latest
+
+replicas:
+  - name: secure-mcp
+    count: 3
+
+configMapGenerator:
+  - name: secure-mcp-config
+    behavior: merge
+    literals:
+      - ENVIRONMENT=base
+
+secretGenerator:
+  - name: secure-mcp-secrets
+    behavior: merge
+    literals:
+      - ENVIRONMENT_SECRET=base
+
+patches:
+  - target:
+      kind: Deployment
+      name: secure-mcp
+    patch: |-
+      - op: add
+        path: /metadata/annotations/kustomize.version
+        value: v5.0.0

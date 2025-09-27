@@ -1,0 +1,1083 @@
+openapi: 3.0.3
+info:
+  title: Secure MCP Server API
+  description: Enterprise-grade Model Context Protocol server with advanced security and scalability
+  version: 1.0.0
+  contact:
+    name: API Support
+    email: api-support@enterprise.com
+  license:
+    name: Apache 2.0
+    url: https://www.apache.org/licenses/LICENSE-2.0.html
+
+servers:
+  - url: https://api.secure-mcp.enterprise.com/api/v1
+    description: Production server
+  - url: https://staging.secure-mcp.enterprise.com/api/v1
+    description: Staging server
+  - url: http://localhost:3000/api/v1
+    description: Development server
+
+tags:
+  - name: Authentication
+    description: User authentication and authorization
+  - name: Tools
+    description: MCP tool operations
+  - name: Contexts
+    description: Context management
+  - name: Sessions
+    description: Session management
+  - name: Admin
+    description: Administrative operations
+  - name: Health
+    description: Health and monitoring endpoints
+
+security:
+  - BearerAuth: []
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    Error:
+      type: object
+      required:
+        - error
+        - message
+        - timestamp
+        - requestId
+      properties:
+        error:
+          type: string
+          example: VALIDATION_ERROR
+        message:
+          type: string
+          example: Invalid request parameters
+        details:
+          type: array
+          items:
+            type: object
+            properties:
+              field:
+                type: string
+              message:
+                type: string
+              code:
+                type: string
+        timestamp:
+          type: string
+          format: date-time
+        requestId:
+          type: string
+          example: req_abc123
+        traceId:
+          type: string
+          example: trace_xyz789
+
+    User:
+      type: object
+      properties:
+        id:
+          type: string
+          example: user_123
+        email:
+          type: string
+          format: email
+        name:
+          type: string
+        roles:
+          type: array
+          items:
+            type: string
+            enum: [admin, developer, user]
+        permissions:
+          type: array
+          items:
+            type: string
+        mfaEnabled:
+          type: boolean
+        status:
+          type: string
+          enum: [active, suspended, deleted]
+        lastLogin:
+          type: string
+          format: date-time
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    Tool:
+      type: object
+      properties:
+        id:
+          type: string
+          example: tool_filesystem
+        name:
+          type: string
+        description:
+          type: string
+        version:
+          type: string
+        category:
+          type: string
+          enum: [system, data, analytics, monitoring]
+        enabled:
+          type: boolean
+        schema:
+          type: object
+          properties:
+            input:
+              type: object
+            output:
+              type: object
+        permissions:
+          type: array
+          items:
+            type: string
+        rateLimit:
+          type: object
+          properties:
+            requests:
+              type: integer
+            window:
+              type: string
+
+    Context:
+      type: object
+      properties:
+        id:
+          type: string
+          example: ctx_123
+        name:
+          type: string
+        description:
+          type: string
+        status:
+          type: string
+          enum: [active, archived]
+        metadata:
+          type: object
+        tools:
+          type: array
+          items:
+            type: string
+        settings:
+          type: object
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    Session:
+      type: object
+      properties:
+        id:
+          type: string
+          example: session_123
+        userId:
+          type: string
+        contextId:
+          type: string
+        status:
+          type: string
+          enum: [active, terminated]
+        connectionType:
+          type: string
+          enum: [websocket, http]
+        ipAddress:
+          type: string
+        userAgent:
+          type: string
+        startedAt:
+          type: string
+          format: date-time
+        lastActivity:
+          type: string
+          format: date-time
+        metrics:
+          type: object
+          properties:
+            messagesReceived:
+              type: integer
+            messagesSent:
+              type: integer
+            toolExecutions:
+              type: integer
+            errors:
+              type: integer
+
+    Pagination:
+      type: object
+      properties:
+        page:
+          type: integer
+        limit:
+          type: integer
+        total:
+          type: integer
+        pages:
+          type: integer
+
+  responses:
+    UnauthorizedError:
+      description: Authentication required
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    ForbiddenError:
+      description: Insufficient permissions
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    NotFoundError:
+      description: Resource not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    ValidationError:
+      description: Validation error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    RateLimitError:
+      description: Rate limit exceeded
+      headers:
+        X-RateLimit-Limit:
+          schema:
+            type: integer
+        X-RateLimit-Remaining:
+          schema:
+            type: integer
+        X-RateLimit-Reset:
+          schema:
+            type: integer
+        Retry-After:
+          schema:
+            type: integer
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+
+paths:
+  /auth/register:
+    post:
+      tags:
+        - Authentication
+      summary: Register new user
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - email
+                - password
+                - name
+              properties:
+                email:
+                  type: string
+                  format: email
+                password:
+                  type: string
+                  minLength: 12
+                  pattern: '^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{12,}$'
+                name:
+                  type: string
+                organization:
+                  type: string
+                phone:
+                  type: string
+                  pattern: '^\+[1-9]\d{1,14}$'
+      responses:
+        '201':
+          description: User created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '409':
+          description: User already exists
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /auth/login:
+    post:
+      tags:
+        - Authentication
+      summary: Login user
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - email
+                - password
+              properties:
+                email:
+                  type: string
+                  format: email
+                password:
+                  type: string
+                mfaCode:
+                  type: string
+                  pattern: '^[0-9]{6}$'
+      responses:
+        '200':
+          description: Login successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  accessToken:
+                    type: string
+                  refreshToken:
+                    type: string
+                  expiresIn:
+                    type: integer
+                  tokenType:
+                    type: string
+                  user:
+                    $ref: '#/components/schemas/User'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '429':
+          $ref: '#/components/responses/RateLimitError'
+
+  /auth/refresh:
+    post:
+      tags:
+        - Authentication
+      summary: Refresh access token
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: Token refreshed successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  accessToken:
+                    type: string
+                  expiresIn:
+                    type: integer
+                  tokenType:
+                    type: string
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+
+  /auth/logout:
+    post:
+      tags:
+        - Authentication
+      summary: Logout user
+      responses:
+        '200':
+          description: Logout successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  timestamp:
+                    type: string
+                    format: date-time
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+
+  /auth/mfa/enable:
+    post:
+      tags:
+        - Authentication
+      summary: Enable MFA
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - type
+              properties:
+                type:
+                  type: string
+                  enum: [totp, sms]
+                phoneNumber:
+                  type: string
+      responses:
+        '200':
+          description: MFA enabled
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  secret:
+                    type: string
+                  qrCode:
+                    type: string
+                  backupCodes:
+                    type: array
+                    items:
+                      type: string
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+
+  /auth/mfa/verify:
+    post:
+      tags:
+        - Authentication
+      summary: Verify MFA code
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - code
+                - type
+              properties:
+                code:
+                  type: string
+                type:
+                  type: string
+                  enum: [totp, sms]
+      responses:
+        '200':
+          description: MFA verified
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  verified:
+                    type: boolean
+                  timestamp:
+                    type: string
+                    format: date-time
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+
+  /tools:
+    get:
+      tags:
+        - Tools
+      summary: List available tools
+      parameters:
+        - name: category
+          in: query
+          schema:
+            type: string
+            enum: [system, data, analytics, monitoring]
+        - name: enabled
+          in: query
+          schema:
+            type: boolean
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 1
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 20
+            maximum: 100
+      responses:
+        '200':
+          description: Tools list
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  tools:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Tool'
+                  pagination:
+                    $ref: '#/components/schemas/Pagination'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+
+  /tools/{id}:
+    get:
+      tags:
+        - Tools
+      summary: Get tool details
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Tool details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Tool'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+
+  /tools/{id}/execute:
+    post:
+      tags:
+        - Tools
+      summary: Execute tool
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - parameters
+              properties:
+                parameters:
+                  type: object
+                context:
+                  type: object
+                  properties:
+                    sessionId:
+                      type: string
+                    requestId:
+                      type: string
+                options:
+                  type: object
+                  properties:
+                    timeout:
+                      type: integer
+                    async:
+                      type: boolean
+      responses:
+        '200':
+          description: Execution result
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  executionId:
+                    type: string
+                  toolId:
+                    type: string
+                  status:
+                    type: string
+                    enum: [pending, running, completed, failed]
+                  result:
+                    type: object
+                  metrics:
+                    type: object
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+        '429':
+          $ref: '#/components/responses/RateLimitError'
+
+  /contexts:
+    get:
+      tags:
+        - Contexts
+      summary: List contexts
+      parameters:
+        - name: status
+          in: query
+          schema:
+            type: string
+            enum: [active, archived]
+        - name: sort
+          in: query
+          schema:
+            type: string
+            enum: [created, updated, name]
+        - name: order
+          in: query
+          schema:
+            type: string
+            enum: [asc, desc]
+      responses:
+        '200':
+          description: Contexts list
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  contexts:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Context'
+                  pagination:
+                    $ref: '#/components/schemas/Pagination'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+
+    post:
+      tags:
+        - Contexts
+      summary: Create context
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - name
+              properties:
+                name:
+                  type: string
+                description:
+                  type: string
+                metadata:
+                  type: object
+                tools:
+                  type: array
+                  items:
+                    type: string
+                settings:
+                  type: object
+      responses:
+        '201':
+          description: Context created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Context'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+
+  /contexts/{id}:
+    get:
+      tags:
+        - Contexts
+      summary: Get context
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Context details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Context'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+
+    put:
+      tags:
+        - Contexts
+      summary: Update context
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                description:
+                  type: string
+                metadata:
+                  type: object
+                tools:
+                  type: array
+                  items:
+                    type: string
+                settings:
+                  type: object
+      responses:
+        '200':
+          description: Context updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Context'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+
+    delete:
+      tags:
+        - Contexts
+      summary: Delete context
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Context deleted
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+
+  /sessions:
+    get:
+      tags:
+        - Sessions
+      summary: List sessions
+      responses:
+        '200':
+          description: Sessions list
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  sessions:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Session'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+
+  /sessions/{id}/terminate:
+    post:
+      tags:
+        - Sessions
+      summary: Terminate session
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Session terminated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  sessionId:
+                    type: string
+                  timestamp:
+                    type: string
+                    format: date-time
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+
+  /admin/users:
+    get:
+      tags:
+        - Admin
+      summary: List users (Admin only)
+      parameters:
+        - name: role
+          in: query
+          schema:
+            type: string
+            enum: [admin, developer, user]
+        - name: status
+          in: query
+          schema:
+            type: string
+            enum: [active, suspended, deleted]
+        - name: search
+          in: query
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Users list
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  users:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/User'
+                  pagination:
+                    $ref: '#/components/schemas/Pagination'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+
+  /admin/users/{id}/roles:
+    put:
+      tags:
+        - Admin
+      summary: Update user roles (Admin only)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - roles
+              properties:
+                roles:
+                  type: array
+                  items:
+                    type: string
+                    enum: [admin, developer, user]
+                permissions:
+                  type: array
+                  items:
+                    type: string
+      responses:
+        '200':
+          description: Roles updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+
+  /admin/audit-logs:
+    get:
+      tags:
+        - Admin
+      summary: Get audit logs (Admin only)
+      parameters:
+        - name: startDate
+          in: query
+          schema:
+            type: string
+            format: date-time
+        - name: endDate
+          in: query
+          schema:
+            type: string
+            format: date-time
+        - name: userId
+          in: query
+          schema:
+            type: string
+        - name: action
+          in: query
+          schema:
+            type: string
+        - name: severity
+          in: query
+          schema:
+            type: string
+            enum: [info, warning, error, critical]
+      responses:
+        '200':
+          description: Audit logs
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  logs:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                        timestamp:
+                          type: string
+                          format: date-time
+                        userId:
+                          type: string
+                        action:
+                          type: string
+                        resource:
+                          type: string
+                        details:
+                          type: object
+                        result:
+                          type: string
+                        ipAddress:
+                          type: string
+                        userAgent:
+                          type: string
+                        severity:
+                          type: string
+                        metadata:
+                          type: object
+                  pagination:
+                    $ref: '#/components/schemas/Pagination'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+
+  /health:
+    get:
+      tags:
+        - Health
+      summary: Health check
+      security: []
+      responses:
+        '200':
+          description: Service healthy
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    enum: [healthy, degraded, unhealthy]
+                  timestamp:
+                    type: string
+                    format: date-time
+                  version:
+                    type: string
+
+  /health/detailed:
+    get:
+      tags:
+        - Health
+      summary: Detailed health check
+      security: []
+      responses:
+        '200':
+          description: Detailed health status
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    enum: [healthy, degraded, unhealthy]
+                  timestamp:
+                    type: string
+                    format: date-time
+                  version:
+                    type: string
+                  components:
+                    type: object
+                  metrics:
+                    type: object
+
+  /ready:
+    get:
+      tags:
+        - Health
+      summary: Readiness probe
+      security: []
+      responses:
+        '200':
+          description: Service ready
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ready:
+                    type: boolean
+                  timestamp:
+                    type: string
+                    format: date-time
+        '503':
+          description: Service not ready
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ready:
+                    type: boolean
+                  timestamp:
+                    type: string
+                    format: date-time
+
+  /metrics:
+    get:
+      tags:
+        - Health
+      summary: Prometheus metrics
+      security: []
+      responses:
+        '200':
+          description: Prometheus metrics
+          content:
+            text/plain:
+              schema:
+                type: string

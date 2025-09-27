@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: secure-mcp
+spec:
+  template:
+    metadata:
+      annotations:
+        cluster-autoscaler.kubernetes.io/safe-to-evict: "false"
+        fluentbit.io/parser: "json"
+    spec:
+      containers:
+        - name: secure-mcp
+          resources:
+            limits:
+              cpu: 4000m
+              memory: 4Gi
+            requests:
+              cpu: 1000m
+              memory: 1Gi
+          env:
+            - name: ENABLE_PRODUCTION_MODE
+              value: "true"
+            - name: ENABLE_AUDIT_LOGGING
+              value: "true"
+            - name: ENABLE_ENCRYPTION_AT_REST
+              value: "true"
+            - name: FORCE_HTTPS
+              value: "true"
+            - name: ENABLE_COMPLIANCE_MODE
+              value: "true"

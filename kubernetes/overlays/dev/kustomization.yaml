@@ -1,0 +1,101 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: secure-mcp-dev
+
+namePrefix: dev-
+nameSuffix: -dev
+
+commonLabels:
+  environment: development
+  app.kubernetes.io/environment: development
+
+commonAnnotations:
+  environment: development
+
+resources:
+  - ../../base
+
+replicas:
+  - name: secure-mcp
+    count: 1
+
+images:
+  - name: secure-mcp-server
+    newTag: dev-latest
+
+configMapGenerator:
+  - name: secure-mcp-config
+    behavior: merge
+    literals:
+      - NODE_ENV=development
+      - LOG_LEVEL=debug
+      - CORS_ORIGINS=http://localhost:3000,http://localhost:3001
+      - RATE_LIMIT_WINDOW_MS=60000
+      - RATE_LIMIT_MAX_REQUESTS=1000
+      - MFA_ENABLED=false
+      - TRACING_SAMPLE_RATE=1.0
+
+secretGenerator:
+  - name: secure-mcp-secrets
+    behavior: merge
+    literals:
+      - DB_PASSWORD=DevPassword123!
+      - REDIS_PASSWORD=DevRedisPass123!
+      - JWT_SECRET=dev-jwt-secret-change-me!
+
+patches:
+  - target:
+      kind: Deployment
+      name: secure-mcp
+    patch: |-
+      - op: replace
+        path: /spec/template/spec/containers/0/resources/limits/cpu
+        value: 500m
+      - op: replace
+        path: /spec/template/spec/containers/0/resources/limits/memory
+        value: 512Mi
+      - op: replace
+        path: /spec/template/spec/containers/0/resources/requests/cpu
+        value: 100m
+      - op: replace
+        path: /spec/template/spec/containers/0/resources/requests/memory
+        value: 128Mi
+
+  - target:
+      kind: HorizontalPodAutoscaler
+      name: secure-mcp-hpa
+    patch: |-
+      - op: replace
+        path: /spec/minReplicas
+        value: 1
+      - op: replace
+        path: /spec/maxReplicas
+        value: 3
+
+  - target:
+      kind: Ingress
+      name: secure-mcp-ingress
+    patch: |-
+      - op: replace
+        path: /spec/rules/0/host
+        value: api-dev.example.com
+      - op: replace
+        path: /spec/tls/0/hosts/0
+        value: api-dev.example.com
+
+  - target:
+      kind: NetworkPolicy
+      name: secure-mcp-network-policy
+    patch: |-
+      - op: add
+        path: /spec/ingress/-
+        value:
+          from:
+            - podSelector: {}
+          ports:
+            - protocol: TCP
+              port: 3000
+
+patchesStrategicMerge:
+  - deployment-patch.yaml

@@ -1,0 +1,16 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: secure-mcp
+spec:
+  template:
+    spec:
+      containers:
+        - name: secure-mcp
+          env:
+            - name: DEBUG
+              value: "true"
+            - name: ENABLE_PROFILING
+              value: "true"
+            - name: SKIP_SSL_VALIDATION
+              value: "true"

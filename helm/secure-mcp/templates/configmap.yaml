@@ -1,0 +1,49 @@
+{{- if .Values.configMaps.create }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "secure-mcp.fullname" . }}
+  labels:
+    {{- include "secure-mcp.labels" . | nindent 4 }}
+data:
+  # Application settings
+  NODE_ENV: {{ .Values.env.NODE_ENV | quote }}
+  PORT: {{ .Values.env.PORT | quote }}
+  LOG_LEVEL: {{ .Values.env.LOG_LEVEL | quote }}
+  LOG_FORMAT: {{ .Values.env.LOG_FORMAT | quote }}
+
+  # CORS settings
+  CORS_ORIGINS: {{ .Values.env.CORS_ORIGINS | quote }}
+  CORS_CREDENTIALS: "true"
+
+  # Rate limiting
+  RATE_LIMIT_WINDOW_MS: {{ .Values.env.RATE_LIMIT_WINDOW_MS | quote }}
+  RATE_LIMIT_MAX_REQUESTS: {{ .Values.env.RATE_LIMIT_MAX_REQUESTS | quote }}
+
+  # JWT settings
+  JWT_ALGORITHM: {{ .Values.env.JWT_ALGORITHM | quote }}
+  JWT_EXPIRY: {{ .Values.env.JWT_EXPIRY | quote }}
+
+  # MFA settings
+  MFA_ENABLED: {{ .Values.env.MFA_ENABLED | quote }}
+  MFA_ISSUER: "SecureMCP"
+
+  # Monitoring
+  METRICS_ENABLED: {{ .Values.env.METRICS_ENABLED | quote }}
+  METRICS_PORT: {{ .Values.env.METRICS_PORT | quote }}
+  TRACING_ENABLED: {{ .Values.env.TRACING_ENABLED | quote }}
+  TRACING_SAMPLE_RATE: {{ .Values.env.TRACING_SAMPLE_RATE | quote }}
+
+  # Database settings
+  {{- if .Values.postgresql.enabled }}
+  DB_HOST: "{{ include "secure-mcp.fullname" . }}-postgresql"
+  DB_PORT: "5432"
+  DB_NAME: {{ .Values.postgresql.auth.database | quote }}
+  {{- end }}
+
+  # Redis settings
+  {{- if .Values.redis.enabled }}
+  REDIS_HOST: "{{ include "secure-mcp.fullname" . }}-redis-master"
+  REDIS_PORT: "6379"
+  {{- end }}
+{{- end }}

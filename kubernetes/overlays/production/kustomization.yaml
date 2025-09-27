@@ -1,0 +1,121 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: secure-mcp-production
+
+namePrefix: prod-
+nameSuffix: -prod
+
+commonLabels:
+  environment: production
+  app.kubernetes.io/environment: production
+  criticality: high
+
+commonAnnotations:
+  environment: production
+  compliance: "pci-dss,hipaa,soc2"
+
+resources:
+  - ../../base
+
+replicas:
+  - name: secure-mcp
+    count: 5
+
+images:
+  - name: secure-mcp-server
+    newName: registry.example.com/secure-mcp/server
+    newTag: v1.0.0
+
+configMapGenerator:
+  - name: secure-mcp-config
+    behavior: merge
+    literals:
+      - NODE_ENV=production
+      - LOG_LEVEL=warn
+      - CORS_ORIGINS=https://app.example.com,https://admin.example.com
+      - RATE_LIMIT_WINDOW_MS=900000
+      - RATE_LIMIT_MAX_REQUESTS=100
+      - MFA_ENABLED=true
+      - TRACING_SAMPLE_RATE=0.01
+      - DB_POOL_MIN=5
+      - DB_POOL_MAX=20
+      - REDIS_CLUSTER_MODE=true
+
+secretGenerator:
+  - name: secure-mcp-secrets
+    behavior: replace
+    envs:
+      - secrets.env
+
+patches:
+  - target:
+      kind: Deployment
+      name: secure-mcp
+    patch: |-
+      - op: replace
+        path: /spec/replicas
+        value: 5
+      - op: add
+        path: /spec/template/spec/affinity/podAntiAffinity/requiredDuringSchedulingIgnoredDuringExecution/0/topologyKey
+        value: failure-domain.beta.kubernetes.io/zone
+      - op: add
+        path: /spec/template/spec/tolerations
+        value:
+          - key: "production"
+            operator: "Equal"
+            value: "true"
+            effect: "NoSchedule"
+
+  - target:
+      kind: HorizontalPodAutoscaler
+      name: secure-mcp-hpa
+    patch: |-
+      - op: replace
+        path: /spec/minReplicas
+        value: 5
+      - op: replace
+        path: /spec/maxReplicas
+        value: 30
+      - op: replace
+        path: /spec/metrics/0/resource/target/averageUtilization
+        value: 60
+      - op: replace
+        path: /spec/metrics/1/resource/target/averageUtilization
+        value: 70
+
+  - target:
+      kind: Ingress
+      name: secure-mcp-ingress
+    patch: |-
+      - op: replace
+        path: /spec/rules/0/host
+        value: api.example.com
+      - op: replace
+        path: /spec/tls/0/hosts/0
+        value: api.example.com
+      - op: add
+        path: /metadata/annotations/nginx.ingress.kubernetes.io~1limit-rps
+        value: "1000"
+      - op: add
+        path: /metadata/annotations/nginx.ingress.kubernetes.io~1enable-modsecurity
+        value: "true"
+
+  - target:
+      kind: PodDisruptionBudget
+      name: secure-mcp-pdb
+    patch: |-
+      - op: replace
+        path: /spec/minAvailable
+        value: 3
+
+  - target:
+      kind: NetworkPolicy
+      name: secure-mcp-network-policy
+    patch: |-
+      - op: remove
+        path: /spec/ingress/3
+
+patchesStrategicMerge:
+  - deployment-patch.yaml
+  - monitoring-patch.yaml

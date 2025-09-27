@@ -1,0 +1,496 @@
+generator client {
+  provider = "prisma-client-js"
+  previewFeatures = ["jsonProtocol", "metrics", "tracing"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                String       @id @default(uuid())
+  email             String       @unique
+  username          String       @unique
+  passwordHash      String
+  mfaSecret         String?
+  mfaBackupCodes    String[]
+  mfaEnabled        Boolean      @default(false)
+  emailVerified     Boolean      @default(false)
+  emailVerifyToken  String?
+  resetToken        String?
+  resetTokenExpiry  DateTime?
+  status            UserStatus   @default(ACTIVE)
+  role              Role         @relation(fields: [roleId], references: [id])
+  roleId            String
+  profile           UserProfile?
+  sessions          Session[]
+  auditLogs         AuditLog[]
+  toolExecutions    ToolExecution[]
+  apiKeys           ApiKey[]
+  notifications     Notification[]
+  loginAttempts     LoginAttempt[]
+  createdAt         DateTime     @default(now())
+  updatedAt         DateTime     @updatedAt
+  lastLoginAt       DateTime?
+  lastLoginIp       String?
+  lockoutUntil      DateTime?
+  failedLoginCount  Int          @default(0)
+
+  @@index([email])
+  @@index([username])
+  @@index([status])
+  @@index([createdAt])
+}
+
+model UserProfile {
+  id                String    @id @default(uuid())
+  userId            String    @unique
+  user              User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  firstName         String
+  lastName          String
+  department        String?
+  title             String?
+  phoneNumber       String?
+  timezone          String    @default("UTC")
+  locale            String    @default("en-US")
+  avatarUrl         String?
+  preferences       Json      @default("{}")
+  metadata          Json      @default("{}")
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+}
+
+model Role {
+  id                String         @id @default(uuid())
+  name              String         @unique
+  description       String?
+  permissions       Permission[]
+  users             User[]
+  isSystem          Boolean        @default(false)
+  priority          Int            @default(0)
+  metadata          Json           @default("{}")
+  createdAt         DateTime       @default(now())
+  updatedAt         DateTime       @updatedAt
+
+  @@index([name])
+}
+
+model Permission {
+  id                String         @id @default(uuid())
+  name              String         @unique
+  resource          String
+  action            String
+  conditions        Json?
+  description       String?
+  roles             Role[]
+  isSystem          Boolean        @default(false)
+  createdAt         DateTime       @default(now())
+  updatedAt         DateTime       @updatedAt
+
+  @@index([resource, action])
+  @@unique([resource, action])
+}
+
+model Session {
+  id                String         @id @default(uuid())
+  userId            String
+  user              User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  token             String         @unique
+  refreshToken      String?        @unique
+  deviceId          String?
+  deviceName        String?
+  ipAddress         String
+  userAgent         String
+  location          String?
+  lastActivityAt    DateTime       @default(now())
+  expiresAt         DateTime
+  revokedAt         DateTime?
+  revokedReason     String?
+  createdAt         DateTime       @default(now())
+
+  @@index([userId])
+  @@index([token])
+  @@index([refreshToken])
+  @@index([expiresAt])
+  @@index([deviceId])
+}
+
+model ApiKey {
+  id                String         @id @default(uuid())
+  name              String
+  key               String         @unique
+  keyHash           String         @unique
+  userId            String
+  user              User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  permissions       String[]
+  rateLimit         Int            @default(1000)
+  expiresAt         DateTime?
+  lastUsedAt        DateTime?
+  lastUsedIp        String?
+  usageCount        Int            @default(0)
+  status            ApiKeyStatus   @default(ACTIVE)
+  metadata          Json           @default("{}")
+  createdAt         DateTime       @default(now())
+  updatedAt         DateTime       @updatedAt
+
+  @@index([keyHash])
+  @@index([userId])
+  @@index([status])
+}
+
+model Tool {
+  id                String         @id @default(uuid())
+  name              String         @unique
+  displayName       String
+  description       String
+  version           String
+  category          String
+  icon              String?
+  runtime           ToolRuntime
+  image             String
+  command           String[]
+  environment       Json           @default("{}")
+  inputs            Json
+  outputs           Json
+  config            Json           @default("{}")
+  securityLevel     SecurityLevel  @default(MEDIUM)
+  requiredPermissions String[]
+  resourceLimits    Json           @default("{}")
+  timeout           Int            @default(30000)
+  retryPolicy       Json?
+  status            ToolStatus     @default(ACTIVE)
+  validationRules   Json?
+  examples          Json[]
+  documentation     String?
+  tags              String[]
+  executions        ToolExecution[]
+  createdBy         String?
+  updatedBy         String?
+  createdAt         DateTime       @default(now())
+  updatedAt         DateTime       @updatedAt
+  deprecatedAt      DateTime?
+
+  @@index([name])
+  @@index([category])
+  @@index([status])
+}
+
+model ToolExecution {
+  id                String            @id @default(uuid())
+  executionId       String            @unique
+  toolId            String
+  tool              Tool              @relation(fields: [toolId], references: [id])
+  userId            String
+  user              User              @relation(fields: [userId], references: [id])
+  sessionId         String?
+  input             Json
+  output            Json?
+  stdout            String?
+  stderr            String?
+  exitCode          Int?
+  status            ExecutionStatus   @default(PENDING)
+  runtime           ToolRuntime
+  containerId       String?
+  startTime         DateTime          @default(now())
+  endTime           DateTime?
+  duration          Int?
+  resourceUsage     Json?
+  securityEvents    Json[]
+  errorMessage      String?
+  errorStack        String?
+  retryCount        Int               @default(0)
+  parentExecutionId String?
+  metadata          Json              @default("{}")
+  createdAt         DateTime          @default(now())
+
+  @@index([executionId])
+  @@index([userId])
+  @@index([toolId])
+  @@index([status])
+  @@index([startTime])
+}
+
+model AuditLog {
+  id                String         @id @default(uuid())
+  userId            String?
+  user              User?          @relation(fields: [userId], references: [id], onDelete: SetNull)
+  action            String
+  resource          String
+  resourceId        String?
+  ipAddress         String?
+  userAgent         String?
+  location          String?
+  status            AuditStatus
+  errorMessage      String?
+  changes           Json?
+  metadata          Json           @default("{}")
+  requestId         String?
+  sessionId         String?
+  duration          Int?
+  timestamp         DateTime       @default(now())
+
+  @@index([userId])
+  @@index([action])
+  @@index([resource])
+  @@index([timestamp])
+  @@index([status])
+  @@index([requestId])
+}
+
+model Resource {
+  id                String         @id @default(uuid())
+  name              String         @unique
+  type              ResourceType
+  provider          String
+  config            Json
+  status            ResourceStatus @default(ACTIVE)
+  healthStatus      HealthStatus   @default(UNKNOWN)
+  lastHealthCheck   DateTime?
+  metrics           Json           @default("{}")
+  tags              String[]
+  metadata          Json           @default("{}")
+  createdAt         DateTime       @default(now())
+  updatedAt         DateTime       @updatedAt
+
+  @@index([name])
+  @@index([type])
+  @@index([status])
+}
+
+model Notification {
+  id                String              @id @default(uuid())
+  userId            String
+  user              User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type              NotificationType
+  priority          NotificationPriority @default(NORMAL)
+  title             String
+  message           String
+  data              Json?
+  readAt            DateTime?
+  actionUrl         String?
+  actionLabel       String?
+  expiresAt         DateTime?
+  createdAt         DateTime            @default(now())
+
+  @@index([userId])
+  @@index([type])
+  @@index([readAt])
+  @@index([createdAt])
+}
+
+model SecurityPolicy {
+  id                String         @id @default(uuid())
+  name              String         @unique
+  type              PolicyType
+  rules             Json
+  priority          Int            @default(0)
+  enabled           Boolean        @default(true)
+  appliesTo         String[]
+  exceptions        String[]
+  validFrom         DateTime?
+  validUntil        DateTime?
+  createdBy         String?
+  updatedBy         String?
+  createdAt         DateTime       @default(now())
+  updatedAt         DateTime       @updatedAt
+
+  @@index([name])
+  @@index([type])
+  @@index([enabled])
+}
+
+model LoginAttempt {
+  id                String         @id @default(uuid())
+  userId            String?
+  user              User?          @relation(fields: [userId], references: [id], onDelete: SetNull)
+  email             String?
+  ipAddress         String
+  userAgent         String
+  success           Boolean
+  failureReason     String?
+  mfaUsed           Boolean        @default(false)
+  location          String?
+  riskScore         Float?
+  metadata          Json           @default("{}")
+  timestamp         DateTime       @default(now())
+
+  @@index([userId])
+  @@index([email])
+  @@index([ipAddress])
+  @@index([timestamp])
+  @@index([success])
+}
+
+model ComplianceRecord {
+  id                String            @id @default(uuid())
+  standard          ComplianceStandard
+  requirement       String
+  status            ComplianceStatus
+  evidence          Json?
+  findings          Json[]
+  lastAssessment    DateTime?
+  nextAssessment    DateTime?
+  assessor          String?
+  notes             String?
+  metadata          Json              @default("{}")
+  createdAt         DateTime          @default(now())
+  updatedAt         DateTime          @updatedAt
+
+  @@index([standard])
+  @@index([status])
+  @@index([lastAssessment])
+}
+
+model BackupRecord {
+  id                String         @id @default(uuid())
+  type              BackupType
+  status            BackupStatus
+  size              BigInt
+  location          String
+  checksum          String
+  encryptionKey     String?
+  startTime         DateTime
+  endTime           DateTime?
+  duration          Int?
+  errorMessage      String?
+  metadata          Json           @default("{}")
+  expiresAt         DateTime?
+  createdAt         DateTime       @default(now())
+
+  @@index([type])
+  @@index([status])
+  @@index([createdAt])
+}
+
+enum UserStatus {
+  ACTIVE
+  INACTIVE
+  SUSPENDED
+  PENDING
+  DELETED
+}
+
+enum ApiKeyStatus {
+  ACTIVE
+  REVOKED
+  EXPIRED
+}
+
+enum ToolRuntime {
+  DOCKER
+  GVISOR
+  KATA
+  WASM
+  NATIVE
+}
+
+enum SecurityLevel {
+  LOW
+  MEDIUM
+  HIGH
+  CRITICAL
+}
+
+enum ToolStatus {
+  ACTIVE
+  INACTIVE
+  DEPRECATED
+  TESTING
+  MAINTENANCE
+}
+
+enum ExecutionStatus {
+  PENDING
+  RUNNING
+  SUCCESS
+  FAILED
+  TIMEOUT
+  CANCELLED
+}
+
+enum AuditStatus {
+  SUCCESS
+  FAILURE
+  WARNING
+}
+
+enum ResourceType {
+  DATABASE
+  CACHE
+  QUEUE
+  STORAGE
+  COMPUTE
+  NETWORK
+}
+
+enum ResourceStatus {
+  ACTIVE
+  INACTIVE
+  MAINTENANCE
+  ERROR
+}
+
+enum HealthStatus {
+  HEALTHY
+  DEGRADED
+  UNHEALTHY
+  UNKNOWN
+}
+
+enum NotificationType {
+  INFO
+  SUCCESS
+  WARNING
+  ERROR
+  SECURITY
+  SYSTEM
+}
+
+enum NotificationPriority {
+  LOW
+  NORMAL
+  HIGH
+  URGENT
+}
+
+enum PolicyType {
+  ACCESS_CONTROL
+  NETWORK
+  DATA_PROTECTION
+  RESOURCE_LIMIT
+  COMPLIANCE
+}
+
+enum ComplianceStandard {
+  SOC2_TYPE2
+  ISO_27001
+  GDPR
+  CCPA
+  HIPAA
+  PCI_DSS
+  FedRAMP
+}
+
+enum ComplianceStatus {
+  COMPLIANT
+  NON_COMPLIANT
+  PARTIAL
+  NOT_APPLICABLE
+  PENDING
+}
+
+enum BackupType {
+  FULL
+  INCREMENTAL
+  DIFFERENTIAL
+  SNAPSHOT
+}
+
+enum BackupStatus {
+  PENDING
+  IN_PROGRESS
+  COMPLETED
+  FAILED
+  VERIFIED
+}

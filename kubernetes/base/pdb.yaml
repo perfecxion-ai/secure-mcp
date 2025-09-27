@@ -1,0 +1,36 @@
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: secure-mcp-pdb
+  namespace: secure-mcp
+  labels:
+    app.kubernetes.io/name: secure-mcp
+    app.kubernetes.io/component: availability
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: secure-mcp
+      app.kubernetes.io/component: backend
+  # Ensure at least 2 pods are always available
+  minAvailable: 2
+  # Alternative: maxUnavailable: 1
+  # This allows disruption of maximum 1 pod at a time
+
+---
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: secure-mcp-percentage-pdb
+  namespace: secure-mcp
+  labels:
+    app.kubernetes.io/name: secure-mcp
+    app.kubernetes.io/component: availability
+    type: percentage-based
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: secure-mcp
+      app.kubernetes.io/component: backend
+  # Ensure at least 60% of pods are always available
+  minAvailable: "60%"
+  # This is useful when you have a larger number of replicas

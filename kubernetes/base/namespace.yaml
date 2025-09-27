@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: secure-mcp
+  labels:
+    name: secure-mcp
+    environment: production
+    app.kubernetes.io/name: secure-mcp
+    app.kubernetes.io/managed-by: kubectl
+    pod-security.kubernetes.io/enforce: restricted
+    pod-security.kubernetes.io/audit: restricted
+    pod-security.kubernetes.io/warn: restricted
+  annotations:
+    scheduler.alpha.kubernetes.io/defaultTolerations: '[{"operator": "Exists", "effect": "NoSchedule", "key": "node.kubernetes.io/not-ready"},{"operator": "Exists", "effect": "NoExecute", "key": "node.kubernetes.io/unreachable"}]'

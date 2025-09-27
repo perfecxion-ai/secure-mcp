@@ -1,0 +1,177 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: secure-mcp-sa
+  namespace: secure-mcp
+  labels:
+    app.kubernetes.io/name: secure-mcp
+    app.kubernetes.io/component: rbac
+  annotations:
+    eks.amazonaws.com/role-arn: "arn:aws:iam::123456789012:role/secure-mcp-pod-role"
+automountServiceAccountToken: true
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: secure-mcp-role
+  namespace: secure-mcp
+  labels:
+    app.kubernetes.io/name: secure-mcp
+    app.kubernetes.io/component: rbac
+rules:
+  # Allow reading config maps for dynamic configuration
+  - apiGroups: [""]
+    resources: ["configmaps"]
+    resourceNames: ["secure-mcp-config", "secure-mcp-scripts"]
+    verbs: ["get", "list", "watch"]
+
+  # Allow reading secrets
+  - apiGroups: [""]
+    resources: ["secrets"]
+    resourceNames: ["secure-mcp-secrets", "secure-mcp-tls"]
+    verbs: ["get"]
+
+  # Allow reading pods for service discovery
+  - apiGroups: [""]
+    resources: ["pods"]
+    verbs: ["get", "list"]
+
+  # Allow reading services
+  - apiGroups: [""]
+    resources: ["services"]
+    verbs: ["get", "list"]
+
+  # Allow reading endpoints for service discovery
+  - apiGroups: [""]
+    resources: ["endpoints"]
+    verbs: ["get", "list", "watch"]
+
+  # Allow reading events for debugging
+  - apiGroups: [""]
+    resources: ["events"]
+    verbs: ["get", "list"]
+
+  # Allow leader election for HA
+  - apiGroups: ["coordination.k8s.io"]
+    resources: ["leases"]
+    verbs: ["get", "list", "watch", "create", "update", "patch"]
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: secure-mcp-rolebinding
+  namespace: secure-mcp
+  labels:
+    app.kubernetes.io/name: secure-mcp
+    app.kubernetes.io/component: rbac
+subjects:
+  - kind: ServiceAccount
+    name: secure-mcp-sa
+    namespace: secure-mcp
+roleRef:
+  kind: Role
+  name: secure-mcp-role
+  apiGroup: rbac.authorization.k8s.io
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: secure-mcp-cluster-role
+  labels:
+    app.kubernetes.io/name: secure-mcp
+    app.kubernetes.io/component: rbac
+rules:
+  # Allow reading namespaces for multi-tenancy
+  - apiGroups: [""]
+    resources: ["namespaces"]
+    verbs: ["get", "list"]
+
+  # Allow reading nodes for topology awareness
+  - apiGroups: [""]
+    resources: ["nodes"]
+    verbs: ["get", "list"]
+
+  # Allow reading custom resources if needed
+  - apiGroups: ["apiextensions.k8s.io"]
+    resources: ["customresourcedefinitions"]
+    verbs: ["get", "list"]
+
+  # Allow reading metrics
+  - apiGroups: ["metrics.k8s.io"]
+    resources: ["nodes", "pods"]
+    verbs: ["get", "list"]
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: secure-mcp-cluster-rolebinding
+  labels:
+    app.kubernetes.io/name: secure-mcp
+    app.kubernetes.io/component: rbac
+subjects:
+  - kind: ServiceAccount
+    name: secure-mcp-sa
+    namespace: secure-mcp
+roleRef:
+  kind: ClusterRole
+  name: secure-mcp-cluster-role
+  apiGroup: rbac.authorization.k8s.io
+
+---
+# Separate ServiceAccount for jobs and migrations
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: secure-mcp-jobs-sa
+  namespace: secure-mcp
+  labels:
+    app.kubernetes.io/name: secure-mcp
+    app.kubernetes.io/component: jobs
+automountServiceAccountToken: true
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: secure-mcp-jobs-role
+  namespace: secure-mcp
+  labels:
+    app.kubernetes.io/name: secure-mcp
+    app.kubernetes.io/component: jobs
+rules:
+  # Allow reading config maps
+  - apiGroups: [""]
+    resources: ["configmaps"]
+    verbs: ["get", "list"]
+
+  # Allow reading and writing secrets for backup/restore
+  - apiGroups: [""]
+    resources: ["secrets"]
+    verbs: ["get", "list", "create", "update", "patch"]
+
+  # Allow managing jobs
+  - apiGroups: ["batch"]
+    resources: ["jobs", "cronjobs"]
+    verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: secure-mcp-jobs-rolebinding
+  namespace: secure-mcp
+  labels:
+    app.kubernetes.io/name: secure-mcp
+    app.kubernetes.io/component: jobs
+subjects:
+  - kind: ServiceAccount
+    name: secure-mcp-jobs-sa
+    namespace: secure-mcp
+roleRef:
+  kind: Role
+  name: secure-mcp-jobs-role
+  apiGroup: rbac.authorization.k8s.io

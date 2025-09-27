@@ -1,0 +1,112 @@
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: secure-mcp-hpa
+  namespace: secure-mcp
+  labels:
+    app.kubernetes.io/name: secure-mcp
+    app.kubernetes.io/component: autoscaling
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: secure-mcp
+  minReplicas: 3
+  maxReplicas: 20
+  metrics:
+    # CPU utilization
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: 70
+
+    # Memory utilization
+    - type: Resource
+      resource:
+        name: memory
+        target:
+          type: Utilization
+          averageUtilization: 80
+
+    # Custom metrics from Prometheus
+    - type: Pods
+      pods:
+        metric:
+          name: http_requests_per_second
+        target:
+          type: AverageValue
+          averageValue: "1000"
+
+    - type: Pods
+      pods:
+        metric:
+          name: response_time_p95
+        target:
+          type: AverageValue
+          averageValue: "500m"
+
+    # External metrics
+    - type: External
+      external:
+        metric:
+          name: queue_messages_ready
+          selector:
+            matchLabels:
+              queue: "secure-mcp"
+        target:
+          type: AverageValue
+          averageValue: "100"
+
+  behavior:
+    scaleDown:
+      stabilizationWindowSeconds: 300
+      policies:
+        - type: Percent
+          value: 50
+          periodSeconds: 60
+        - type: Pods
+          value: 2
+          periodSeconds: 60
+      selectPolicy: Min
+
+    scaleUp:
+      stabilizationWindowSeconds: 60
+      policies:
+        - type: Percent
+          value: 100
+          periodSeconds: 60
+        - type: Pods
+          value: 4
+          periodSeconds: 60
+      selectPolicy: Max
+
+---
+apiVersion: autoscaling/v2
+kind: VerticalPodAutoscaler
+metadata:
+  name: secure-mcp-vpa
+  namespace: secure-mcp
+  labels:
+    app.kubernetes.io/name: secure-mcp
+    app.kubernetes.io/component: autoscaling
+spec:
+  targetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: secure-mcp
+  updatePolicy:
+    updateMode: "Auto"  # Can be "Off", "Initial", or "Auto"
+  resourcePolicy:
+    containerPolicies:
+      - containerName: secure-mcp
+        mode: Auto
+        minAllowed:
+          cpu: 250m
+          memory: 256Mi
+        maxAllowed:
+          cpu: 4000m
+          memory: 4Gi
+        controlledResources: ["cpu", "memory"]
+        controlledValues: RequestsAndLimits

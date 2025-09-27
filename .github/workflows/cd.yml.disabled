@@ -1,0 +1,409 @@
+name: Continuous Deployment
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Environment to deploy to'
+        required: true
+        type: choice
+        options:
+          - development
+          - staging
+          - production
+      version:
+        description: 'Version to deploy (leave empty for latest)'
+        required: false
+        type: string
+
+env:
+  HELM_VERSION: '3.13.3'
+  KUBECTL_VERSION: '1.29.0'
+  TERRAFORM_VERSION: '1.6.6'
+
+jobs:
+  prepare-deployment:
+    name: Prepare Deployment
+    runs-on: ubuntu-22.04
+    outputs:
+      environment: ${{ steps.set-env.outputs.environment }}
+      version: ${{ steps.set-version.outputs.version }}
+      namespace: ${{ steps.set-namespace.outputs.namespace }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set environment
+        id: set-env
+        run: |
+          if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
+            echo "environment=${{ github.event.inputs.environment }}" >> $GITHUB_OUTPUT
+          elif [[ "${{ github.ref }}" == refs/tags/v*-rc* ]]; then
+            echo "environment=staging" >> $GITHUB_OUTPUT
+          elif [[ "${{ github.ref }}" == refs/tags/v* ]]; then
+            echo "environment=production" >> $GITHUB_OUTPUT
+          else
+            echo "environment=development" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Set version
+        id: set-version
+        run: |
+          if [[ "${{ github.event_name }}" == "workflow_dispatch" && -n "${{ github.event.inputs.version }}" ]]; then
+            echo "version=${{ github.event.inputs.version }}" >> $GITHUB_OUTPUT
+          elif [[ "${{ github.ref }}" == refs/tags/* ]]; then
+            echo "version=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
+          else
+            echo "version=${GITHUB_SHA::8}" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Set namespace
+        id: set-namespace
+        run: |
+          case "${{ steps.set-env.outputs.environment }}" in
+            production)
+              echo "namespace=secure-mcp-prod" >> $GITHUB_OUTPUT
+              ;;
+            staging)
+              echo "namespace=secure-mcp-staging" >> $GITHUB_OUTPUT
+              ;;
+            *)
+              echo "namespace=secure-mcp-dev" >> $GITHUB_OUTPUT
+              ;;
+          esac
+
+  deploy-infrastructure:
+    name: Deploy Infrastructure
+    runs-on: ubuntu-22.04
+    needs: [prepare-deployment]
+    environment: ${{ needs.prepare-deployment.outputs.environment }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: ${{ env.TERRAFORM_VERSION }}
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+
+      - name: Terraform Init
+        working-directory: ./terraform/environments/${{ needs.prepare-deployment.outputs.environment }}
+        run: |
+          terraform init \
+            -backend-config="bucket=${{ secrets.TF_STATE_BUCKET }}" \
+            -backend-config="key=${{ needs.prepare-deployment.outputs.environment }}/terraform.tfstate" \
+            -backend-config="region=us-east-1" \
+            -backend-config="dynamodb_table=${{ secrets.TF_LOCK_TABLE }}"
+
+      - name: Terraform Plan
+        working-directory: ./terraform/environments/${{ needs.prepare-deployment.outputs.environment }}
+        run: |
+          terraform plan \
+            -var="environment=${{ needs.prepare-deployment.outputs.environment }}" \
+            -var="version=${{ needs.prepare-deployment.outputs.version }}" \
+            -out=tfplan
+
+      - name: Terraform Apply
+        if: needs.prepare-deployment.outputs.environment != 'development'
+        working-directory: ./terraform/environments/${{ needs.prepare-deployment.outputs.environment }}
+        run: terraform apply -auto-approve tfplan
+
+  deploy-application:
+    name: Deploy Application
+    runs-on: ubuntu-22.04
+    needs: [prepare-deployment, deploy-infrastructure]
+    environment: ${{ needs.prepare-deployment.outputs.environment }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup kubectl
+        uses: azure/setup-kubectl@v3
+        with:
+          version: ${{ env.KUBECTL_VERSION }}
+
+      - name: Setup Helm
+        uses: azure/setup-helm@v3
+        with:
+          version: ${{ env.HELM_VERSION }}
+
+      - name: Configure kubectl
+        run: |
+          mkdir -p ~/.kube
+          echo "${{ secrets.KUBE_CONFIG }}" | base64 -d > ~/.kube/config
+          chmod 600 ~/.kube/config
+
+      - name: Create namespace
+        run: |
+          kubectl create namespace ${{ needs.prepare-deployment.outputs.namespace }} \
+            --dry-run=client -o yaml | kubectl apply -f -
+
+      - name: Setup Vault secrets
+        run: |
+          kubectl create secret generic vault-token \
+            --from-literal=token=${{ secrets.VAULT_TOKEN }} \
+            --namespace=${{ needs.prepare-deployment.outputs.namespace }} \
+            --dry-run=client -o yaml | kubectl apply -f -
+
+      - name: Deploy with Helm
+        run: |
+          helm upgrade --install secure-mcp ./helm/secure-mcp \
+            --namespace ${{ needs.prepare-deployment.outputs.namespace }} \
+            --create-namespace \
+            --values ./helm/secure-mcp/values.${{ needs.prepare-deployment.outputs.environment }}.yaml \
+            --set image.tag=${{ needs.prepare-deployment.outputs.version }} \
+            --set ingress.hosts[0].host=${{ secrets.INGRESS_HOST }} \
+            --set postgresql.auth.password=${{ secrets.DB_PASSWORD }} \
+            --set redis.auth.password=${{ secrets.REDIS_PASSWORD }} \
+            --wait \
+            --timeout 10m
+
+      - name: Run database migrations
+        run: |
+          kubectl run migration-job \
+            --image=ghcr.io/${{ github.repository }}:${{ needs.prepare-deployment.outputs.version }} \
+            --namespace=${{ needs.prepare-deployment.outputs.namespace }} \
+            --restart=Never \
+            --rm=true \
+            --attach=true \
+            --env="DATABASE_URL=${{ secrets.DATABASE_URL }}" \
+            -- npm run db:migrate
+
+      - name: Verify deployment
+        run: |
+          kubectl rollout status deployment/secure-mcp \
+            --namespace=${{ needs.prepare-deployment.outputs.namespace }} \
+            --timeout=5m
+
+          kubectl get pods \
+            --namespace=${{ needs.prepare-deployment.outputs.namespace }} \
+            -l app.kubernetes.io/name=secure-mcp
+
+  smoke-tests:
+    name: Smoke Tests
+    runs-on: ubuntu-22.04
+    needs: [prepare-deployment, deploy-application]
+    environment: ${{ needs.prepare-deployment.outputs.environment }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.10.0'
+
+      - name: Install test dependencies
+        run: |
+          npm install --no-save \
+            axios@1.6.2 \
+            jest@29.7.0 \
+            @types/jest@29.5.11
+
+      - name: Run smoke tests
+        run: |
+          export API_URL=${{ secrets.API_URL }}
+          export API_KEY=${{ secrets.API_KEY }}
+          npm run test:smoke
+        continue-on-error: false
+
+      - name: Health check
+        run: |
+          for i in {1..30}; do
+            if curl -f "${{ secrets.API_URL }}/health"; then
+              echo "Health check passed"
+              exit 0
+            fi
+            echo "Attempt $i failed, retrying..."
+            sleep 10
+          done
+          echo "Health check failed after 30 attempts"
+          exit 1
+
+  security-validation:
+    name: Security Validation
+    runs-on: ubuntu-22.04
+    needs: [prepare-deployment, deploy-application]
+    environment: ${{ needs.prepare-deployment.outputs.environment }}
+    steps:
+      - name: Run DAST scan
+        uses: zaproxy/action-full-scan@v0.8.0
+        with:
+          target: ${{ secrets.API_URL }}
+          rules_file_name: '.zap/rules.tsv'
+          cmd_options: '-a'
+
+      - name: Run SSL/TLS scan
+        run: |
+          docker run --rm drwetter/testssl.sh \
+            --severity HIGH \
+            --vulnerable \
+            ${{ secrets.API_URL }}
+
+      - name: Validate security headers
+        run: |
+          response=$(curl -I ${{ secrets.API_URL }})
+          echo "$response" | grep -q "Strict-Transport-Security"
+          echo "$response" | grep -q "X-Content-Type-Options: nosniff"
+          echo "$response" | grep -q "X-Frame-Options: DENY"
+          echo "$response" | grep -q "Content-Security-Policy"
+
+      - name: Check for exposed secrets
+        run: |
+          docker run --rm trufflesecurity/trufflehog:latest \
+            --no-update \
+            --only-verified \
+            git ${{ secrets.API_URL }}
+
+  performance-validation:
+    name: Performance Validation
+    runs-on: ubuntu-22.04
+    needs: [prepare-deployment, deploy-application]
+    if: needs.prepare-deployment.outputs.environment != 'development'
+    environment: ${{ needs.prepare-deployment.outputs.environment }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Run load test
+        run: |
+          docker run --rm \
+            -v $PWD/tests/performance:/scripts \
+            grafana/k6 run \
+            -e API_URL=${{ secrets.API_URL }} \
+            -e API_KEY=${{ secrets.API_KEY }} \
+            /scripts/load-test.js
+
+      - name: Analyze performance metrics
+        run: |
+          # Check if p95 response time is under 100ms
+          kubectl exec -n ${{ needs.prepare-deployment.outputs.namespace }} \
+            deployment/secure-mcp -- \
+            curl -s http://localhost:9090/metrics | \
+            grep 'http_request_duration_seconds{quantile="0.95"}' | \
+            awk '{if ($2 > 0.1) exit 1}'
+
+  rollback:
+    name: Rollback Deployment
+    runs-on: ubuntu-22.04
+    needs: [prepare-deployment, deploy-application, smoke-tests]
+    if: failure()
+    environment: ${{ needs.prepare-deployment.outputs.environment }}
+    steps:
+      - name: Configure kubectl
+        run: |
+          mkdir -p ~/.kube
+          echo "${{ secrets.KUBE_CONFIG }}" | base64 -d > ~/.kube/config
+          chmod 600 ~/.kube/config
+
+      - name: Rollback Helm release
+        run: |
+          helm rollback secure-mcp 0 \
+            --namespace=${{ needs.prepare-deployment.outputs.namespace }} \
+            --wait \
+            --timeout 5m
+
+      - name: Verify rollback
+        run: |
+          kubectl rollout status deployment/secure-mcp \
+            --namespace=${{ needs.prepare-deployment.outputs.namespace }} \
+            --timeout=5m
+
+      - name: Send rollback notification
+        uses: slackapi/slack-github-action@v1.24.0
+        with:
+          payload: |
+            {
+              "text": "⚠️ Deployment rollback triggered",
+              "blocks": [
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "*Deployment Rollback*\n*Environment:* ${{ needs.prepare-deployment.outputs.environment }}\n*Version:* ${{ needs.prepare-deployment.outputs.version }}\n*Status:* Rolled back to previous version"
+                  }
+                }
+              ]
+            }
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK }}
+
+  notify:
+    name: Send Notifications
+    runs-on: ubuntu-22.04
+    needs: [prepare-deployment, deploy-application, smoke-tests, security-validation]
+    if: always()
+    steps:
+      - name: Send Slack notification
+        uses: slackapi/slack-github-action@v1.24.0
+        with:
+          payload: |
+            {
+              "text": "${{ job.status == 'success' && '✅' || '❌' }} Deployment ${{ job.status }}",
+              "blocks": [
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "*Deployment Status*\n*Environment:* ${{ needs.prepare-deployment.outputs.environment }}\n*Version:* ${{ needs.prepare-deployment.outputs.version }}\n*Status:* ${{ job.status }}\n*URL:* ${{ secrets.API_URL }}"
+                  }
+                },
+                {
+                  "type": "actions",
+                  "elements": [
+                    {
+                      "type": "button",
+                      "text": {
+                        "type": "plain_text",
+                        "text": "View Deployment"
+                      },
+                      "url": "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+                    },
+                    {
+                      "type": "button",
+                      "text": {
+                        "type": "plain_text",
+                        "text": "View Application"
+                      },
+                      "url": "${{ secrets.API_URL }}"
+                    }
+                  ]
+                }
+              ]
+            }
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK }}
+
+      - name: Create GitHub deployment
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const deployment = await github.rest.repos.createDeployment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              ref: context.sha,
+              environment: '${{ needs.prepare-deployment.outputs.environment }}',
+              description: 'Deployment version ${{ needs.prepare-deployment.outputs.version }}',
+              production_environment: '${{ needs.prepare-deployment.outputs.environment }}' === 'production',
+              required_contexts: [],
+              auto_merge: false
+            });
+
+            await github.rest.repos.createDeploymentStatus({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              deployment_id: deployment.data.id,
+              state: '${{ job.status }}' === 'success' ? 'success' : 'failure',
+              environment_url: '${{ secrets.API_URL }}',
+              description: 'Deployment ${{ job.status }}'
+            });

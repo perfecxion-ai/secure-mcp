@@ -1,0 +1,93 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: secure-mcp-staging
+
+namePrefix: staging-
+nameSuffix: -staging
+
+commonLabels:
+  environment: staging
+  app.kubernetes.io/environment: staging
+
+commonAnnotations:
+  environment: staging
+
+resources:
+  - ../../base
+
+replicas:
+  - name: secure-mcp
+    count: 2
+
+images:
+  - name: secure-mcp-server
+    newTag: staging-v1.0.0
+
+configMapGenerator:
+  - name: secure-mcp-config
+    behavior: merge
+    literals:
+      - NODE_ENV=staging
+      - LOG_LEVEL=info
+      - CORS_ORIGINS=https://staging.example.com
+      - RATE_LIMIT_WINDOW_MS=300000
+      - RATE_LIMIT_MAX_REQUESTS=500
+      - MFA_ENABLED=true
+      - TRACING_SAMPLE_RATE=0.5
+
+secretGenerator:
+  - name: secure-mcp-secrets
+    behavior: merge
+    literals:
+      - DB_PASSWORD=StagingPassword456!
+      - REDIS_PASSWORD=StagingRedisPass456!
+      - JWT_SECRET=staging-jwt-secret-secure!
+
+patches:
+  - target:
+      kind: Deployment
+      name: secure-mcp
+    patch: |-
+      - op: replace
+        path: /spec/template/spec/containers/0/resources/limits/cpu
+        value: 1000m
+      - op: replace
+        path: /spec/template/spec/containers/0/resources/limits/memory
+        value: 1Gi
+      - op: replace
+        path: /spec/template/spec/containers/0/resources/requests/cpu
+        value: 250m
+      - op: replace
+        path: /spec/template/spec/containers/0/resources/requests/memory
+        value: 256Mi
+
+  - target:
+      kind: HorizontalPodAutoscaler
+      name: secure-mcp-hpa
+    patch: |-
+      - op: replace
+        path: /spec/minReplicas
+        value: 2
+      - op: replace
+        path: /spec/maxReplicas
+        value: 10
+
+  - target:
+      kind: Ingress
+      name: secure-mcp-ingress
+    patch: |-
+      - op: replace
+        path: /spec/rules/0/host
+        value: api-staging.example.com
+      - op: replace
+        path: /spec/tls/0/hosts/0
+        value: api-staging.example.com
+
+  - target:
+      kind: PriorityClass
+      name: high-priority
+    patch: |-
+      - op: replace
+        path: /metadata/name
+        value: medium-priority

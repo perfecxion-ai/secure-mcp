@@ -1,0 +1,118 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: secure-mcp-config
+  namespace: secure-mcp
+  labels:
+    app.kubernetes.io/name: secure-mcp
+    app.kubernetes.io/component: configuration
+    app.kubernetes.io/part-of: secure-mcp-server
+data:
+  # Application configuration
+  NODE_ENV: "production"
+  PORT: "3000"
+  LOG_LEVEL: "info"
+  LOG_FORMAT: "json"
+
+  # Database configuration
+  DB_HOST: "postgres-service.secure-mcp.svc.cluster.local"
+  DB_PORT: "5432"
+  DB_NAME: "mcp_db"
+  DB_SSL_MODE: "require"
+  DB_POOL_MIN: "2"
+  DB_POOL_MAX: "10"
+  DB_CONNECTION_TIMEOUT: "30000"
+
+  # Redis configuration
+  REDIS_HOST: "redis-service.secure-mcp.svc.cluster.local"
+  REDIS_PORT: "6379"
+  REDIS_DB: "0"
+  REDIS_CONNECT_TIMEOUT: "10000"
+  REDIS_COMMAND_TIMEOUT: "5000"
+  REDIS_KEEPALIVE: "30000"
+
+  # Security configuration
+  CORS_ORIGINS: "https://app.example.com,https://admin.example.com"
+  CORS_CREDENTIALS: "true"
+  SESSION_COOKIE_SECURE: "true"
+  SESSION_COOKIE_HTTPONLY: "true"
+  SESSION_COOKIE_SAMESITE: "strict"
+  HELMET_CSP: "true"
+
+  # Rate limiting
+  RATE_LIMIT_WINDOW_MS: "900000"
+  RATE_LIMIT_MAX_REQUESTS: "100"
+  RATE_LIMIT_SKIP_SUCCESSFUL_REQUESTS: "false"
+  RATE_LIMIT_SKIP_FAILED_REQUESTS: "false"
+
+  # Authentication
+  JWT_ALGORITHM: "RS256"
+  JWT_EXPIRY: "15m"
+  JWT_REFRESH_EXPIRY: "7d"
+  MFA_ENABLED: "true"
+  MFA_ISSUER: "SecureMCP"
+
+  # Monitoring
+  METRICS_ENABLED: "true"
+  METRICS_PORT: "9090"
+  TRACING_ENABLED: "true"
+  TRACING_ENDPOINT: "http://jaeger-collector.observability.svc.cluster.local:4318"
+  TRACING_SAMPLE_RATE: "0.1"
+
+  # Health checks
+  HEALTH_CHECK_INTERVAL: "30000"
+  SHUTDOWN_TIMEOUT: "30000"
+  GRACEFUL_SHUTDOWN_ENABLED: "true"
+
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: secure-mcp-scripts
+  namespace: secure-mcp
+  labels:
+    app.kubernetes.io/name: secure-mcp
+    app.kubernetes.io/component: scripts
+data:
+  healthcheck.sh: |
+    #!/bin/sh
+    set -e
+
+    # Check main application health
+    response=$(wget --no-verbose --tries=1 --spider --timeout=5 http://localhost:3000/health 2>&1)
+    if [ $? -ne 0 ]; then
+      echo "Health check failed: $response"
+      exit 1
+    fi
+
+    # Check metrics endpoint if enabled
+    if [ "$METRICS_ENABLED" = "true" ]; then
+      wget --no-verbose --tries=1 --spider --timeout=5 http://localhost:9090/metrics || exit 1
+    fi
+
+    echo "Health check passed"
+    exit 0
+
+  prestop.sh: |
+    #!/bin/sh
+    set -e
+
+    echo "Starting graceful shutdown..."
+
+    # Send SIGTERM to the main process
+    kill -TERM 1
+
+    # Wait for the application to shut down gracefully
+    timeout=30
+    while [ $timeout -gt 0 ]; do
+      if ! kill -0 1 2>/dev/null; then
+        echo "Application shut down gracefully"
+        exit 0
+      fi
+      sleep 1
+      timeout=$((timeout - 1))
+    done
+
+    echo "Graceful shutdown timeout, forcing termination"
+    kill -KILL 1
+    exit 0
