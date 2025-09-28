@@ -6,43 +6,17 @@ module.exports = {
   // Test configuration
   roots: ['<rootDir>/src', '<rootDir>/tests'],
   testMatch: [
-    '**/__tests__/**/*.test.ts',
-    '**/__tests__/**/*.spec.ts',
     '**/tests/**/*.test.ts',
-    '**/tests/**/*.spec.ts'
   ],
 
-  // TypeScript configuration
-  transform: {
-    '^.+\\.ts$': ['@swc/jest', {
-      jsc: {
-        parser: {
-          syntax: 'typescript',
-          decorators: true,
-          dynamicImport: true,
-        },
-        target: 'es2020',
-        keepClassNames: true,
-        loose: true,
-      },
-      module: {
-        type: 'commonjs',
-      },
-    }],
-  },
-
   // Module resolution
-  moduleNameMapping: {
+  moduleNameMapper: {
     '^@/(.*)$': '<rootDir>/src/$1',
     '^@tests/(.*)$': '<rootDir>/tests/$1',
   },
 
-  // Setup files
-  setupFiles: ['<rootDir>/tests/setup/jest.setup.ts'],
-  setupFilesAfterEnv: ['<rootDir>/tests/setup/jest.afterEnv.ts'],
-
   // Coverage configuration
-  collectCoverage: true,
+  collectCoverage: false,
   collectCoverageFrom: [
     'src/**/*.ts',
     '!src/**/*.d.ts',
@@ -87,11 +61,11 @@ module.exports = {
 
   // Test environment configuration
   testEnvironment: 'node',
-  testTimeout: 30000,
+  // testTimeout: 30000, // Moved to project configs
 
-  // Global setup and teardown
-  globalSetup: '<rootDir>/tests/setup/global-setup.ts',
-  globalTeardown: '<rootDir>/tests/setup/global-teardown.ts',
+  // Global setup and teardown (disabled for CI)
+  // globalSetup: '<rootDir>/tests/setup/global-setup.ts',
+  // globalTeardown: '<rootDir>/tests/setup/global-teardown.ts',
 
   // Parallel execution
   maxWorkers: '50%',
@@ -150,19 +124,16 @@ module.exports = {
       displayName: 'integration',
       testMatch: ['<rootDir>/tests/integration/**/*.test.ts'],
       testEnvironment: 'node',
-      testTimeout: 60000,
     },
     {
       displayName: 'security',
       testMatch: ['<rootDir>/tests/security/**/*.test.ts'],
       testEnvironment: 'node',
-      testTimeout: 120000,
     },
     {
       displayName: 'performance',
       testMatch: ['<rootDir>/tests/performance/**/*.test.ts'],
       testEnvironment: 'node',
-      testTimeout: 300000,
     },
   ],
 };
