@@ -254,6 +254,9 @@ export class MockFactory {
     socket.join = jest.fn();
     socket.leave = jest.fn();
     socket.rooms = new Set();
+    socket.on = jest.fn();
+    socket.off = jest.fn();
+    socket.once = jest.fn();
 
     return socket;
   }

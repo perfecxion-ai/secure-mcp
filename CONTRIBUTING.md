@@ -1,6 +1,6 @@
 # Contributing to Secure MCP Server
 
-Thank you for your interest in contributing! We welcome contributions from the community.
+Thank you for your interest in contributing! The **perfecXion.ai** team welcomes contributions from the community to help improve this enterprise-grade MCP implementation.
 
 ## Code of Conduct
 

@@ -1,7 +1,30 @@
 import { describe, test, expect } from '@jest/globals';
-import { secureEncryption } from '../crypto/secure-encryption';
-import { secureTOTPGenerator } from '../crypto/totp-generator';
-import { cryptographicIntegrity } from '../crypto/integrity-protection';
+
+// Mock config before importing modules that depend on it
+jest.mock('../../src/config/config', () => ({
+  config: {
+    env: 'test',
+    logging: {
+      level: 'silent',
+    },
+    jwt: {
+      secret: 'test-jwt-secret-must-be-at-least-32-characters-long',
+      accessExpiresIn: '15m',
+      refreshExpiresIn: '7d',
+      issuer: 'secure-mcp-server',
+      audience: 'secure-mcp-client',
+    },
+    security: {
+      forceHttps: false,
+      hstsMaxAge: 31536000,
+      frameOptions: 'DENY',
+    },
+  },
+}));
+
+import { secureEncryption } from '../../src/auth/crypto/secure-encryption';
+import { secureTOTPGenerator } from '../../src/auth/crypto/totp-generator';
+// Note: cryptographicIntegrity is not available, will mock if needed
 import { randomBytes } from 'crypto';
 
 /**

@@ -1,9 +1,8 @@
 import pino from 'pino';
-import { config } from '../config/config';
 
-// Create logger configuration
+// Create logger configuration with safe defaults
 const loggerConfig: pino.LoggerOptions = {
-  level: config.logging.level,
+  level: process.env.LOG_LEVEL || 'info',
   timestamp: pino.stdTimeFunctions.isoTime,
   messageKey: 'message',
   errorKey: 'error',
@@ -17,7 +16,7 @@ const loggerConfig: pino.LoggerOptions = {
         hostname: bindings.hostname,
         service: 'secure-mcp-server',
         version: process.env.npm_package_version || '1.0.0',
-        environment: config.env,
+        environment: process.env.NODE_ENV || 'development',
       };
     },
   },
@@ -56,7 +55,7 @@ const loggerConfig: pino.LoggerOptions = {
       };
     },
   },
-  redact: config.logging.redactSensitive ? {
+  redact: process.env.NODE_ENV === 'production' ? {
     paths: [
       'password',
       'token',
@@ -80,7 +79,7 @@ const loggerConfig: pino.LoggerOptions = {
 // Configure transport based on environment
 let transport: pino.TransportSingleOptions | pino.TransportMultiOptions | undefined;
 
-if (config.env === 'development' || config.logging.format === 'pretty') {
+if (process.env.NODE_ENV === 'development' || process.env.LOG_FORMAT === 'pretty') {
   transport = {
     target: 'pino-pretty',
     options: {
@@ -91,7 +90,7 @@ if (config.env === 'development' || config.logging.format === 'pretty') {
       errorLikeObjectKeys: ['err', 'error'],
     },
   };
-} else if (config.env === 'production') {
+} else if (process.env.NODE_ENV === 'production') {
   // In production, you might want to use structured logging
   // and send logs to external systems
   transport = {
@@ -528,7 +527,7 @@ export class CorrelationLogger {
 }
 
 // Set up periodic memory usage logging in production
-if (config.env === 'production') {
+if (process.env.NODE_ENV === 'production') {
   setInterval(() => {
     PerformanceLogger.logMemoryUsage();
   }, 60000); // Every minute

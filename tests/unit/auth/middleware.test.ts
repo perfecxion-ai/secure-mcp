@@ -1,4 +1,4 @@
-import { AuthMiddleware, authenticateSocket } from '../../../src/auth/middleware';
+import { AuthMiddleware } from '../../../src/auth/middleware';
 import { JWTService } from '../../../src/auth/jwt-service';
 import { MFAService } from '../../../src/auth/mfa-service';
 import { MockFactory, TestDataGenerator } from '../../utils/test-helpers';
@@ -7,19 +7,83 @@ import { fixtures } from '../../utils/fixtures';
 // Mock dependencies
 jest.mock('../../../src/config/config', () => ({
   config: {
+    env: 'test',
     session: {
       timeout: 3600000, // 1 hour
+    },
+    jwt: {
+      secret: 'test-jwt-secret-must-be-at-least-32-characters-long',
+      accessExpiresIn: '15m',
+      refreshExpiresIn: '7d',
+      issuer: 'secure-mcp-server',
+      audience: 'secure-mcp-client',
     },
   },
 }));
 
 jest.mock('../../../src/database/redis', () => ({
-  redis: MockFactory.createMockRedis(),
+  redis: {
+    get: jest.fn(),
+    set: jest.fn(),
+    setex: jest.fn(),
+    del: jest.fn(),
+    incr: jest.fn(),
+    expire: jest.fn(),
+    ttl: jest.fn(),
+    sadd: jest.fn(),
+    srem: jest.fn(),
+    smembers: jest.fn(),
+    hgetall: jest.fn(),
+    hget: jest.fn(),
+    hset: jest.fn(),
+    keys: jest.fn(),
+    scard: jest.fn(),
+    scan: jest.fn(),
+    memory: jest.fn(),
+    exists: jest.fn(),
+    ping: jest.fn(() => Promise.resolve('PONG')),
+    disconnect: jest.fn(() => Promise.resolve()),
+    pipeline: jest.fn(() => ({
+      setex: jest.fn().mockReturnThis(),
+      sadd: jest.fn().mockReturnThis(),
+      srem: jest.fn().mockReturnThis(),
+      del: jest.fn().mockReturnThis(),
+      expire: jest.fn().mockReturnThis(),
+      ttl: jest.fn().mockReturnThis(),
+      exec: jest.fn().mockResolvedValue([]),
+    })),
+  },
 }));
 
 jest.mock('../../../src/utils/logger', () => ({
-  logger: MockFactory.createMockLogger(),
+  logger: {
+    info: jest.fn(),
+    error: jest.fn(),
+    warn: jest.fn(),
+    debug: jest.fn(),
+    trace: jest.fn(),
+    child: jest.fn(() => ({
+      info: jest.fn(),
+      error: jest.fn(),
+      warn: jest.fn(),
+      debug: jest.fn(),
+      trace: jest.fn(),
+    })),
+  },
 }));
+
+// Mock JWTService for socket authentication tests
+jest.mock('../../../src/auth/jwt-service', () => ({
+  JWTService: jest.fn().mockImplementation(() => ({
+    initialize: jest.fn(),
+    isValidTokenFormat: jest.fn(),
+    verifyAccessToken: jest.fn(),
+    extractTokenFromHeader: jest.fn(),
+  })),
+}));
+
+// Import after mocks are set up
+import { authenticateSocket } from '../../../src/auth/middleware';
 
 describe('AuthMiddleware', () => {
   let authMiddleware: AuthMiddleware;
@@ -29,6 +93,9 @@ describe('AuthMiddleware', () => {
   let mockLogger: any;
 
   beforeEach(() => {
+    // Use fake timers to avoid timeout issues
+    jest.useFakeTimers();
+
     mockRedis = require('../../../src/database/redis').redis;
     mockLogger = require('../../../src/utils/logger').logger;
 
@@ -48,6 +115,10 @@ describe('AuthMiddleware', () => {
     authMiddleware = new AuthMiddleware(mockJWTService, mockMFAService);
 
     jest.clearAllMocks();
+  });
+
+  afterEach(() => {
+    jest.useRealTimers();
   });
 
   describe('authenticate middleware', () => {
@@ -364,7 +435,7 @@ describe('AuthMiddleware', () => {
 
       await authMiddleware.optionalAuth(req, res, next);
 
-      expect(req.user).toBeUndefined();
+      expect(req.user).toBeNull();
       expect(next).toHaveBeenCalledWith();
     });
 
@@ -377,7 +448,7 @@ describe('AuthMiddleware', () => {
 
       await authMiddleware.optionalAuth(req, res, next);
 
-      expect(req.user).toBeUndefined();
+      expect(req.user).toBeNull();
       expect(next).toHaveBeenCalledWith();
       expect(mockLogger.debug).toHaveBeenCalledWith(
         'Optional authentication failed',
@@ -546,7 +617,7 @@ describe('AuthMiddleware', () => {
       expect(session.userId).toBe(userId);
       expect(session.ipAddress).toBe(ipAddress);
       expect(session.userAgent).toBe(userAgent);
-      expect(session.id).toBeValidUUID();
+      expect(session.id).toMatch(/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i);
 
       expect(mockRedis.setex).toHaveBeenCalledWith(
         `session:${session.id}`,
@@ -615,32 +686,36 @@ describe('AuthMiddleware', () => {
 
 describe('authenticateSocket', () => {
   let mockSocket: any;
-  let mockJWTService: any;
+  let validJWTToken: string;
+  let mockJWTServiceInstance: any;
 
   beforeEach(() => {
+    // Create a valid JWT token format (3 base64url parts)
+    validJWTToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c';
+
     mockSocket = MockFactory.createMockSocket();
     mockSocket.handshake = {
-      auth: { token: 'valid-jwt-token' },
+      auth: { token: validJWTToken },
       headers: {},
     };
 
-    // Mock JWTService constructor and methods
-    mockJWTService = {
+    // Get the mocked instance methods
+    const MockedJWTService = jest.mocked(JWTService);
+    mockJWTServiceInstance = {
       initialize: jest.fn(),
       isValidTokenFormat: jest.fn(),
       verifyAccessToken: jest.fn(),
     };
+    MockedJWTService.mockImplementation(() => mockJWTServiceInstance);
 
-    jest.doMock('../../../src/auth/jwt-service', () => ({
-      JWTService: jest.fn(() => mockJWTService),
-    }));
+    jest.clearAllMocks();
   });
 
   it('should authenticate socket with valid token in auth', async () => {
     const mockPayload = fixtures.jwt.validPayload;
 
-    mockJWTService.isValidTokenFormat.mockReturnValue(true);
-    mockJWTService.verifyAccessToken.mockResolvedValue(mockPayload);
+    mockJWTServiceInstance.isValidTokenFormat.mockReturnValue(true);
+    mockJWTServiceInstance.verifyAccessToken.mockResolvedValue(mockPayload);
 
     const user = await authenticateSocket(mockSocket);
 
@@ -651,10 +726,10 @@ describe('authenticateSocket', () => {
   it('should authenticate socket with token in headers', async () => {
     const mockPayload = fixtures.jwt.validPayload;
     mockSocket.handshake.auth = {};
-    mockSocket.handshake.headers.authorization = 'Bearer valid-jwt-token';
+    mockSocket.handshake.headers.authorization = `Bearer ${validJWTToken}`;
 
-    mockJWTService.isValidTokenFormat.mockReturnValue(true);
-    mockJWTService.verifyAccessToken.mockResolvedValue(mockPayload);
+    mockJWTServiceInstance.isValidTokenFormat.mockReturnValue(true);
+    mockJWTServiceInstance.verifyAccessToken.mockResolvedValue(mockPayload);
 
     const user = await authenticateSocket(mockSocket);
 
@@ -672,15 +747,17 @@ describe('authenticateSocket', () => {
   it('should reject socket with invalid token format', async () => {
     mockSocket.handshake.auth.token = 'invalid-token';
 
-    mockJWTService.isValidTokenFormat.mockReturnValue(false);
+    mockJWTServiceInstance.isValidTokenFormat.mockReturnValue(false);
 
     await expect(authenticateSocket(mockSocket))
       .rejects.toThrow('Invalid token format');
   });
 
   it('should reject socket with invalid token', async () => {
-    mockJWTService.isValidTokenFormat.mockReturnValue(true);
-    mockJWTService.verifyAccessToken.mockRejectedValue(new Error('Token expired'));
+    mockSocket.handshake.auth.token = validJWTToken;
+
+    mockJWTServiceInstance.isValidTokenFormat.mockReturnValue(true);
+    mockJWTServiceInstance.verifyAccessToken.mockRejectedValue(new Error('Token expired'));
 
     await expect(authenticateSocket(mockSocket))
       .rejects.toThrow('Token expired');

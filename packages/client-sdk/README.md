@@ -1,6 +1,28 @@
 # Secure MCP Client SDK
 
-Official client SDK for the Secure MCP Server.
+<div align="center">
+
+```
+██████╗ ███████╗██████╗ ███████╗███████╗ ██████╗██╗  ██╗██╗ ██████╗ ███╗   ██╗
+██╔══██╗██╔════╝██╔══██╗██╔════╝██╔════╝██╔════╝╚██╗██╔╝██║██╔═══██╗████╗  ██║
+██████╔╝█████╗  ██████╔╝█████╗  █████╗  ██║      ╚███╔╝ ██║██║   ██║██╔██╗ ██║
+██╔═══╝ ██╔══╝  ██╔══██╗██╔══╝  ██╔══╝  ██║      ██╔██╗ ██║██║   ██║██║╚██╗██║
+██║     ███████╗██║  ██║██║     ███████╗╚██████╗██╔╝ ██╗██║╚██████╔╝██║ ╚████║
+╚═╝     ╚══════╝╚═╝  ╚═╝╚═╝     ╚══════╝ ╚═════╝╚═╝  ╚═╝╚═╝ ╚═════╝ ╚═╝  ╚═══╝
+                                    .ai
+```
+
+  <p><strong>Developed by the perfecXion.ai Team</strong></p>
+  <p>
+    <a href="https://perfecxion.ai">Website</a> •
+    <a href="https://github.com/perfecxion-ai/secure-mcp">GitHub</a> •
+    <a href="https://www.npmjs.com/package/@perfecxion/secure-mcp-client">NPM</a>
+  </p>
+</div>
+
+---
+
+Official client SDK for the Secure MCP Server by **perfecXion.ai**.
 
 ## Installation
 
@@ -178,3 +200,10 @@ try {
 ## License
 
 Apache-2.0
+
+---
+
+<div align="center">
+  <p><strong>Built with ❤️ by the perfecXion.ai Team</strong></p>
+  <p>© 2024 perfecXion.ai - Enterprise AI Solutions</p>
+</div>

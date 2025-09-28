@@ -1,3 +1,11 @@
+/**
+ * Secure MCP Server
+ * Developed by perfecXion.ai Team
+ *
+ * Enterprise-grade Model Context Protocol implementation
+ * https://perfecxion.ai
+ */
+
 import { createServer } from 'http';
 import express from 'express';
 import { Server as SocketIOServer } from 'socket.io';
@@ -17,11 +25,15 @@ import { WebSocketManager } from './server/websocket-manager';
 import { SecurityMiddleware } from './security/middleware';
 import { errorHandler } from './utils/error-handler';
 import { gracefulShutdown } from './utils/shutdown';
+import { printLogo, printStartupMessage } from './utils/logo';
 import cluster from 'cluster';
 import os from 'os';
 
 async function startServer(): Promise<void> {
   try {
+    // Print perfecXion.ai logo
+    printLogo();
+
     await setupTracing();
 
     await initializeDatabase();
@@ -119,6 +131,7 @@ async function startServer(): Promise<void> {
     app.use(errorHandler);
 
     server.listen(config.server.port, config.server.host, () => {
+      printStartupMessage(config.server.port);
       logger.info(`Server running on ${config.server.host}:${config.server.port}`);
       logger.info(`Environment: ${config.env}`);
       logger.info(`Worker PID: ${process.pid}`);

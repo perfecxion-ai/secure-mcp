@@ -1,6 +1,5 @@
 import { z } from 'zod';
 import { config as dotenvConfig } from 'dotenv';
-import { logger } from '../utils/logger';
 
 // Load environment variables
 dotenvConfig();
@@ -405,15 +404,15 @@ export const validateConfig = (): void => {
     }
 
     if (!config.security.forceHttps) {
-      logger.warn('SECURITY_FORCE_HTTPS is disabled in production');
+      console.warn('WARNING: SECURITY_FORCE_HTTPS is disabled in production');
     }
 
     if (!config.session.cookie.secure) {
-      logger.warn('SESSION_COOKIE_SECURE is disabled in production');
+      console.warn('WARNING: SESSION_COOKIE_SECURE is disabled in production');
     }
   }
 
-  logger.info('Configuration validated successfully', {
+  console.log('Configuration validated successfully:', {
     environment: config.env,
     server: `${config.server.host}:${config.server.port}`,
     clustering: config.clustering.enabled,

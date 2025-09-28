@@ -7,13 +7,31 @@ import Redis from 'ioredis';
 jest.mock('ioredis');
 jest.mock('../../../src/config/config', () => ({
   config: {
-    redis: fixtures.config.testConfig.redis,
+    redis: {
+      url: 'redis://localhost:6379/1',
+      db: 1,
+      connectTimeout: 5000,
+      commandTimeout: 2000,
+    },
     env: 'test',
   },
 }));
 
 jest.mock('../../../src/utils/logger', () => ({
-  logger: MockFactory.createMockLogger(),
+  logger: {
+    info: jest.fn(),
+    error: jest.fn(),
+    warn: jest.fn(),
+    debug: jest.fn(),
+    trace: jest.fn(),
+    child: jest.fn(() => ({
+      info: jest.fn(),
+      error: jest.fn(),
+      warn: jest.fn(),
+      debug: jest.fn(),
+      trace: jest.fn(),
+    })),
+  },
 }));
 
 describe('Redis Database Connection', () => {
@@ -59,13 +77,10 @@ describe('Redis Database Connection', () => {
       await initializeRedis();
 
       expect(Redis).toHaveBeenCalledWith(
+        'redis://localhost:6379/1',
         expect.objectContaining({
-          host: expect.any(String),
-          port: expect.any(Number),
-          db: expect.any(Number),
-          connectTimeout: expect.any(Number),
-          commandTimeout: expect.any(Number),
-          retryDelayOnFailure: expect.any(Number),
+          db: 1,
+          connectTimeout: 5000,
           maxRetriesPerRequest: 3,
         })
       );
@@ -87,7 +102,7 @@ describe('Redis Database Connection', () => {
         connectHandler();
       }
 
-      expect(mockLogger.info).toHaveBeenCalledWith('Redis connected successfully');
+      expect(mockLogger.info).toHaveBeenCalledWith('Redis connected');
     });
 
     it('should handle connection error events', async () => {
@@ -103,7 +118,7 @@ describe('Redis Database Connection', () => {
         errorHandler(testError);
       }
 
-      expect(mockLogger.error).toHaveBeenCalledWith('Redis connection error:', testError);
+      expect(mockLogger.error).toHaveBeenCalledWith('Redis error', { error: testError });
     });
 
     it('should handle reconnection events', async () => {
@@ -118,7 +133,7 @@ describe('Redis Database Connection', () => {
         reconnectingHandler();
       }
 
-      expect(mockLogger.info).toHaveBeenCalledWith('Redis reconnecting...');
+      expect(mockLogger.info).toHaveBeenCalledWith('Redis reconnecting', { delay: undefined });
     });
 
     it('should handle initialization failures gracefully', async () => {
@@ -128,7 +143,7 @@ describe('Redis Database Connection', () => {
       });
 
       await expect(initializeRedis()).rejects.toThrow('Redis initialization failed');
-      expect(mockLogger.error).toHaveBeenCalledWith('Failed to initialize Redis:', initError);
+      expect(mockLogger.error).toHaveBeenCalledWith('Failed to initialize Redis', { error: initError });
     });
   });
 

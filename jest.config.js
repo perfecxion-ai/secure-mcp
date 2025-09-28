@@ -3,6 +3,17 @@ module.exports = {
   preset: 'ts-jest',
   testEnvironment: 'node',
 
+  // TypeScript configuration
+  transform: {
+    '^.+\\.ts$': ['ts-jest', {
+      useESM: false,
+      tsconfig: 'tsconfig.test.json'
+    }]
+  },
+  transformIgnorePatterns: [
+    'node_modules/(?!(@modelcontextprotocol)/)'
+  ],
+
   // Test configuration
   roots: ['<rootDir>/src', '<rootDir>/tests'],
   testMatch: [
@@ -14,6 +25,9 @@ module.exports = {
     '^@/(.*)$': '<rootDir>/src/$1',
     '^@tests/(.*)$': '<rootDir>/tests/$1',
   },
+
+  // Extensions to consider
+  moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json', 'node'],
 
   // Coverage configuration
   collectCoverage: false,
@@ -58,9 +72,6 @@ module.exports = {
       statements: 90,
     },
   },
-
-  // Test environment configuration
-  testEnvironment: 'node',
   // testTimeout: 30000, // Moved to project configs
 
   // Global setup and teardown (disabled for CI)

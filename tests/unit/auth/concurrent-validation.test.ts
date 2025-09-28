@@ -19,15 +19,63 @@ jest.mock('../../../src/config/config', () => ({
 }));
 
 jest.mock('../../../src/database/redis', () => ({
-  redis: MockFactory.createMockRedis(),
+  redis: {
+    get: jest.fn(),
+    set: jest.fn(),
+    setex: jest.fn(),
+    del: jest.fn(),
+    incr: jest.fn(),
+    expire: jest.fn(),
+    ttl: jest.fn(),
+    sadd: jest.fn(),
+    srem: jest.fn(),
+    smembers: jest.fn(),
+    hgetall: jest.fn(),
+    hget: jest.fn(),
+    hset: jest.fn(),
+    keys: jest.fn(),
+    scard: jest.fn(),
+    scan: jest.fn(),
+    memory: jest.fn(),
+    exists: jest.fn(),
+    ping: jest.fn(() => Promise.resolve('PONG')),
+    disconnect: jest.fn(() => Promise.resolve()),
+    pipeline: jest.fn(() => ({
+      setex: jest.fn().mockReturnThis(),
+      sadd: jest.fn().mockReturnThis(),
+      srem: jest.fn().mockReturnThis(),
+      del: jest.fn().mockReturnThis(),
+      expire: jest.fn().mockReturnThis(),
+      ttl: jest.fn().mockReturnThis(),
+      exec: jest.fn().mockResolvedValue([]),
+    })),
+  },
 }));
 
 jest.mock('../../../src/security/vault', () => ({
-  vault: MockFactory.createMockVault(),
+  vault: {
+    read: jest.fn(),
+    write: jest.fn(),
+    health: jest.fn(() => Promise.resolve({ status: 'ok' })),
+    delete: jest.fn(),
+  },
 }));
 
 jest.mock('../../../src/utils/logger', () => ({
-  logger: MockFactory.createMockLogger(),
+  logger: {
+    info: jest.fn(),
+    error: jest.fn(),
+    warn: jest.fn(),
+    debug: jest.fn(),
+    trace: jest.fn(),
+    child: jest.fn(() => ({
+      info: jest.fn(),
+      error: jest.fn(),
+      warn: jest.fn(),
+      debug: jest.fn(),
+      trace: jest.fn(),
+    })),
+  },
 }));
 
 // Mock security modules

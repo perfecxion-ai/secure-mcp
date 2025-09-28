@@ -20,11 +20,54 @@ jest.mock('../../../src/config/config', () => ({
 }));
 
 jest.mock('../../../src/database/redis', () => ({
-  redis: MockFactory.createMockRedis(),
+  redis: {
+    get: jest.fn(),
+    set: jest.fn(),
+    setex: jest.fn(),
+    del: jest.fn(),
+    incr: jest.fn(),
+    expire: jest.fn(),
+    ttl: jest.fn(),
+    sadd: jest.fn(),
+    srem: jest.fn(),
+    smembers: jest.fn(),
+    hgetall: jest.fn(),
+    hget: jest.fn(),
+    hset: jest.fn(),
+    keys: jest.fn(),
+    scard: jest.fn(),
+    scan: jest.fn(),
+    memory: jest.fn(),
+    exists: jest.fn(),
+    ping: jest.fn(() => Promise.resolve('PONG')),
+    disconnect: jest.fn(() => Promise.resolve()),
+    pipeline: jest.fn(() => ({
+      setex: jest.fn().mockReturnThis(),
+      sadd: jest.fn().mockReturnThis(),
+      srem: jest.fn().mockReturnThis(),
+      del: jest.fn().mockReturnThis(),
+      expire: jest.fn().mockReturnThis(),
+      ttl: jest.fn().mockReturnThis(),
+      exec: jest.fn().mockResolvedValue([]),
+    })),
+  },
 }));
 
 jest.mock('../../../src/utils/logger', () => ({
-  logger: MockFactory.createMockLogger(),
+  logger: {
+    info: jest.fn(),
+    error: jest.fn(),
+    warn: jest.fn(),
+    debug: jest.fn(),
+    trace: jest.fn(),
+    child: jest.fn(() => ({
+      info: jest.fn(),
+      error: jest.fn(),
+      warn: jest.fn(),
+      debug: jest.fn(),
+      trace: jest.fn(),
+    })),
+  },
 }));
 
 jest.mock('../../../src/auth/middleware', () => ({
@@ -37,6 +80,15 @@ jest.mock('../../../src/security/middleware', () => ({
   },
 }));
 
+jest.mock('../../../src/server/mcp-security', () => ({
+  mcpSecurityValidator: {
+    validateMessage: jest.fn(() => ({ valid: true, sanitized: null })),
+    validateRequestId: jest.fn(() => true),
+    validateToolExecution: jest.fn(() => ({ valid: true })),
+    validateResourceAccess: jest.fn(() => ({ valid: true })),
+  },
+}));
+
 describe('WebSocketManager', () => {
   let wsManager: WebSocketManager;
   let mockIO: any;
@@ -44,8 +96,11 @@ describe('WebSocketManager', () => {
   let mockRedis: any;
   let mockLogger: any;
   let mockAuthenticateSocket: any;
+  let mockMcpSecurityValidator: any;
 
   beforeEach(async () => {
+    // Use fake timers for tests that advance time
+    jest.useFakeTimers();
     // Create mock SocketIO server
     mockIO = new EventEmitter();
     mockIO.use = jest.fn((middleware) => {
@@ -62,13 +117,28 @@ describe('WebSocketManager', () => {
     mockRedis = require('../../../src/database/redis').redis;
     mockLogger = require('../../../src/utils/logger').logger;
     mockAuthenticateSocket = require('../../../src/auth/middleware').authenticateSocket;
+    mockMcpSecurityValidator = require('../../../src/server/mcp-security').mcpSecurityValidator;
 
     mockAuthenticateSocket.mockResolvedValue(fixtures.users.validUser);
 
-    wsManager = new WebSocketManager(mockIO as SocketIOServer);
+    // Setup MCP security validator to return valid results with the actual message
+    mockMcpSecurityValidator.validateMessage.mockImplementation((messageStr: string) => {
+      try {
+        const message = JSON.parse(messageStr);
+        return { valid: true, sanitized: message };
+      } catch {
+        return { valid: false, error: 'Invalid JSON' };
+      }
+    });
 
-    // Reset mocks
+    // Reset mocks before creating the instance to avoid clearing setup call history
     jest.clearAllMocks();
+
+    wsManager = new WebSocketManager(mockIO as SocketIOServer);
+  });
+
+  afterEach(() => {
+    jest.useRealTimers();
   });
 
   describe('initialization', () => {

@@ -3,11 +3,54 @@ import { MockFactory } from '../../utils/test-helpers';
 
 // Mock dependencies
 jest.mock('../../../src/database/redis', () => ({
-  redis: MockFactory.createMockRedis(),
+  redis: {
+    get: jest.fn(),
+    set: jest.fn(),
+    setex: jest.fn(),
+    del: jest.fn(),
+    incr: jest.fn(),
+    expire: jest.fn(),
+    ttl: jest.fn(),
+    sadd: jest.fn(),
+    srem: jest.fn(),
+    smembers: jest.fn(),
+    hgetall: jest.fn(),
+    hget: jest.fn(),
+    hset: jest.fn(),
+    keys: jest.fn(),
+    scard: jest.fn(),
+    scan: jest.fn(),
+    memory: jest.fn(),
+    exists: jest.fn(),
+    ping: jest.fn(() => Promise.resolve('PONG')),
+    disconnect: jest.fn(() => Promise.resolve()),
+    pipeline: jest.fn(() => ({
+      setex: jest.fn().mockReturnThis(),
+      sadd: jest.fn().mockReturnThis(),
+      srem: jest.fn().mockReturnThis(),
+      del: jest.fn().mockReturnThis(),
+      expire: jest.fn().mockReturnThis(),
+      ttl: jest.fn().mockReturnThis(),
+      exec: jest.fn().mockResolvedValue([]),
+    })),
+  },
 }));
 
 jest.mock('../../../src/utils/logger', () => ({
-  logger: MockFactory.createMockLogger(),
+  logger: {
+    info: jest.fn(),
+    error: jest.fn(),
+    warn: jest.fn(),
+    debug: jest.fn(),
+    trace: jest.fn(),
+    child: jest.fn(() => ({
+      info: jest.fn(),
+      error: jest.fn(),
+      warn: jest.fn(),
+      debug: jest.fn(),
+      trace: jest.fn(),
+    })),
+  },
 }));
 
 describe('TokenBlacklistManager', () => {
@@ -15,6 +58,9 @@ describe('TokenBlacklistManager', () => {
   let mockRedis: any;
 
   beforeEach(() => {
+    // Use fake timers to avoid timeouts from setInterval
+    jest.useFakeTimers();
+
     blacklistManager = new TokenBlacklistManager({
       cleanupInterval: 100, // Fast cleanup for testing
       batchSize: 10
@@ -26,6 +72,7 @@ describe('TokenBlacklistManager', () => {
   });
 
   afterEach(async () => {
+    jest.useRealTimers();
     await blacklistManager.shutdown();
   });
 
@@ -114,19 +161,27 @@ describe('TokenBlacklistManager', () => {
 
     it('should retrieve blacklist entry details', async () => {
       const jti = 'detailed-jti';
+      const now = new Date();
       const mockEntry: BlacklistEntry = {
         jti,
         userId: 'user-123',
         reason: 'manual_revocation',
-        expiresAt: new Date(),
-        blacklistedAt: new Date()
+        expiresAt: now,
+        blacklistedAt: now
       };
 
       mockRedis.get.mockResolvedValue(JSON.stringify(mockEntry));
 
       const entry = await blacklistManager.getBlacklistEntry(jti);
 
-      expect(entry).toEqual(mockEntry);
+      // When JSON parsed, dates become strings, so we need to compare accordingly
+      expect(entry).toEqual({
+        jti,
+        userId: 'user-123',
+        reason: 'manual_revocation',
+        expiresAt: now.toISOString(),
+        blacklistedAt: now.toISOString()
+      });
     });
 
     it('should remove token from blacklist', async () => {
@@ -178,8 +233,15 @@ describe('TokenBlacklistManager', () => {
       const userId = 'bulk-blacklist-user';
       const mockTokenKeys = ['active_token:jti1', 'active_token:jti2'];
 
+      // Mock token data that includes the user ID
+      const mockTokenData = JSON.stringify({
+        userId: userId,
+        jti: 'test-jti',
+        exp: Math.floor(Date.now() / 1000) + 3600
+      });
+
       mockRedis.keys.mockResolvedValue(mockTokenKeys);
-      mockRedis.get.mockResolvedValue('token-data');
+      mockRedis.get.mockResolvedValue(mockTokenData);
 
       const count = await blacklistManager.blacklistAllUserTokens(userId, 'user_logout');
 

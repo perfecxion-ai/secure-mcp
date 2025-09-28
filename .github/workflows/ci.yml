@@ -9,7 +9,7 @@ on:
     - cron: '0 2 * * *'  # Daily security scan at 2 AM UTC
 
 env:
-  NODE_VERSION: '20.10.0'
+  NODE_VERSION: '20'
   DOCKER_BUILDKIT: 1
   COMPOSE_DOCKER_CLI_BUILD: 1
 
@@ -166,6 +166,9 @@ jobs:
       - name: Setup test environment
         run: |
           cp .env.example .env.test
+          echo "NODE_ENV=test" >> .env.test
+          echo "DATABASE_URL=postgresql://test_user:test_password@localhost:5432/test_db" >> .env.test
+          echo "REDIS_URL=redis://localhost:6379" >> .env.test
           npx prisma generate
           npx prisma migrate deploy
 

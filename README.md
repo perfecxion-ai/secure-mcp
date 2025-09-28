@@ -1,8 +1,29 @@
-# Secure MCP Server
+# Secure MCP Server by perfecXion.ai
 
-## Enterprise-Grade Model Context Protocol Implementation
+<div align="center">
 
-A production-ready, secure, and scalable Model Context Protocol (MCP) server designed for enterprise deployments with advanced security features, comprehensive monitoring, and high availability.
+```
+██████╗ ███████╗██████╗ ███████╗███████╗ ██████╗██╗  ██╗██╗ ██████╗ ███╗   ██╗
+██╔══██╗██╔════╝██╔══██╗██╔════╝██╔════╝██╔════╝╚██╗██╔╝██║██╔═══██╗████╗  ██║
+██████╔╝█████╗  ██████╔╝█████╗  █████╗  ██║      ╚███╔╝ ██║██║   ██║██╔██╗ ██║
+██╔═══╝ ██╔══╝  ██╔══██╗██╔══╝  ██╔══╝  ██║      ██╔██╗ ██║██║   ██║██║╚██╗██║
+██║     ███████╗██║  ██║██║     ███████╗╚██████╗██╔╝ ██╗██║╚██████╔╝██║ ╚████║
+╚═╝     ╚══════╝╚═╝  ╚═╝╚═╝     ╚══════╝ ╚═════╝╚═╝  ╚═╝╚═╝ ╚═════╝ ╚═╝  ╚═══╝
+                                    .ai
+```
+
+  <h2>🚀 Enterprise-Grade Model Context Protocol Implementation</h2>
+  <p><strong>Developed by the perfecXion.ai Team</strong></p>
+  <p>
+    <a href="https://perfecxion.ai">Website</a> •
+    <a href="https://github.com/perfecxion-ai/secure-mcp">GitHub</a> •
+    <a href="https://www.npmjs.com/package/@perfecxion/secure-mcp-server">NPM</a>
+  </p>
+</div>
+
+---
+
+A production-ready, secure, and scalable Model Context Protocol (MCP) server engineered by **perfecXion.ai** for enterprise deployments. Features advanced security, comprehensive monitoring, and high availability.
 
 ## Features
 
@@ -465,17 +486,27 @@ Please read our [Developer Guide](./docs/DEVELOPER_GUIDE.md) for details on our 
 ## Support
 
 - **Documentation**: [Full Documentation](./docs/)
-- **Issues**: [GitHub Issues](https://github.com/enterprise/secure-mcp-server/issues)
-- **Security**: security@enterprise.com
-- **Enterprise Support**: support@enterprise.com
+- **Issues**: [GitHub Issues](https://github.com/perfecxion-ai/secure-mcp/issues)
+- **Security**: security@perfecxion.ai
+- **Enterprise Support**: support@perfecxion.ai
 
 ## License
 
 This project is licensed under the Apache License 2.0 - see the [LICENSE](LICENSE) file for details.
 
-## Acknowledgments
+## About perfecXion.ai
 
-- Model Context Protocol specification by Anthropic
-- Open source community contributors
-- Security researchers and pen testers
-- Enterprise customers for feedback and requirements
+**perfecXion.ai** is dedicated to building enterprise-grade AI infrastructure and tools that prioritize security, scalability, and reliability. Our team of expert engineers focuses on delivering production-ready solutions that meet the demanding requirements of modern enterprises.
+
+### Connect With Us
+- 🌐 **Website**: [perfecxion.ai](https://perfecxion.ai)
+- 📧 **Contact**: contact@perfecxion.ai
+- 💼 **LinkedIn**: [perfecXion.ai](https://linkedin.com/company/perfecxion-ai)
+- 🐦 **Twitter**: [@perfecXion_ai](https://twitter.com/perfecXion_ai)
+
+---
+
+<div align="center">
+  <p><strong>Built with ❤️ by the perfecXion.ai Team</strong></p>
+  <p>© 2024 perfecXion.ai - Enterprise AI Solutions</p>
+</div>
