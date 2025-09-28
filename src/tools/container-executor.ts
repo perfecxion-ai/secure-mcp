@@ -109,34 +109,12 @@ export class ContainerExecutor {
   private activeExecutions = new Map<string, AbortController>();
   private activeSecurityContexts = new Map<string, SecurityContext>();
 
-  // Security hardening managers
-  private seccompManager: SeccompProfileManager;
-  private userNamespaceManager: UserNamespaceManager;
-  private macManager: MandatoryAccessControl;
-  private resourceController: ResourceController;
-  private networkIsolation: NetworkIsolation;
-  private capabilityManager: CapabilityManager;
+  // Security hardening is handled via static methods
 
   constructor() {
-    this.initializeSecurityManagers();
     this.initializeSandboxEnvironment();
   }
 
-  private async initializeSecurityManagers(): Promise<void> {
-    try {
-      this.seccompManager = new SeccompProfileManager();
-      this.userNamespaceManager = new UserNamespaceManager();
-      this.macManager = new MandatoryAccessControl();
-      this.resourceController = new ResourceController();
-      this.networkIsolation = new NetworkIsolation();
-      this.capabilityManager = new CapabilityManager();
-
-      logger.info('Security hardening managers initialized');
-    } catch (error) {
-      logger.error('Failed to initialize security managers', { error });
-      throw error;
-    }
-  }
 
   private async initializeSandboxEnvironment(): Promise<void> {
     try {
@@ -575,7 +553,7 @@ allow mcp_executor_t self:file { read write execute };
     });
   }
 
-  private async buildSecureRuntimeCommand(runtime: ContainerRuntime, options: any): { cmd: string; args: string[] } {
+  private async buildSecureRuntimeCommand(runtime: ContainerRuntime, options: any): Promise<{ cmd: string; args: string[] }> {
     const securityContext = options.securityContext;
 
     switch (runtime) {
@@ -795,17 +773,17 @@ allow mcp_executor_t self:file { read write execute };
     try {
       // Cleanup user namespace
       if (securityContext.userNamespaceId) {
-        await this.userNamespaceManager.destroyNamespace(executionId);
+        await UserNamespaceManager.destroyNamespace(executionId);
       }
 
       // Cleanup network namespace
       if (securityContext.networkNamespaceId) {
-        await this.networkIsolation.destroyNetworkNamespace(executionId);
+        await NetworkIsolation.destroyNetworkNamespace(executionId);
       }
 
       // Cleanup resource group
       if (securityContext.resourceGroupId) {
-        await this.resourceController.destroyResourceGroup(executionId);
+        await ResourceController.destroyResourceGroup(executionId);
       }
 
       // Cleanup seccomp profile file
@@ -943,8 +921,8 @@ allow mcp_executor_t self:file { read write execute };
 
       // 2. Create user namespace for rootless execution
       if (hardening.enableUserNamespace) {
-        const nsId = await this.userNamespaceManager.createUserNamespace();
-        await this.userNamespaceManager.enforceNonRootExecution(nsId);
+        const nsId = await UserNamespaceManager.createUserNamespace(UserNamespaceManager.getDefaultConfig());
+        await UserNamespaceManager.enforceNonRootExecution();
         securityContext.userNamespaceId = nsId;
         logger.debug('User namespace created', { executionId, nsId });
       }
@@ -958,32 +936,32 @@ allow mcp_executor_t self:file { read write execute };
 
       // 4. Create resource limits
       if (hardening.enableResourceLimits) {
-        const resourceLimits = hardening.customResourceLimits || this.resourceController.getDefaultSecureLimits();
-        const resourceGroupId = await this.resourceController.createResourceGroup(executionId, resourceLimits);
+        const resourceLimits = hardening.customResourceLimits || ResourceController.getDefaultSecureLimits();
+        const resourceGroupId = await ResourceController.createResourceGroup(executionId, resourceLimits);
         securityContext.resourceGroupId = resourceGroupId;
         logger.debug('Resource limits applied', { executionId, resourceGroupId });
       }
 
       // 5. Setup network isolation
       if (hardening.enableNetworkIsolation) {
-        const networkPolicy = this.networkIsolation.getDefaultSecurePolicy();
+        const networkPolicy = NetworkIsolation.getDefaultSecurePolicy();
         if (hardening.networkPolicy === 'bridge') {
           networkPolicy.mode = 'bridge';
         } else if (hardening.networkPolicy === 'custom') {
           networkPolicy.mode = 'custom';
         }
-        const networkNsId = await this.networkIsolation.createNetworkNamespace(executionId, networkPolicy);
+        const networkNsId = await NetworkIsolation.createNetworkNamespace(networkPolicy);
         securityContext.networkNamespaceId = networkNsId;
         logger.debug('Network isolation applied', { executionId, networkNsId });
       }
 
       // 6. Configure capability dropping
       if (hardening.enableCapabilityDropping) {
-        const capConfig = await this.capabilityManager.dropDangerousCapabilities();
+        const capConfig = await CapabilityManager.dropDangerousCapabilities();
         if (hardening.allowedCapabilities) {
           capConfig.add = hardening.allowedCapabilities;
         }
-        await this.capabilityManager.validateCapabilityConfig(capConfig);
+        await CapabilityManager.validateCapabilityConfig(capConfig);
         securityContext.appliedCapabilities = capConfig.add;
         securityContext.droppedCapabilities = capConfig.drop;
         logger.debug('Capability configuration applied', { executionId, added: capConfig.add.length, dropped: capConfig.drop.length });
@@ -1002,15 +980,15 @@ allow mcp_executor_t self:file { read write execute };
 
   private async applyMandatoryAccessControl(executionId: string, macProfile?: 'apparmor' | 'selinux' | 'both'): Promise<void> {
     try {
-      const defaultConfig = this.macManager.getDefaultSecureConfig();
+      const defaultConfig = MandatoryAccessControl.getDefaultSecureConfig();
 
       if (macProfile === 'apparmor' || macProfile === 'both' || !macProfile) {
-        const apparmorProfile = await this.macManager.createAppArmorProfile(defaultConfig.apparmor);
+        const apparmorProfile = await MandatoryAccessControl.createAppArmorProfile(defaultConfig.profileName);
         logger.debug('AppArmor profile created', { executionId, profileName: apparmorProfile.name });
       }
 
       if (macProfile === 'selinux' || macProfile === 'both') {
-        const selinuxProfile = await this.macManager.createSELinuxPolicy(defaultConfig.selinux);
+        const selinuxProfile = await MandatoryAccessControl.createSELinuxPolicy(defaultConfig.profileName);
         logger.debug('SELinux policy created', { executionId, moduleName: selinuxProfile.name });
       }
 
@@ -1275,7 +1253,7 @@ allow mcp_executor_t self:file { read write execute };
       // Collect resource controller metrics if available
       if (securityContext.resourceGroupId) {
         try {
-          const resourceStats = this.resourceController.getResourceStats();
+          const resourceStats = await ResourceController.getResourceStats('default');
           securityMetrics.resourceController = resourceStats;
         } catch (error) {
           logger.warn('Failed to collect resource controller metrics', { error });
@@ -1285,7 +1263,7 @@ allow mcp_executor_t self:file { read write execute };
       // Collect network isolation metrics if available
       if (securityContext.networkNamespaceId) {
         try {
-          const networkStats = this.networkIsolation.getNetworkStats();
+          const networkStats = await NetworkIsolation.getNetworkStats('default');
           securityMetrics.networkIsolation = networkStats;
         } catch (error) {
           logger.warn('Failed to collect network isolation metrics', { error });
@@ -1339,21 +1317,21 @@ allow mcp_executor_t self:file { read write execute };
   /**
    * Gets statistics about security hardening
    */
-  public getSecurityStats(): any {
+  public async getSecurityStats(): Promise<any> {
     return {
       activeExecutions: this.activeExecutions.size,
       activeSecurityContexts: this.activeSecurityContexts.size,
       securityManagers: {
-        seccomp: !!this.seccompManager,
-        userNamespace: !!this.userNamespaceManager,
-        mac: !!this.macManager,
-        resourceController: !!this.resourceController,
-        networkIsolation: !!this.networkIsolation,
-        capabilityManager: !!this.capabilityManager
+        seccomp: true,
+        userNamespace: true,
+        mac: true,
+        resourceController: true,
+        networkIsolation: true,
+        capabilityManager: true
       },
-      capabilities: this.capabilityManager.getCapabilityStats(),
-      resources: this.resourceController.getResourceStats(),
-      network: this.networkIsolation.getNetworkStats()
+      capabilities: await CapabilityManager.getCapabilityStats('default'),
+      resources: await ResourceController.getResourceStats('default'),
+      network: await NetworkIsolation.getNetworkStats('default')
     };
   }
 }

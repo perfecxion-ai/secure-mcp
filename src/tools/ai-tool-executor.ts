@@ -32,14 +32,14 @@ interface AITool {
   securityLevel: SecurityLevel;
   maxPromptLength: number;
   allowedParameters: string[];
-  systemPrompt?: string;
+  systemPrompt: string;
   validator?: (params: any) => boolean;
   preprocessor?: (prompt: string) => string;
   postprocessor?: (result: string) => string;
 }
 
 // Available AI tools with security configurations
-const AI_TOOLS: Map<string, AITool> = new Map([
+const AI_TOOLS = new Map<string, AITool>([
   ['text_summarization', {
     name: 'text_summarization',
     description: 'Summarize text content safely',
