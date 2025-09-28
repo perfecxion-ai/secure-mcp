@@ -101,7 +101,7 @@ describe('MCP Protocol Security', () => {
     });
 
     it('should reject deeply nested objects', () => {
-      let nested: any = {};
+      const nested: any = {};
       let current = nested;
       for (let i = 0; i < 15; i++) {
         current.child = {};

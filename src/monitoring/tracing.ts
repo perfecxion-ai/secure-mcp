@@ -10,7 +10,7 @@ import { config } from '../config/config';
 import { logger } from '../utils/logger';
 import { Request, Response, NextFunction } from 'express';
 
-let sdk: any | null = null;
+const sdk: any | null = null;
 let tracer: any = null;
 
 /**
