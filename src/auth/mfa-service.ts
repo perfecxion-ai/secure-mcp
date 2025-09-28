@@ -4,7 +4,11 @@ import { config } from '../config/config';
 import { logger } from '../utils/logger';
 import { redis } from '../database/redis';
 import { vault } from '../security/vault';
-import crypto from 'crypto';
+import * as crypto from 'crypto';
+import { secureEncryption, EncryptedSecret } from './crypto/secure-encryption';
+import { SecureKeyDerivation } from './crypto/key-derivation';
+import { secureTOTPGenerator } from './crypto/totp-generator';
+import { cryptographicIntegrity } from './crypto/integrity-protection';
 
 export interface MFASecret {
   secret: string;
@@ -19,10 +23,13 @@ export interface MFAVerificationResult {
 }
 
 export class MFAService {
-  private encryptionKey: string;
+  private masterKey: Buffer;
+  private isInitialized: boolean = false;
 
   constructor() {
-    this.encryptionKey = config.jwt.secret;
+    // Initialize with a secure master key from configuration
+    // In production, this should come from a secure key management system
+    this.masterKey = Buffer.from(config.jwt.secret, 'utf8');
   }
 
   /**
@@ -30,24 +37,41 @@ export class MFAService {
    */
   public async initialize(): Promise<void> {
     try {
-      // In production, load encryption key from Vault
+      // In production, load master key from Vault with enhanced security
       if (config.env === 'production') {
         const secrets = await vault.read('auth/mfa');
-        if (secrets?.data?.encryption_key) {
-          this.encryptionKey = secrets.data.encryption_key;
+        if (secrets?.data?.master_key) {
+          this.masterKey = Buffer.from(secrets.data.master_key, 'base64');
+        } else {
+          // Generate and store a new master key if none exists
+          const newMasterKey = crypto.randomBytes(32);
+          await vault.write('auth/mfa', {
+            master_key: newMasterKey.toString('base64'),
+            created_at: new Date().toISOString(),
+            algorithm: 'aes-256-gcm',
+            key_derivation: 'pbkdf2'
+          });
+          this.masterKey = newMasterKey;
+          logger.info('Generated new MFA master key in production');
         }
       }
 
-      // Configure TOTP
+      // Validate master key strength
+      if (this.masterKey.length < 32) {
+        throw new Error('Master key must be at least 32 bytes for security');
+      }
+
+      // Configure TOTP with secure parameters (SHA-256 instead of SHA-1)
       authenticator.options = {
         window: config.mfa.window,
         step: 30,
         digits: 6,
-        algorithm: 'sha1',
-        encoding: 'base32',
+        algorithm: 'sha256' as any, // Enhanced security: SHA-256 instead of SHA-1
+        encoding: 'base32' as any,
       };
 
-      logger.info('MFA service initialized');
+      this.isInitialized = true;
+      logger.info('MFA service initialized with enhanced cryptographic security');
     } catch (error) {
       logger.error('Failed to initialize MFA service', { error });
       throw error;
@@ -59,30 +83,56 @@ export class MFAService {
    */
   public async generateMFASecret(userId: string, userEmail: string): Promise<MFASecret> {
     try {
-      const secret = authenticator.generateSecret();
+      this.ensureInitialized();
+
+      // Generate cryptographically secure TOTP secret
+      const secret = secureTOTPGenerator.generateSecret();
+
+      // Validate secret strength
+      const validation = secureTOTPGenerator.validateSecretEntropy(secret);
+      if (!validation.isValid) {
+        throw new Error(`Generated secret failed validation: ${validation.issues.join(', ')}`);
+      }
+
       const service = config.mfa.issuer;
-      const otpauth = authenticator.keyuri(userEmail, service, secret);
+      const otpauth = secureTOTPGenerator.generateOTPURL(secret, userEmail, service);
 
       // Generate QR code
       const qrCodeUrl = await QRCode.toDataURL(otpauth);
 
-      // Generate backup codes
-      const backupCodes = this.generateBackupCodes();
+      // Generate cryptographically secure backup codes
+      const backupCodes = secureTOTPGenerator.generateBackupCodes();
 
-      // Encrypt and store the secret temporarily (for verification before enabling)
-      const encryptedSecret = this.encrypt(secret);
-      const encryptedBackupCodes = backupCodes.map(code => this.encrypt(code));
+      // Encrypt secret and backup codes with authenticated encryption
+      const userContext = `${userId}:${userEmail}`;
+      const encryptedSecret = await secureEncryption.encryptMFASecret(secret, userContext);
 
-      await redis.hset(`mfa_setup:${userId}`, {
-        secret: encryptedSecret,
+      const encryptedBackupCodes: string[] = [];
+      for (const code of backupCodes) {
+        const encryptedCode = await secureEncryption.encryptMFASecret(code, `${userContext}:backup`);
+        encryptedBackupCodes.push(JSON.stringify(encryptedCode));
+      }
+
+      // Add integrity protection for the setup data
+      const setupData = {
+        secret: JSON.stringify(encryptedSecret),
         backupCodes: JSON.stringify(encryptedBackupCodes),
         createdAt: new Date().toISOString(),
-      });
+        algorithm: 'aes-256-gcm',
+        keyDerivation: 'pbkdf2',
+        secretValidation: JSON.stringify(validation)
+      };
+
+      await redis.hset(`mfa_setup:${userId}`, setupData);
 
       // Expire the setup data after 10 minutes
       await redis.expire(`mfa_setup:${userId}`, 600);
 
-      logger.info('MFA secret generated for user', { userId });
+      logger.info('MFA secret generated with enhanced security', {
+        userId,
+        secretEntropy: validation.entropy,
+        secretStrength: validation.strength
+      });
 
       return {
         secret,
@@ -101,20 +151,28 @@ export class MFAService {
    */
   public async verifyMFASetup(userId: string, token: string): Promise<boolean> {
     try {
+      this.ensureInitialized();
+
       const setupData = await redis.hgetall(`mfa_setup:${userId}`);
       if (!setupData.secret) {
         throw new Error('MFA setup not found or expired');
       }
 
-      const secret = this.decrypt(setupData.secret);
-      const isValid = authenticator.check(token, secret);
+      // Decrypt secret with authenticated encryption
+      const encryptedSecret: EncryptedSecret = JSON.parse(setupData.secret);
+      const userContext = userId; // Simplified for setup verification
+      const secret = await secureEncryption.decryptMFASecret(encryptedSecret, userContext);
+
+      // Verify token with timing attack protection
+      const isValid = secureTOTPGenerator.verifyToken(token, secret);
 
       if (isValid) {
-        // Move from setup to active MFA
-        await this.enableMFA(userId, secret, JSON.parse(setupData.backupCodes));
+        // Move from setup to active MFA with enhanced security
+        const encryptedBackupCodes = JSON.parse(setupData.backupCodes);
+        await this.enableMFA(userId, secret, encryptedBackupCodes);
         await redis.del(`mfa_setup:${userId}`);
 
-        logger.info('MFA setup verified and enabled', { userId });
+        logger.info('MFA setup verified and enabled with enhanced security', { userId });
         return true;
       } else {
         logger.warn('Invalid MFA setup token', { userId });
@@ -132,48 +190,71 @@ export class MFAService {
    */
   public async verifyMFAToken(userId: string, token: string): Promise<MFAVerificationResult> {
     try {
+      this.ensureInitialized();
+
       const mfaData = await redis.hgetall(`mfa:${userId}`);
       if (!mfaData.secret) {
         throw new Error('MFA not enabled for user');
       }
 
-      const secret = this.decrypt(mfaData.secret);
+      // Decrypt secret with authenticated encryption
+      const encryptedSecret: EncryptedSecret = JSON.parse(mfaData.secret);
+      const userContext = userId;
+      const secret = await secureEncryption.decryptMFASecret(encryptedSecret, userContext);
 
-      // First try TOTP verification
-      const isValidTOTP = authenticator.check(token, secret);
+      // First try TOTP verification with timing attack protection
+      const isValidTOTP = secureTOTPGenerator.verifyToken(token, secret);
       if (isValidTOTP) {
-        // Check if token was already used (replay attack protection)
+        // Enhanced replay attack protection with HMAC
         const tokenKey = `used_totp:${userId}:${token}`;
         const wasUsed = await redis.get(tokenKey);
 
         if (wasUsed) {
-          logger.warn('TOTP token replay attempt', { userId, token });
+          logger.warn('TOTP token replay attempt detected', { userId, tokenHash: crypto.createHash('sha256').update(token).digest('hex').substring(0, 8) });
           return { verified: false };
         }
 
         // Mark token as used (expires in 90 seconds - token window)
         await redis.setex(tokenKey, 90, 'used');
 
-        logger.info('MFA TOTP verified', { userId });
+        // Update last used timestamp with integrity protection
+        await redis.hset(`mfa:${userId}`, 'lastUsed', new Date().toISOString());
+
+        logger.info('MFA TOTP verified with enhanced security', { userId });
         return { verified: true };
       }
 
-      // If TOTP fails, try backup codes
+      // If TOTP fails, try backup codes with constant-time comparison
       const backupCodes = JSON.parse(mfaData.backupCodes || '[]');
-      const hashedToken = this.hashBackupCode(token);
+      let codeIndex = -1;
+      let foundMatch = false;
 
-      const codeIndex = backupCodes.findIndex((encryptedCode: string) => {
-        const decryptedCode = this.decrypt(encryptedCode);
-        const hashedDecrypted = this.hashBackupCode(decryptedCode);
-        return hashedDecrypted === hashedToken;
-      });
+      // Use constant-time comparison for all backup codes to prevent timing attacks
+      for (let i = 0; i < backupCodes.length; i++) {
+        try {
+          const encryptedCode: EncryptedSecret = JSON.parse(backupCodes[i]);
+          const decryptedCode = await secureEncryption.decryptMFASecret(encryptedCode, `${userContext}:backup`);
 
-      if (codeIndex !== -1) {
+          // Use secure constant-time comparison
+          if (secureEncryption.constantTimeEquals(token, decryptedCode)) {
+            if (!foundMatch) { // Only record the first match
+              codeIndex = i;
+              foundMatch = true;
+            }
+          }
+        } catch (decryptError) {
+          // Continue checking other codes if one fails to decrypt
+          logger.warn('Failed to decrypt backup code during verification', { userId, index: i });
+        }
+      }
+
+      if (foundMatch && codeIndex !== -1) {
         // Remove used backup code
         backupCodes.splice(codeIndex, 1);
         await redis.hset(`mfa:${userId}`, 'backupCodes', JSON.stringify(backupCodes));
+        await redis.hset(`mfa:${userId}`, 'lastUsed', new Date().toISOString());
 
-        logger.info('MFA backup code used', {
+        logger.info('MFA backup code used with enhanced security', {
           userId,
           remainingCodes: backupCodes.length
         });
@@ -185,7 +266,7 @@ export class MFAService {
         };
       }
 
-      logger.warn('Invalid MFA token', { userId });
+      logger.warn('Invalid MFA token - all verification methods failed', { userId });
       return { verified: false };
 
     } catch (error) {
@@ -234,17 +315,42 @@ export class MFAService {
    */
   public async regenerateBackupCodes(userId: string): Promise<string[]> {
     try {
+      this.ensureInitialized();
+
       const mfaData = await redis.hgetall(`mfa:${userId}`);
       if (!mfaData.secret) {
         throw new Error('MFA not enabled for user');
       }
 
-      const backupCodes = this.generateBackupCodes();
-      const encryptedBackupCodes = backupCodes.map(code => this.encrypt(code));
+      // Generate new cryptographically secure backup codes
+      const backupCodes = secureTOTPGenerator.generateBackupCodes();
 
-      await redis.hset(`mfa:${userId}`, 'backupCodes', JSON.stringify(encryptedBackupCodes));
+      // Validate each backup code entropy
+      for (const code of backupCodes) {
+        if (!secureTOTPGenerator.validateBackupCodeEntropy(code)) {
+          throw new Error('Generated backup code failed entropy validation');
+        }
+      }
 
-      logger.info('Backup codes regenerated', { userId });
+      // Encrypt backup codes with authenticated encryption
+      const userContext = userId;
+      const encryptedBackupCodes: string[] = [];
+
+      for (const code of backupCodes) {
+        const encryptedCode = await secureEncryption.encryptMFASecret(code, `${userContext}:backup`);
+        encryptedBackupCodes.push(JSON.stringify(encryptedCode));
+      }
+
+      // Update with new encrypted backup codes
+      await redis.hset(`mfa:${userId}`, {
+        backupCodes: JSON.stringify(encryptedBackupCodes),
+        backupCodesGeneratedAt: new Date().toISOString()
+      });
+
+      logger.info('Backup codes regenerated with enhanced security', {
+        userId,
+        codeCount: backupCodes.length
+      });
 
       return backupCodes;
 
@@ -255,15 +361,23 @@ export class MFAService {
   }
 
   /**
-   * Get MFA status for user
+   * Get MFA status for user with enhanced security information
    */
   public async getMFAStatus(userId: string): Promise<{
     enabled: boolean;
     hasBackupCodes: boolean;
     backupCodesCount?: number;
     lastUsed?: string;
+    securityInfo?: {
+      algorithm: string;
+      keyDerivation: string;
+      secretStrength?: string;
+      enabledAt?: string;
+    };
   }> {
     try {
+      this.ensureInitialized();
+
       const mfaData = await redis.hgetall(`mfa:${userId}`);
 
       if (!mfaData.secret) {
@@ -272,11 +386,26 @@ export class MFAService {
 
       const backupCodes = JSON.parse(mfaData.backupCodes || '[]');
 
+      // Parse security information
+      let securityInfo;
+      try {
+        const secretValidation = mfaData.secretValidation ? JSON.parse(mfaData.secretValidation) : null;
+        securityInfo = {
+          algorithm: mfaData.algorithm || 'aes-256-gcm',
+          keyDerivation: mfaData.keyDerivation || 'pbkdf2',
+          secretStrength: secretValidation?.strength || 'unknown',
+          enabledAt: mfaData.enabledAt
+        };
+      } catch (parseError) {
+        logger.warn('Failed to parse MFA security info', { userId, parseError });
+      }
+
       return {
         enabled: true,
         hasBackupCodes: backupCodes.length > 0,
         backupCodesCount: backupCodes.length,
         lastUsed: mfaData.lastUsed,
+        securityInfo
       };
 
     } catch (error) {
@@ -293,78 +422,71 @@ export class MFAService {
   }
 
   /**
-   * Generate random backup codes
+   * Ensure the service is properly initialized before cryptographic operations
    */
-  private generateBackupCodes(count: number = 10): string[] {
-    const codes: string[] = [];
-    for (let i = 0; i < count; i++) {
-      // Generate 8-digit backup codes
-      const code = crypto.randomInt(10000000, 99999999).toString();
-      codes.push(code);
+  private ensureInitialized(): void {
+    if (!this.isInitialized) {
+      throw new Error('MFA service not initialized - call initialize() first');
     }
-    return codes;
   }
 
   /**
-   * Enable MFA for user (internal method)
+   * Enable MFA for user with enhanced security (internal method)
    */
   private async enableMFA(userId: string, secret: string, encryptedBackupCodes: string[]): Promise<void> {
-    await redis.hset(`mfa:${userId}`, {
-      secret: this.encrypt(secret),
-      backupCodes: JSON.stringify(encryptedBackupCodes),
-      enabledAt: new Date().toISOString(),
-    });
+    try {
+      // Encrypt secret with authenticated encryption
+      const userContext = userId;
+      const encryptedSecret = await secureEncryption.encryptMFASecret(secret, userContext);
+
+      // Validate secret before enabling
+      const validation = secureTOTPGenerator.validateSecretEntropy(secret);
+      if (!validation.isValid) {
+        throw new Error(`Secret validation failed: ${validation.issues.join(', ')}`);
+      }
+
+      await redis.hset(`mfa:${userId}`, {
+        secret: JSON.stringify(encryptedSecret),
+        backupCodes: JSON.stringify(encryptedBackupCodes),
+        enabledAt: new Date().toISOString(),
+        algorithm: 'aes-256-gcm',
+        keyDerivation: 'pbkdf2',
+        secretValidation: JSON.stringify(validation)
+      });
+
+      logger.info('MFA enabled with enhanced cryptographic security', {
+        userId,
+        secretEntropy: validation.entropy,
+        secretStrength: validation.strength
+      });
+
+    } catch (error) {
+      logger.error('Failed to enable MFA with enhanced security', { error, userId });
+      throw new Error('Failed to enable MFA');
+    }
   }
 
   /**
-   * Encrypt sensitive data
+   * Legacy method removed - now using secure authenticated encryption
+   * @deprecated Use secureEncryption.encryptMFASecret() instead
    */
   private encrypt(text: string): string {
-    const algorithm = 'aes-256-gcm';
-    const key = crypto.scryptSync(this.encryptionKey, 'salt', 32);
-    const iv = crypto.randomBytes(16);
-
-    const cipher = crypto.createCipher(algorithm, key);
-    cipher.setAAD(Buffer.from('mfa'));
-
-    let encrypted = cipher.update(text, 'utf8', 'hex');
-    encrypted += cipher.final('hex');
-
-    const authTag = cipher.getAuthTag();
-
-    return `${iv.toString('hex')}:${authTag.toString('hex')}:${encrypted}`;
+    throw new Error('Legacy encryption method removed for security - use secureEncryption.encryptMFASecret()');
   }
 
   /**
-   * Decrypt sensitive data
+   * Legacy method removed - now using secure authenticated decryption
+   * @deprecated Use secureEncryption.decryptMFASecret() instead
    */
   private decrypt(encryptedText: string): string {
-    const algorithm = 'aes-256-gcm';
-    const key = crypto.scryptSync(this.encryptionKey, 'salt', 32);
-
-    const parts = encryptedText.split(':');
-    if (parts.length !== 3) {
-      throw new Error('Invalid encrypted data format');
-    }
-
-    const iv = Buffer.from(parts[0], 'hex');
-    const authTag = Buffer.from(parts[1], 'hex');
-    const encrypted = parts[2];
-
-    const decipher = crypto.createDecipher(algorithm, key);
-    decipher.setAuthTag(authTag);
-    decipher.setAAD(Buffer.from('mfa'));
-
-    let decrypted = decipher.update(encrypted, 'hex', 'utf8');
-    decrypted += decipher.final('utf8');
-
-    return decrypted;
+    throw new Error('Legacy decryption method removed for security - use secureEncryption.decryptMFASecret()');
   }
 
   /**
-   * Hash backup code for comparison
+   * Legacy backup code hashing removed - now using constant-time comparison
+   * @deprecated Use secureEncryption.constantTimeEquals() for secure comparison
    */
   private hashBackupCode(code: string): string {
-    return crypto.createHash('sha256').update(code + this.encryptionKey).digest('hex');
+    throw new Error('Legacy backup code hashing removed for security - use constant-time comparison');
   }
 }

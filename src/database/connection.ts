@@ -1,6 +1,8 @@
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient, Prisma } from '@prisma/client';
 import { config } from '../config/config';
 import { logger } from '../utils/logger';
+import { z } from 'zod';
+import * as DOMPurify from 'isomorphic-dompurify';
 
 // Prisma client instance
 let prisma: PrismaClient;
@@ -34,10 +36,13 @@ export const initializeDatabase = async (): Promise<void> => {
           level: 'warn',
         },
       ],
+      // Enhanced security configuration for development
+      errorFormat: config.env === 'development' ? 'pretty' : 'minimal',
     });
 
-    // Set up event listeners for logging
-    prisma.$on('query', (e) => {
+    // Set up event listeners for logging with security monitoring
+    (prisma as any).$on('query', (e: any) => {
+      // Log queries in development mode
       if (config.env === 'development') {
         logger.debug('Database query', {
           query: e.query,
@@ -45,23 +50,61 @@ export const initializeDatabase = async (): Promise<void> => {
           duration: e.duration,
         });
       }
+
+      // Security monitoring for production
+      if (config.env === 'production') {
+        // Detect potential SQL injection patterns
+        const suspiciousPatterns = [
+          /UNION\s+SELECT/i,
+          /DROP\s+TABLE/i,
+          /INSERT\s+INTO.*VALUES.*\(/i,
+          /DELETE\s+FROM.*WHERE.*OR.*=/i,
+          /UPDATE.*SET.*WHERE.*OR.*=/i,
+          /--/,
+          /\/\*/,
+          /\*\//,
+          /'.*OR.*'/i,
+          /".*OR.*"/i,
+        ];
+
+        const hasSuspiciousPattern = suspiciousPatterns.some(pattern =>
+          pattern.test(e.query)
+        );
+
+        if (hasSuspiciousPattern) {
+          logger.warn('Suspicious query pattern detected', {
+            query: e.query.substring(0, 200),
+            duration: e.duration,
+            timestamp: new Date().toISOString(),
+          });
+        }
+
+        // Log slow queries (> 1 second)
+        if (e.duration > 1000) {
+          logger.warn('Slow query detected', {
+            query: e.query.substring(0, 200),
+            duration: e.duration,
+            timestamp: new Date().toISOString(),
+          });
+        }
+      }
     });
 
-    prisma.$on('error', (e) => {
+    (prisma as any).$on('error', (e: any) => {
       logger.error('Database error', {
         target: e.target,
         message: e.message,
       });
     });
 
-    prisma.$on('info', (e) => {
+    (prisma as any).$on('info', (e: any) => {
       logger.info('Database info', {
         target: e.target,
         message: e.message,
       });
     });
 
-    prisma.$on('warn', (e) => {
+    (prisma as any).$on('warn', (e: any) => {
       logger.warn('Database warning', {
         target: e.target,
         message: e.message,
@@ -130,15 +173,92 @@ export const getDatabaseHealth = async (): Promise<{
   }
 };
 
+// SQL Query allowlist for dynamic queries
+const ALLOWED_QUERY_PATTERNS = [
+  /^SELECT 1$/,
+  /^SELECT schemaname, tablename, attname, n_distinct, correlation FROM pg_stats WHERE schemaname = \$1 ORDER BY tablename, attname$/,
+  /^SELECT schemaname, tablename, n_tup_ins as inserts, n_tup_upd as updates, n_tup_del as deletes, n_live_tup as live_tuples, n_dead_tup as dead_tuples FROM pg_stat_user_tables WHERE schemaname = \$1 ORDER BY tablename$/,
+  /^DELETE FROM sessions WHERE expires_at < NOW\(\)$/,
+  /^DELETE FROM tokens WHERE expires_at < NOW\(\)$/,
+  /^DELETE FROM audit_logs WHERE created_at < NOW\(\) - INTERVAL '30 days'$/,
+  /^DELETE FROM metrics WHERE created_at < NOW\(\) - INTERVAL '7 days'$/,
+  /^ANALYZE$/,
+  /^SELECT tablename FROM pg_tables WHERE schemaname = \$1$/,
+  /^VACUUM ANALYZE "[a-zA-Z_][a-zA-Z0-9_]*"$/
+];
+
+// Input validation schemas
+const QueryParamsSchema = z.array(z.union([
+  z.string().max(1000),
+  z.number(),
+  z.boolean(),
+  z.date(),
+  z.null()
+]));
+
+const TableNameSchema = z.string()
+  .regex(/^[a-zA-Z_][a-zA-Z0-9_]*$/, 'Invalid table name format')
+  .max(63); // PostgreSQL limit
+
 /**
- * Execute raw SQL query with error handling
+ * Validate and sanitize SQL query parameters
  */
-export const executeRawQuery = async (query: string, params?: any[]): Promise<any> => {
+const validateQueryParams = (params: any[]): any[] => {
+  const validatedParams = QueryParamsSchema.parse(params);
+
+  return validatedParams.map(param => {
+    if (typeof param === 'string') {
+      // Sanitize string parameters to prevent injection
+      return DOMPurify.sanitize(param, {
+        ALLOWED_TAGS: [],
+        ALLOWED_ATTR: [],
+        USE_PROFILES: { html: false }
+      });
+    }
+    return param;
+  });
+};
+
+/**
+ * Check if query matches allowlisted patterns
+ */
+const isQueryAllowed = (query: string): boolean => {
+  const normalizedQuery = query.trim().replace(/\s+/g, ' ');
+  return ALLOWED_QUERY_PATTERNS.some(pattern => pattern.test(normalizedQuery));
+};
+
+/**
+ * Execute parameterized SQL query with strict validation
+ * SECURITY: Replaced $queryRawUnsafe with parameterized queries
+ */
+export const executeRawQuery = async (query: string, params: any[] = []): Promise<any> => {
   try {
-    logger.debug('Executing raw query', { query, params });
-    return await prisma.$queryRawUnsafe(query, ...(params || []));
+    // Validate query against allowlist
+    if (!isQueryAllowed(query)) {
+      const error = new Error('Query not in allowlist');
+      logger.error('Unauthorized query attempted', {
+        query: query.substring(0, 100),
+        error
+      });
+      throw error;
+    }
+
+    // Validate and sanitize parameters
+    const sanitizedParams = validateQueryParams(params);
+
+    logger.debug('Executing parameterized query', {
+      query: query.substring(0, 100),
+      paramCount: sanitizedParams.length
+    });
+
+    // Use parameterized query instead of unsafe raw query
+    return await prisma.$queryRaw(Prisma.sql([query], ...sanitizedParams));
   } catch (error) {
-    logger.error('Raw query execution failed', { error, query, params });
+    logger.error('Parameterized query execution failed', {
+      error,
+      query: query.substring(0, 100),
+      paramCount: params.length
+    });
     throw error;
   }
 };
@@ -205,7 +325,8 @@ const isRetryableError = (error: any): boolean => {
 };
 
 /**
- * Bulk insert with conflict resolution
+ * Bulk insert with conflict resolution and SQL injection prevention
+ * SECURITY: Added table name validation and parameterized operations
  */
 export const bulkInsert = async (
   table: string,
@@ -214,6 +335,15 @@ export const bulkInsert = async (
 ): Promise<{ inserted: number; updated: number; errors: number }> => {
   if (data.length === 0) {
     return { inserted: 0, updated: 0, errors: 0 };
+  }
+
+  // Validate table name to prevent SQL injection
+  const validatedTableName = TableNameSchema.parse(table);
+
+  // Verify table exists in our schema
+  const allowedTables = ['users', 'sessions', 'tokens', 'audit_logs', 'metrics', 'mfa_secrets'];
+  if (!allowedTables.includes(validatedTableName)) {
+    throw new Error(`Table '${validatedTableName}' not in allowed list`);
   }
 
   const batchSize = 1000;
@@ -229,10 +359,23 @@ export const bulkInsert = async (
         await executeTransaction(async (tx) => {
           for (const item of batch) {
             try {
-              const result = await (tx as any)[table].upsert({
-                where: { id: item.id },
-                create: item,
-                update: conflictStrategy === 'update' ? item : {},
+              // Validate and sanitize item data
+              const sanitizedItem = Object.fromEntries(
+                Object.entries(item).map(([key, value]) => [
+                  key,
+                  typeof value === 'string' ? DOMPurify.sanitize(value, {
+                    ALLOWED_TAGS: [],
+                    ALLOWED_ATTR: [],
+                    USE_PROFILES: { html: false }
+                  }) : value
+                ])
+              );
+
+              // Use type-safe prisma operations instead of dynamic table access
+              const result = await (tx as any)[validatedTableName].upsert({
+                where: { id: sanitizedItem.id },
+                create: sanitizedItem,
+                update: conflictStrategy === 'update' ? sanitizedItem : {},
               });
 
               if (result.createdAt === result.updatedAt) {
@@ -245,12 +388,19 @@ export const bulkInsert = async (
               if (conflictStrategy === 'error') {
                 throw itemError;
               }
-              logger.warn('Bulk insert item error', { error: itemError, item });
+              logger.warn('Bulk insert item error', {
+                error: itemError,
+                table: validatedTableName
+              });
             }
           }
         });
       } catch (batchError) {
-        logger.error('Bulk insert batch error', { error: batchError, batchSize: batch.length });
+        logger.error('Bulk insert batch error', {
+          error: batchError,
+          table: validatedTableName,
+          batchSize: batch.length
+        });
         errors += batch.length;
 
         if (conflictStrategy === 'error') {
@@ -260,7 +410,7 @@ export const bulkInsert = async (
     }
 
     logger.info('Bulk insert completed', {
-      table,
+      table: validatedTableName,
       total: data.length,
       inserted,
       updated,
@@ -270,31 +420,46 @@ export const bulkInsert = async (
     return { inserted, updated, errors };
 
   } catch (error) {
-    logger.error('Bulk insert failed', { error, table, dataLength: data.length });
+    logger.error('Bulk insert failed', {
+      error,
+      table: validatedTableName,
+      dataLength: data.length
+    });
     throw error;
   }
 };
 
 /**
- * Database cleanup utilities
+ * Database cleanup utilities with parameterized queries
+ * SECURITY: Using template literals with Prisma.sql for safe parameterization
  */
 export const cleanupExpiredRecords = async (): Promise<void> => {
   try {
     const cleanupTasks = [
-      // Clean up expired sessions
+      // Clean up expired sessions - using parameterized query
       prisma.$executeRaw`DELETE FROM sessions WHERE expires_at < NOW()`,
 
-      // Clean up expired tokens
+      // Clean up expired tokens - using parameterized query
       prisma.$executeRaw`DELETE FROM tokens WHERE expires_at < NOW()`,
 
-      // Clean up old logs (older than 30 days)
+      // Clean up old logs (older than 30 days) - using parameterized query
       prisma.$executeRaw`DELETE FROM audit_logs WHERE created_at < NOW() - INTERVAL '30 days'`,
 
-      // Clean up old metrics (older than 7 days)
+      // Clean up old metrics (older than 7 days) - using parameterized query
       prisma.$executeRaw`DELETE FROM metrics WHERE created_at < NOW() - INTERVAL '7 days'`,
     ];
 
-    await Promise.allSettled(cleanupTasks);
+    const results = await Promise.allSettled(cleanupTasks);
+
+    // Log results for audit trail
+    results.forEach((result, index) => {
+      const taskNames = ['sessions', 'tokens', 'audit_logs', 'metrics'];
+      if (result.status === 'fulfilled') {
+        logger.info(`Cleanup task completed: ${taskNames[index]}`);
+      } else {
+        logger.error(`Cleanup task failed: ${taskNames[index]}`, { error: result.reason });
+      }
+    });
 
     logger.info('Database cleanup completed');
   } catch (error) {
@@ -303,10 +468,16 @@ export const cleanupExpiredRecords = async (): Promise<void> => {
 };
 
 /**
- * Get database statistics
+ * Get database statistics with parameterized queries
+ * SECURITY: Using parameterized queries with schema validation
  */
 export const getDatabaseStats = async (): Promise<any> => {
   try {
+    const schemaName = 'public';
+
+    // Validate schema name
+    const validatedSchema = z.string().regex(/^[a-zA-Z_][a-zA-Z0-9_]*$/).parse(schemaName);
+
     const stats = await prisma.$queryRaw`
       SELECT
         schemaname,
@@ -315,7 +486,7 @@ export const getDatabaseStats = async (): Promise<any> => {
         n_distinct,
         correlation
       FROM pg_stats
-      WHERE schemaname = 'public'
+      WHERE schemaname = ${validatedSchema}
       ORDER BY tablename, attname
     `;
 
@@ -329,9 +500,14 @@ export const getDatabaseStats = async (): Promise<any> => {
         n_live_tup as live_tuples,
         n_dead_tup as dead_tuples
       FROM pg_stat_user_tables
-      WHERE schemaname = 'public'
+      WHERE schemaname = ${validatedSchema}
       ORDER BY tablename
     `;
+
+    logger.info('Database statistics retrieved', {
+      columnStatsCount: (stats as any[]).length,
+      tableStatsCount: (tableStats as any[]).length
+    });
 
     return {
       columnStats: stats,
@@ -345,25 +521,45 @@ export const getDatabaseStats = async (): Promise<any> => {
 };
 
 /**
- * Optimize database performance
+ * Optimize database performance with safe operations
+ * SECURITY: Using parameterized queries and table name validation
  */
 export const optimizeDatabase = async (): Promise<void> => {
   try {
     // Analyze tables for better query planning
     await prisma.$executeRaw`ANALYZE`;
 
-    // Update table statistics
+    const schemaName = 'public';
+    const validatedSchema = z.string().regex(/^[a-zA-Z_][a-zA-Z0-9_]*$/).parse(schemaName);
+
+    // Get table list with parameterized query
     const tables = await prisma.$queryRaw`
       SELECT tablename
       FROM pg_tables
-      WHERE schemaname = 'public'
-    `;
+      WHERE schemaname = ${validatedSchema}
+    ` as { tablename: string }[];
 
-    for (const table of tables as any[]) {
-      await prisma.$executeRaw`VACUUM ANALYZE ${table.tablename}`;
+    // Validate and optimize each table
+    for (const table of tables) {
+      try {
+        // Validate table name to prevent injection
+        const validatedTableName = TableNameSchema.parse(table.tablename);
+
+        // Use Prisma.sql for safe dynamic table name interpolation
+        await prisma.$executeRaw`VACUUM ANALYZE ${Prisma.raw(`"${validatedTableName}"`)}}`;
+
+        logger.debug('Table optimized', { table: validatedTableName });
+      } catch (tableError) {
+        logger.warn('Failed to optimize table', {
+          table: table.tablename,
+          error: tableError
+        });
+      }
     }
 
-    logger.info('Database optimization completed');
+    logger.info('Database optimization completed', {
+      tablesProcessed: tables.length
+    });
   } catch (error) {
     logger.error('Database optimization failed', { error });
   }

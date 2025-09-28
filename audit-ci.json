@@ -1,0 +1,19 @@
+{
+  "allowlist": [],
+  "low": true,
+  "moderate": true,
+  "high": true,
+  "critical": true,
+  "report-type": "summary",
+  "advisories": [],
+  "whitelist": [],
+  "skip-dev": false,
+  "path-whitelist": [],
+  "show-not-found": false,
+  "retry": {
+    "count": 3,
+    "delay": 5000
+  },
+  "package-manager": "npm",
+  "output-format": "text"
+}

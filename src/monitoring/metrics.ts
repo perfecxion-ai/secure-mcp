@@ -6,11 +6,10 @@ import os from 'os';
 
 // Configure Prometheus client
 promClient.collectDefaultMetrics({
-  timeout: 5000,
   gcDurationBuckets: [0.001, 0.01, 0.1, 1, 2, 5],
   register: promClient.register,
   prefix: 'mcp_',
-});
+} as any);
 
 /**
  * Custom metrics definitions
@@ -520,7 +519,7 @@ export class BusinessMetrics {
 }
 
 // Export all metrics classes
-export { HealthMetrics, BusinessMetrics };
+// Classes are already exported above
 
 // Setup cleanup on process exit
 process.on('SIGTERM', () => {

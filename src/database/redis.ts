@@ -3,9 +3,9 @@ import { config } from '../config/config';
 import { logger } from '../utils/logger';
 
 // Redis client instances
-let redis: Redis;
-let redisSubscriber: Redis;
-let redisPublisher: Redis;
+export let redis: Redis;
+export let redisSubscriber: Redis;
+export let redisPublisher: Redis;
 
 /**
  * Initialize Redis connections
@@ -18,7 +18,6 @@ export const initializeRedis = async (): Promise<void> => {
       db: config.redis.db,
       connectTimeout: config.redis.connectTimeout,
       commandTimeout: config.redis.commandTimeout,
-      retryDelayOnFailure: config.redis.retryDelayOnFailure,
       maxRetriesPerRequest: 3,
       lazyConnect: true,
       keepAlive: 30000,
@@ -26,7 +25,7 @@ export const initializeRedis = async (): Promise<void> => {
       enableOfflineQueue: false,
       maxLoadingTimeout: 5000,
       enableReadyCheck: true,
-    });
+    } as any);
 
     // Subscriber client (separate connection for pub/sub)
     redisSubscriber = new Redis(config.redis.url, {
@@ -529,8 +528,7 @@ const setupRedisHealthCheck = (): void => {
   }, 30000); // Check every 30 seconds
 };
 
-// Export Redis clients
-export { redis, redisSubscriber, redisPublisher, RedisCache, RedisPubSub, RedisLock };
+// Redis clients and classes are already exported above
 
 // Graceful shutdown handling
 process.on('SIGTERM', async () => {

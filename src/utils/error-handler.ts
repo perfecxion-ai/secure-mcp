@@ -612,17 +612,4 @@ export class ErrorMetrics {
   }
 }
 
-// Export error classes
-export {
-  AppError as BaseError,
-  ValidationError,
-  AuthenticationError,
-  AuthorizationError,
-  NotFoundError,
-  ConflictError,
-  TooManyRequestsError,
-  InternalServerError,
-  BadGatewayError,
-  ServiceUnavailableError,
-  GatewayTimeoutError,
-};
+// Error classes are already exported above, no need to re-export

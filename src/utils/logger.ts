@@ -124,7 +124,7 @@ if (config.env === 'development' || config.logging.format === 'pretty') {
 }
 
 // Create the logger instance
-export const logger = pino(loggerConfig, transport);
+export const logger = pino(loggerConfig, transport as any);
 
 /**
  * Security-focused logging utilities

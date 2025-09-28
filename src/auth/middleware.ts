@@ -32,6 +32,7 @@ export interface AuthSession {
   lastActivity: Date;
   ipAddress: string;
   userAgent: string;
+  csrfToken?: string;
 }
 
 export class AuthMiddleware {

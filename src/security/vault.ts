@@ -1,4 +1,4 @@
-import vault from 'node-vault';
+import nodeVault from 'node-vault';
 import { config } from '../config/config';
 import { logger } from '../utils/logger';
 import crypto from 'crypto';
@@ -35,9 +35,9 @@ class VaultService {
   /**
    * Initialize Vault client
    */
-  public async initialize(): Promise<void> => {
+  public async initialize(): Promise<void> {
     try {
-      this.client = vault({
+      this.client = nodeVault({
         apiVersion: 'v1',
         endpoint: config.vault.url,
         token: config.vault.token,

@@ -103,7 +103,7 @@ export class SSOService {
       },
     };
 
-    passport.use('saml', new SamlStrategy(samlOptions, async (profile: any, done: any) => {
+    (passport as any).use('saml', new SamlStrategy(samlOptions as any, async (profile: any, done: any) => {
       try {
         const user = await this.processSAMLProfile(profile);
         done(null, user);
@@ -261,11 +261,11 @@ export class SSOService {
           const session: SSOSession = JSON.parse(sessionData);
           if (session.provider === 'saml') {
             // Generate SAML logout request
-            const strategy = passport._strategy('saml') as SamlStrategy;
+            const strategy = (passport as any)._strategy('saml') as any;
 
             return new Promise((resolve, reject) => {
               strategy.logout(
-                { nameID: session.nameID, sessionIndex: session.sessionIndex },
+                { nameID: session.nameID, sessionIndex: session.sessionIndex } as any,
                 (err: any, url: string) => {
                   if (err) {
                     logger.error('SAML logout failed', { error: err, userId });
