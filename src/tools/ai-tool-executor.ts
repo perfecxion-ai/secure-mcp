@@ -297,7 +297,7 @@ export class SecureAIToolExecutor {
     userPrompt: string;
     constraints: any;
   }): Promise<string> {
-    // In production, this would call actual AI service (OpenAI, Anthropic, etc.)
+    // In production, this would call actual AI service APIs
     // For now, return simulated safe response
 
     // Simulate AI processing time
