@@ -621,7 +621,7 @@ allow mcp_executor_t self:file { read write execute };
 
     // Seccomp profile
     if (securityContext.seccompProfileId) {
-      const profilePath = `/tmp/claude/seccomp-${securityContext.seccompProfileId}.json`;
+      const profilePath = `/tmp/mcp/seccomp-${securityContext.seccompProfileId}.json`;
       dockerArgs.push('--security-opt', `seccomp=${profilePath}`);
     }
 
@@ -811,7 +811,7 @@ allow mcp_executor_t self:file { read write execute };
       // Cleanup seccomp profile file
       if (securityContext.seccompProfileId) {
         try {
-          await fs.unlink(`/tmp/claude/seccomp-${securityContext.seccompProfileId}.json`);
+          await fs.unlink(`/tmp/mcp/seccomp-${securityContext.seccompProfileId}.json`);
         } catch {
           // File may not exist
         }
@@ -935,7 +935,7 @@ allow mcp_executor_t self:file { read write execute };
       // 1. Create and apply seccomp profile
       if (hardening.enableSeccomp) {
         const seccompProfile = await SeccompProfileManager.createSeccompProfile(securityLevel);
-        const profilePath = `/tmp/claude/seccomp-${executionId}.json`;
+        const profilePath = `/tmp/mcp/seccomp-${executionId}.json`;
         await SeccompProfileManager.writeProfileToFile(seccompProfile, profilePath);
         securityContext.seccompProfileId = executionId;
         logger.debug('Seccomp profile applied', { executionId });
