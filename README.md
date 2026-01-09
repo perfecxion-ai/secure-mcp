@@ -488,7 +488,6 @@ Please read our [Developer Guide](./docs/DEVELOPER_GUIDE.md) for details on our 
 - **Documentation**: [Full Documentation](./docs/)
 - **Issues**: [GitHub Issues](https://github.com/perfecxion-ai/secure-mcp/issues)
 - **Security**: security@perfecxion.ai
-- **Enterprise Support**: support@perfecxion.ai
 
 ## License
 
@@ -496,13 +495,9 @@ This project is licensed under the Apache License 2.0 - see the [LICENSE](LICENS
 
 ## About perfecXion.ai
 
-**perfecXion.ai** is dedicated to building enterprise-grade AI infrastructure and tools that prioritize security, scalability, and reliability. Our team of expert engineers focuses on delivering production-ready solutions that meet the demanding requirements of modern enterprises.
-
 ### Connect With Us
 - 🌐 **Website**: [perfecxion.ai](https://perfecxion.ai)
-- 📧 **Contact**: contact@perfecxion.ai
 - 💼 **LinkedIn**: [perfecXion.ai](https://linkedin.com/company/perfecxion-ai)
-- 🐦 **Twitter**: [@perfecXion_ai](https://twitter.com/perfecXion_ai)
 
 ---
 
