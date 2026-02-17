@@ -1,109 +1,160 @@
-# Dependencies
-node_modules/
+# Logs
+logs
+*.log
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
-package-lock.json
-yarn.lock
-pnpm-lock.yaml
+lerna-debug.log*
+.pnpm-debug.log*
 
-# Environment variables
+# Diagnostic reports
+report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
+
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# Directory for instrumented libs
+lib-cov
+
+# Coverage directory
+coverage
+*.lcov
+
+# nyc test coverage
+.nyc_output
+
+# Grunt intermediate storage
+.grunt
+
+# Bower dependency directory
+bower_components
+
+# node-waf configuration
+.lock-wscript
+
+# Compiled binary addons
+build/Release
+
+# Dependency directories
+node_modules/
+jspm_packages/
+
+# Snowpack dependency directory
+web_modules/
+
+# TypeScript cache
+*.tsbuildinfo
+
+# Optional npm cache directory
+.npm
+
+# Optional eslint cache
+.eslintcache
+
+# Optional stylelint cache
+.stylelintcache
+
+# Microbundle cache
+.rpt2_cache/
+.rts2_cache_cjs/
+.rts2_cache_es/
+.rts2_cache_umd/
+
+# Optional REPL history
+.node_repl_history
+
+# Output of 'npm pack'
+*.tgz
+
+# Yarn Integrity file
+.yarn-integrity
+
+# dotenv environment variable files
 .env
 .env.*
 !.env.example
-!.env.test
+.env.development.local
+.env.test.local
+.env.production.local
+.env.local
 
-# Testing
-coverage/
-*.coverage
-.nyc_output/
+# parcel-bundler cache
+.cache
+.parcel-cache
 
-# Production
-build/
-dist/
-out/
+# Next.js build output
+.next
+out
 
-# Prisma
-prisma/*.db
-prisma/*.db-journal
-prisma/migrations/dev/
+# Nuxt.js build / generate output
+.nuxt
+dist
 
-# Database files
-*.db
-*.sqlite
-*.sqlite3
-*.sql
-*.dump
+# Gatsby files
+.cache/
+public
+
+# vuepress build output
+.vuepress/dist
+
+# vuepress v2.x temp and cache directory
+.temp
+
+# Docusaurus cache and generated files
+.docusaurus
+
+# Serverless directories
+.serverless/
+
+# FuseBox cache
+.fusebox/
+
+# DynamoDB Local files
+.dynamodb/
+
+# TernJS port file
+.tern-port
+
+# Stores VSCode versions used for testing VSCode extensions
+.vscode-test
+
+# yarn v2
+.yarn/cache
+.yarn/unplugged
+.yarn/build-state.yml
+.yarn/install-state.gz
+.pnp.*
 
 # IDE
-.vscode/
 .idea/
+.vscode/
 *.swp
 *.swo
 *~
-*.sublime-*
 
 # OS
 .DS_Store
 .DS_Store?
 ._*
-Thumbs.db
+.Spotlight-V100
+.Trashes
 ehthumbs.db
-Desktop.ini
-
-# Logs
-logs/
-*.log
-*.pid
-*.seed
-*.pid.lock
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-lerna-debug.log*
-
-# Temporary files
-tmp/
-temp/
-.tmp/
-*.tmp
-
-# Docker
-docker/data/
-*.tar
-*.tar.gz
-
-# TypeScript
-*.tsbuildinfo
-.tscache/
-
-# Next.js (if applicable)
-.next/
-.vercel/
-
-# Cache directories
-.cache/
-.parcel-cache/
-.turbo/
-
-# Debug
-debug/
-*.heap
-*.cpuprofile
+Thumbs.db
 
 # Backup files
 *.backup
 *.bak
-~*
-# AI tool artifacts
-.claude/
-CLAUDE.md
-claude.md
-planning.md
-status.md
-notes.md
-todo.md
-*.chat
-*.conversation
-.cursor/
-.aider/
+*.backup_*
+*.old
+
+# Temporary files
+*.tmp
+temp/
+tmp/
+
+# Build outputs
+build/
+dist/
