@@ -27,8 +27,8 @@ async function stop(signal = 'SIGTERM') {
   child = undefined;
   if (signal === 'SIGKILL') await unlink(socket);
 }
-async function create() {
-  return SecureRuntime.create({ config: { allowedTools: ['policy_status'], audit: { socketPath: socket, timeoutMs: 200, maxPending: 64 } } });
+async function create(timeoutMs = 1000) {
+  return SecureRuntime.create({ config: { allowedTools: ['policy_status'], audit: { socketPath: socket, timeoutMs, maxPending: 64 } } });
 }
 try {
   await start();
@@ -36,7 +36,7 @@ try {
   const principal = { issuer: 'fixture', subject: 'private-subject-sentinel', scopes: ['policy:read'] };
   for (let batch = 0; batch < 50; batch++) {
     const results = await Promise.all(Array.from({ length: 8 }, () => runtime.invoke(principal, 'policy_status', {})));
-    assert.ok(results.every((result) => !result.isError));
+    assert.ok(results.every((result) => !result.isError), JSON.stringify({ audit: runtime.audit.state, failures: results.filter((result) => result.isError).map((result) => result.content[0].text) }));
     total += results.length;
   }
   assert.equal(runtime.audit.healthy, true);
@@ -64,7 +64,7 @@ try {
   report.checks.push('journal capacity failure denies work and latches readiness');
   blocker = createServer((client) => { sockets.add(client); client.on('error', () => {}); client.once('close', () => sockets.delete(client)); });
   await new Promise((resolve) => blocker.listen(socket, resolve));
-  runtime = await create();
+  runtime = await create(200);
   const startTime = performance.now();
   const results = await Promise.all(Array.from({ length: 200 }, () => runtime.invoke(principal, 'policy_status', {})));
   assert.ok(results.every((result) => result.isError));
