@@ -1,4 +1,4 @@
-name: Review baseline
+name: CI
 on:
   push:
     branches: [main]
@@ -7,15 +7,17 @@ on:
 permissions:
   contents: read
 jobs:
-  review:
-    name: Validate review artifacts
+  validate:
+    name: Validate stdio runtime
     runs-on: ubuntu-24.04
-    timeout-minutes: 5
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
       - uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5
         with:
           node-version: '24'
-      - run: node scripts/verify-review.mjs
-      - name: State the unsupported runtime baseline
-        run: echo "This check validates the review and release hold. V1 runtime failures remain documented; no runtime pass is claimed."
+          cache: npm
+      - run: npm ci
+      - run: npm run check
+      - run: npm run test:package
+      - run: npm audit --audit-level=high
