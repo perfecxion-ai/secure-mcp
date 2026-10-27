@@ -9,6 +9,7 @@ import { auditContext, jsonAuditSink, record } from './audit.js';
 import type { AuditSink } from './audit.js';
 import { ExecutionController } from './execution.js';
 import { failureCode, RuntimeFailure } from './errors.js';
+import { withinInputElementLimit } from './input.js';
 import { createApiTool, createDocumentTool, defineTool, textResult } from './tools.js';
 import type { ToolDefinition } from './tools.js';
 
@@ -108,6 +109,7 @@ export class SecureRuntime {
     const server = new McpServer(
       { name: 'secure-mcp', version: VERSION },
       {
+        maxToolInputElements: this.config.limits.maxInputElements,
         capabilities: { tools: { listChanged: false } },
         cacheHints: { 'tools/list': { ttlMs: 0, cacheScope: 'private' } },
       },
@@ -141,6 +143,8 @@ export class SecureRuntime {
     let outcome = 'internal';
     try {
       if (!tool || !mayInvoke(this.config, principal, tool)) throw new RuntimeFailure('denied');
+      if (!withinInputElementLimit(args, this.config.limits.maxInputElements))
+        throw new RuntimeFailure('invalid_input');
       if (Buffer.byteLength(JSON.stringify(args)) > this.config.limits.maxInputBytes)
         throw new RuntimeFailure('invalid_input');
       const parsed = tool.inputSchema.safeParse(args);

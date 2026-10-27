@@ -26,7 +26,9 @@ Browser origins are denied unless their exact scheme, hostname, and port appear 
 
 ## Limits and audit
 
-Default tool limits: 16 concurrent operations, 10-second deadline, 64 KiB input, 256 KiB output, and 5-second shutdown grace. HTTP admits at most twice the configured tool concurrency, with finite connection/header/body timeouts. Oversized or invalid wire input fails before dispatch. Document reads have a smaller byte limit to leave room for JSON framing; highly escaped text may still hit the total output limit and return an explicit error.
+Default tool limits: 16 concurrent operations, 10-second deadline, 64 KiB input, 1,024 input collection entries, 256 KiB output, and 5-second shutdown grace. `limits.maxInputElements` counts array entries and object keys across the complete arguments value. The SDK rejects excess entries before schema validation; direct library invocation applies the same budget before serialization and validation. HTTP admits at most twice the configured tool concurrency, with finite connection/header/body timeouts. Document reads have a smaller byte limit to leave room for JSON framing; highly escaped text may still hit the total output limit and return an explicit error.
+
+The explicit element budget addresses the SDK's [configuration-dependent input-validation advisory](https://github.com/modelcontextprotocol/typescript-sdk/security/advisories/GHSA-46jr-4wx8-v453). Installing a patched SDK alone does not enable this control. Keep both byte and element limits appropriate to the registered tools.
 
 Audit is newline-delimited JSON on stderr. Route it to a bounded, monitored log collector. Never redirect stdout logging into the stdio protocol stream. Audit events omit request content. If a sink fails before execution, the operation is denied. See [the threat model](THREAT_MODEL.md) for failure and coverage limits.
 
