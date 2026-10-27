@@ -15,7 +15,7 @@ BENCH_SECONDS=60 npm run benchmark:http
 
 The HTTP lab mints short-lived ES256 fixture tokens locally and renews them every two minutes. Verification uses the server's configured issuer, audience, scopes, and a real loopback JWKS endpoint. This is a resource-server load test, not an identity-provider capacity test or a TLS/proxy benchmark.
 
-Both workloads execute authorization and generate JSON audit events, but send stderr to `/dev/null`. They do not measure a durable log collector. The HTTP report includes built-runtime hashes, token issuance count, JWKS request count, expected denial count, and unexpected failures. No access tokens, private keys, or document paths are written to the report. Fixtures are removed on normal completion.
+By default both workloads execute authorization and generate JSON audit events with stderr sent to `/dev/null`. Set `BENCH_AUDIT_SOCKET` to an operator-owned collector socket and `BENCH_INTERVAL_MS=200` for the durable HTTP workload in the [performance contract](validation/PERFORMANCE_CONTRACT.md). That mode waits for per-record fsync acknowledgements and keeps the journal within its declared capacity. The HTTP report includes built-runtime hashes, token issuance count, JWKS request count, expected denial count, and unexpected failures. No access tokens, private keys, or document paths are written to the report. Fixtures are removed on normal completion.
 
 Use a named source revision, an unchanged build, explicit duration, and a recorded host/runtime configuration when publishing results. Disclose overlapping workloads and background activity. A small-document run does not establish production capacity, performance for arbitrary handlers, or the roadmap's separate no-op overhead target.
 
@@ -26,3 +26,5 @@ BENCH_SECONDS=1800 BENCH_PROGRESS=1 node --max-old-space-size=256 scripts/http-b
 ```
 
 Progress reports appear once per minute. Memory samples distinguish server RSS from driver RSS and heap usage. The final report includes driver event-loop delay, bounded failure categories, and at most 20 failure samples with numeric error codes. It never includes raw exception messages or response bodies. A failed run exits nonzero and remains failed evidence even if a later run passes. Use these diagnostics to investigate load-generator stalls before attributing every timeout or memory trend to the server.
+
+Both harnesses require server exit status 0. The stdio harness inspects the child-process handle of the pinned SDK as a benchmark-only diagnostic and fails if that hook is absent. This avoids treating a forced SDK transport close as a clean exit. The HTTP harness checks final `/health` readiness and authenticated audit failure/drop counters, and writes its report only after server shutdown. CI runs a short smoke of each harness so SDK changes cannot silently remove exit verification. Driver exit status must still be captured by the runner.
