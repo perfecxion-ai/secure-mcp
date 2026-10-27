@@ -7,6 +7,7 @@ import { mayInvoke } from './policy.js';
 import type { Principal } from './policy.js';
 import { auditContext, AuditDispatcher, AuditedMcpServer, jsonAuditSink, record } from './audit.js';
 import type { AuditSink } from './audit.js';
+import { socketAuditSink } from './collector.js';
 import { ExecutionController } from './execution.js';
 import { failureCode, RuntimeFailure } from './errors.js';
 import { deferredInputSchema, withinInputElementLimit } from './input.js';
@@ -36,7 +37,10 @@ export class SecureRuntime {
       this.config.limits.timeoutMs,
     );
     this.audit = new AuditDispatcher(
-      options.audit ?? jsonAuditSink(process.stderr),
+      options.audit ??
+        (this.config.audit.socketPath
+          ? socketAuditSink(this.config.audit.socketPath, this.config.audit.timeoutMs)
+          : jsonAuditSink(process.stderr)),
       this.config.audit.maxPending,
       this.config.audit.timeoutMs,
     );

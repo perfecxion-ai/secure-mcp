@@ -35,6 +35,12 @@
       "default": {},
       "type": "object",
       "properties": {
+        "socketPath": {
+          "type": "string",
+          "maxLength": 100,
+          "format": "starts_with",
+          "pattern": "^\\/.*"
+        },
         "maxPending": {
           "default": 64,
           "type": "integer",

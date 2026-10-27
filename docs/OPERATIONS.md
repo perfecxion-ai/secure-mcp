@@ -36,6 +36,18 @@ Audit is newline-delimited JSON on stderr by default. Route it to a durable coll
 
 Tool admission and completion, SDK error responses, and HTTP response preparation await sink acknowledgement. The final socket completion/disconnect record is necessarily asynchronous. Denials are audited independently of tool capacity. Stderr acknowledgement means a stream write completed, not that a remote collector persisted the record. See [the threat model](THREAT_MODEL.md) for unavoidable loss boundaries.
 
+For a fresh local validation deployment, create a private directory outside the document workspace and run the included collector as the same unprivileged user:
+
+```bash
+install -d -m 700 /tmp/secure-mcp-audit
+node examples/audit-collector.mjs --socket /tmp/secure-mcp-audit/collector.sock \
+  --journal /tmp/secure-mcp-audit/events.jsonl
+```
+
+Set `audit.socketPath` to that absolute Unix socket path. The server then requires a one-byte acknowledgement after each journal write and `fsync`. This adds filesystem latency to requests. The collector bounds records to 4 KiB, connections and pending records to 64, and the journal to 256 MiB by default (`--max-bytes` overrides the limit). Reaching the limit denies further work. Monitor capacity, stop the server before rotating the journal, preserve old files, restart the collector, then restart the server and check readiness. Paths and parent directories must remain operator-controlled. The collector rejects symlink journals, multiply linked files, public permissions, and incomplete final records. A crash can leave a socket path; remove it only after confirming its collector has stopped. A partial record requires preserving and repairing the journal before restart.
+
+This local collector is a validation reference, with no automatic rotation, retention, remote replication, or tamper-resistant storage. File sync acknowledgements depend on the host filesystem and hardware. A privileged local attacker can alter the journal. Integrate and fault-test your production collector separately. `npm run test:audit` exercises the actual collector process, kill/restart persistence, journal limits, and blocked delivery.
+
 SIGINT, SIGTERM, and stdio EOF initiate shutdown. HTTP stops accepting requests, cancels active tools, and closes sockets. The process exits nonzero if trusted handlers fail to settle within the deadline. Library users must call `close()` and handle its remaining-work count.
 
 ## Container
