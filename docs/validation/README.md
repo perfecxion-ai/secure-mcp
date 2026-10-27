@@ -4,6 +4,8 @@ Reports identify a workload and a particular runtime. The [run identity record](
 
 ## Current candidate
 
+The [reported attack review](2026-10-27-reported-attack-review.md) records maintainer-supplied findings against the same runtime source. Its provenance and missing raw-artifact limits are explicit; it is separate from the reproduced acceptance below.
+
 Use the [candidate record](CANDIDATE.md) for the current runtime and the [fresh-install guide](REAL_USER_VALIDATION.md) for the trial. It contains the 44-test, actual browser/issuer, durable collector, storage failure, real-host, container, and immutable artifact evidence. Its final endurance status is recorded explicitly rather than inferred from older results.
 
 The guarded-runtime and initial-alpha reports below are historical. Their runtime module hashes differ from the current candidate.

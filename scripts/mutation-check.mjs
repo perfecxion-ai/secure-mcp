@@ -7,6 +7,14 @@ import { join, resolve } from 'node:path';
 // Prove that selected security assertions fail when their actual boundary is weakened.
 const mutations = [
   {
+    name: 'configured-signing-algorithms',
+    file: 'src/identity.ts',
+    from: 'algorithms: config.algorithms,',
+    to: "algorithms: ['RS256', 'ES256'],",
+    test: 'tests/http-identity.test.ts',
+    pattern: 'default RS256 HTTP identity boundary',
+  },
+  {
     name: 'pre-validation-input-budget',
     file: 'src/runtime.ts',
     from: 'maxToolInputElements: this.config.limits.maxInputElements,',
