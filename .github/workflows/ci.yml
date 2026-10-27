@@ -38,3 +38,30 @@ jobs:
             *.tgz
             sbom.cdx.json
           if-no-files-found: error
+  attest:
+    name: Attest verified artifacts
+    needs: validate
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    permissions:
+      contents: read
+      actions: read
+      id-token: write
+      attestations: write
+    steps:
+      - uses: actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0 # v5
+        with:
+          name: verified-alpha-${{ github.sha }}
+          path: verified
+      - name: Attest package build provenance
+        uses: actions/attest@1e69f48acb82d1966a394da916b4c1698aa569d6 # v4
+        with:
+          subject-path: verified/*.tgz
+          create-storage-record: false
+      - name: Bind the production dependency inventory
+        uses: actions/attest@1e69f48acb82d1966a394da916b4c1698aa569d6 # v4
+        with:
+          subject-path: verified/*.tgz
+          create-storage-record: false
+          sbom-path: verified/sbom.cdx.json
