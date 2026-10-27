@@ -47,7 +47,8 @@
     "test:oauth": "node labs/oauth/verify.mjs && node labs/oauth/verify-code.mjs",
     "benchmark:http": "node scripts/http-benchmark.mjs",
     "test:proxy": "node labs/proxy/verify.mjs",
-    "test:audit": "node labs/audit/verify.mjs"
+    "test:audit": "node labs/audit/verify.mjs",
+    "test:keycloak": "node labs/keycloak/verify.mjs"
   },
   "engines": {
     "node": ">=24 <25",
