@@ -16,7 +16,7 @@
     "model-context-protocol"
   ],
   "author": "Perfecxion AI",
-  "license": "AGPL-3.0-or-later",
+  "license": "Apache-2.0",
   "dependencies": {
     "socket.io-client": "^4.6.0",
     "axios": "^1.6.0",

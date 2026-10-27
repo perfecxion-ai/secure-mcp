@@ -1,0 +1,7 @@
+{
+  "transport": "stdio",
+  "workspace": "./documents",
+  "allowedTools": ["documents_read", "policy_status"],
+  "readOnly": true,
+  "localScopes": ["documents:read", "policy:read"]
+}

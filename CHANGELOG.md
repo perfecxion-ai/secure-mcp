@@ -1,31 +1,11 @@
 # Changelog
 
-All notable changes to the Secure MCP Server will be documented in this file.
+## 2.0.0-alpha.1 (unreleased)
 
-The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
-and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+Replace the experimental Socket.IO application with an official-SDK MCP runtime. Add stdio, explicit tool policy, bounded execution, workspace document reads, audit events, and a clean package installation check. HTTP transport is a separate follow-up.
 
-## [1.0.0] - 2026-01-09
+This is an incompatible, unpublished alpha. Existing v1 installations require an explicit migration. The old implementation and test results are retained under `legacy/v1` and `docs/reviews`.
 
-### Added
-- Enterprise-grade Model Context Protocol (MCP) v0.5.0 implementation
-- WebSocket and HTTP transport layer support
-- Dynamic tool registration, validation, and execution
-- Multi-factor authentication (JWT + TOTP/SMS-based 2FA)
-- SAML 2.0 integration for enterprise SSO
-- End-to-end encryption with TLS 1.3 and certificate pinning
-- HashiCorp Vault integration for secrets management
-- Role-based access control (RBAC) with granular permissions
-- Configurable rate limiting per-endpoint and per-user
-- High availability with multi-region deployment and automatic failover
-- Horizontal scaling with Kubernetes-native auto-scaling
-- Comprehensive monitoring with Prometheus, Grafana, and distributed tracing
-- Audit logging for compliance (SOC 2, GDPR, HIPAA, ISO 27001)
-- PostgreSQL support with read replicas and Redis caching
-- RabbitMQ/Kafka integration for async message processing
-- Docker and Kubernetes deployment configurations
-- Comprehensive test suite with unit and integration tests
-- Security scanning with Snyk and Trivy
-- Complete API documentation
+## 1.0.0 (historical)
 
-[1.0.0]: https://github.com/perfecxion-ai/secure-mcp/releases/tag/1.0.0
+The public GitHub release was published September 27, 2025. The former changelog used a conflicting January 9, 2026 date; its original content is preserved under `legacy/v1/CHANGELOG.md`. See the repository assessment for the reviewed baseline and release limitations.

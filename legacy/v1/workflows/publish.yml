@@ -1,0 +1,58 @@
+name: Publish to NPM
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+    inputs:
+      package:
+        description: 'Package to publish'
+        required: true
+        type: choice
+        options:
+          - server
+          - client-sdk
+          - both
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          registry-url: 'https://registry.npmjs.org'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build packages
+        run: |
+          npm run build
+          if [ -d "packages/client-sdk" ]; then
+            cd packages/client-sdk
+            npm install
+            npm run build
+            cd ../..
+          fi
+
+      - name: Publish Server Package
+        if: github.event_name == 'release' || github.event.inputs.package == 'server' || github.event.inputs.package == 'both'
+        run: npm publish --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Publish Client SDK
+        if: (github.event_name == 'release' || github.event.inputs.package == 'client-sdk' || github.event.inputs.package == 'both') && hashFiles('packages/client-sdk/package.json') != ''
+        working-directory: ./packages/client-sdk
+        run: npm publish --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
