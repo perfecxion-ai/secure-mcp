@@ -5,18 +5,10 @@ updates:
     schedule:
       interval: weekly
     open-pull-requests-limit: 5
-    ignore:
-      - dependency-name: '@types/node'
-        update-types: ['version-update:semver-major']
-      - dependency-name: typescript
-        update-types: ['version-update:semver-major']
   - package-ecosystem: docker
     directory: /
     schedule:
       interval: weekly
-    ignore:
-      - dependency-name: node
-        update-types: ['version-update:semver-major']
   - package-ecosystem: npm
     directory: /labs/oauth
     schedule:
