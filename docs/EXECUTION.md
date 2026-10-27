@@ -62,7 +62,3 @@ That run predates the audit-stream error and oversized-frame lifecycle fixes. It
 - Configure required GitHub checks, verify private vulnerability reporting, and wire artifact provenance and immutable release promotion.
 - Collect independent design-partner onboarding and repeat-use evidence. No external users have been contacted by this work.
 - Publish only after the technical and feedback gates pass. Content-screening providers and isolated untrusted execution remain separate optional workstreams.
-
-## Git identity
-
-Origin is `git@github-perfecxion:perfecxion-ai/secure-mcp.git`. Global identity remains `perfecxion-ai` / `pluckymon@proton.me`. The maintainer approved a repository-local email override to `222053267+perfecxion-ai@users.noreply.github.com` after GitHub rejected the original private email. The unpublished baseline commit was amended before its successful push. No account privacy setting was changed.
