@@ -23,6 +23,7 @@ jobs:
       - run: npm ci
       - run: npm run check
       - run: npm run test:mutations
+      - run: npm run test:audit
       - run: npm --prefix labs/oauth ci
       - run: npm run test:oauth
       - run: npm audit --audit-level=high

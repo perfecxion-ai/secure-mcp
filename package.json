@@ -46,7 +46,8 @@
     "test:coverage": "node --import tsx --test --experimental-test-coverage --test-coverage-include=src/*.ts tests/*.test.ts",
     "test:oauth": "node labs/oauth/verify.mjs && node labs/oauth/verify-code.mjs",
     "benchmark:http": "node scripts/http-benchmark.mjs",
-    "test:proxy": "node labs/proxy/verify.mjs"
+    "test:proxy": "node labs/proxy/verify.mjs",
+    "test:audit": "node labs/audit/verify.mjs"
   },
   "engines": {
     "node": ">=24 <25",

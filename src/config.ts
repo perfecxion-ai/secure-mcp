@@ -25,6 +25,7 @@ export const configSchema = z
     readOnly: z.boolean().default(true),
     audit: z
       .strictObject({
+        socketPath: z.string().startsWith('/').max(100).optional(),
         maxPending: z.number().int().min(1).max(1024).default(64),
         timeoutMs: z.number().int().min(10).max(5000).default(1000),
       })
