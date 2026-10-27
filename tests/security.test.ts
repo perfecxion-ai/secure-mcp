@@ -299,3 +299,47 @@ test('unknown allowlist entries and tools without policy fail startup', async ()
     /explicit scopes/,
   );
 });
+
+test('collection budgets stop validation and cyclic inputs before execution', async (t) => {
+  let validated = 0;
+  let invoked = 0;
+  const tool = defineTool({
+    name: 'collect',
+    description: 'bounded collection fixture',
+    requiredScopes: ['collect:read'],
+    readOnly: true,
+    inputSchema: z.strictObject({
+      values: z.array(
+        z.string().superRefine(() => {
+          validated++;
+        }),
+      ),
+    }),
+    async invoke({ values }) {
+      invoked++;
+      return textResult(String(values.length));
+    },
+  });
+  const { runtime, principal } = await fixture(t, {
+    tools: [tool],
+    config: {
+      allowedTools: ['collect'],
+      localScopes: ['collect:read'],
+      limits: { maxInputElements: 8 },
+    },
+  });
+  assert.equal(
+    text(await runtime.invoke(principal, 'collect', { values: Array(8).fill('x') })),
+    'invalid_input',
+  );
+  assert.equal(validated, 0);
+  assert.equal(invoked, 0);
+  const cyclic: Record<string, unknown> = {};
+  cyclic.self = cyclic;
+  assert.equal(text(await runtime.invoke(principal, 'collect', cyclic)), 'invalid_input');
+  assert.equal(
+    text(await runtime.invoke(principal, 'collect', { values: Array(7).fill('x') })),
+    '7',
+  );
+  assert.equal(invoked, 1);
+});

@@ -54,12 +54,31 @@ test(
         return textResult('done');
       },
     });
+    let collectionValidations = 0;
+    let collectionCalls = 0;
+    const collection = defineTool({
+      name: 'collect',
+      description: 'collection budget fixture',
+      requiredScopes: ['wait:read'],
+      readOnly: true,
+      inputSchema: z.strictObject({
+        values: z.array(
+          z.string().superRefine(() => {
+            collectionValidations++;
+          }),
+        ),
+      }),
+      async invoke({ values }) {
+        collectionCalls++;
+        return textResult(String(values.length));
+      },
+    });
     const { runtime } = await fixture(t, {
-      tools: [tool],
+      tools: [tool, collection],
       config: {
         transport: 'http',
-        allowedTools: ['wait'],
-        limits: { maxConcurrent: 1, timeoutMs: 200 },
+        allowedTools: ['wait', 'collect'],
+        limits: { maxConcurrent: 1, timeoutMs: 200, maxInputElements: 8 },
         http: { port: 0, resource, issuer, jwksUrl: issuer + '/jwks', algorithms: ['ES256'] },
       },
     });
@@ -83,6 +102,19 @@ test(
         requestInit: { headers: { authorization: `Bearer ${token}` } },
       }),
     );
+
+    const rejected = await client.callTool({
+      name: 'collect',
+      arguments: { values: Array(8).fill('x') },
+    });
+    assert.equal(rejected.isError, true);
+    assert.equal(collectionValidations, 0);
+    assert.equal(collectionCalls, 0);
+    assert.equal(
+      text(await client.callTool({ name: 'collect', arguments: { values: Array(7).fill('x') } })),
+      '7',
+    );
+    assert.equal(collectionCalls, 1);
 
     const controller = new AbortController();
     let ready = entered();
