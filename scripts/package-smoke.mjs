@@ -1,16 +1,22 @@
 import assert from 'node:assert/strict';
+import { createHash } from 'node:crypto';
+import { parseArgs } from 'node:util';
 import { execFileSync, spawn } from 'node:child_process';
-import { mkdtemp, writeFile, rm, readdir } from 'node:fs/promises';
+import { mkdtemp, writeFile, rm, readdir, copyFile, readFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
-import { join, resolve } from 'node:path';
+import { join, resolve, basename } from 'node:path';
 import { Client } from '@modelcontextprotocol/client';
 import { StdioClientTransport } from '@modelcontextprotocol/client/stdio';
 
+const { values } = parseArgs({ options: { artifact: { type: 'string' } } });
 const directory = await mkdtemp(join(tmpdir(), 'secure-mcp-consumer-'));
 try {
-  execFileSync('npm', ['pack', '--pack-destination', directory], {
-    stdio: ['ignore', 'pipe', 'pipe'],
-  });
+  if (values.artifact)
+    await copyFile(resolve(values.artifact), join(directory, basename(values.artifact)));
+  else
+    execFileSync('npm', ['pack', '--pack-destination', directory], {
+      stdio: ['ignore', 'pipe', 'pipe'],
+    });
   const archive = (await readdir(directory)).find((file) => file.endsWith('.tgz'));
   assert.ok(archive);
   const files = execFileSync('tar', ['-tzf', join(directory, archive)], { encoding: 'utf8' }).split(
@@ -77,6 +83,10 @@ try {
   console.log(
     JSON.stringify({
       package: archive,
+      source: values.artifact ? 'provided immutable artifact' : 'local npm pack',
+      sha256: createHash('sha256')
+        .update(await readFile(join(directory, archive)))
+        .digest('hex'),
       files: files.filter(Boolean).length,
       installation: 'pass',
       import: 'silent',

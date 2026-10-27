@@ -1,0 +1,42 @@
+name: Alpha validation feedback
+description: Report results from a fresh, isolated alpha installation.
+title: 'Validation: '
+body:
+  - type: markdown
+    attributes:
+      value: 'For suspected security vulnerabilities, use private vulnerability reporting. Omit tokens, document content, credentials, and raw logs.'
+  - type: input
+    id: candidate
+    attributes:
+      label: Candidate commit and tarball SHA-256
+    validations:
+      required: true
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
+      description: Node version, Linux distribution, architecture, MCP host/version, and stdio or HTTP.
+    validations:
+      required: true
+  - type: textarea
+    id: behavior
+    attributes:
+      label: Steps, expected result, and actual result
+      description: Use harmless fixture names and sanitized outcomes. Include whether a clean restart changed the result.
+    validations:
+      required: true
+  - type: textarea
+    id: friction
+    attributes:
+      label: Setup friction and unclear instructions
+  - type: dropdown
+    id: result
+    attributes:
+      label: Trial outcome
+      options:
+        - Acceptance steps passed
+        - Setup blocked
+        - Runtime defect reproduced
+        - Trial stopped; security report submitted privately
+    validations:
+      required: true
