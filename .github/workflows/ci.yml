@@ -30,6 +30,7 @@ jobs:
       - run: npm --prefix labs/oauth audit --audit-level=high
       - run: npm run test:package
       - run: npm run test:container
+      - run: node labs/audit/storage-failure.mjs
       - run: npm run test:proxy
       - run: npm sbom --omit=dev --sbom-format=cyclonedx > sbom.cdx.json
       - run: npm pack --ignore-scripts
