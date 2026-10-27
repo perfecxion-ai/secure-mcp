@@ -7,6 +7,14 @@ import { join, resolve } from 'node:path';
 // Prove that selected security assertions fail when their actual boundary is weakened.
 const mutations = [
   {
+    name: 'pre-validation-input-budget',
+    file: 'src/runtime.ts',
+    from: 'maxToolInputElements: this.config.limits.maxInputElements,',
+    to: '',
+    test: 'tests/http-limits.test.ts',
+    pattern: 'HTTP cancellation',
+  },
+  {
     name: 'all-scopes-required',
     file: 'src/policy.ts',
     from: '.requiredScopes.every(',

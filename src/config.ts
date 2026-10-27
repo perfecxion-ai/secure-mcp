@@ -29,6 +29,7 @@ export const configSchema = z
         maxConcurrent: z.number().int().min(1).max(256).default(16),
         timeoutMs: z.number().int().min(10).max(300_000).default(10_000),
         maxInputBytes: z.number().int().min(1024).max(4_194_304).default(65_536),
+        maxInputElements: z.number().int().min(1).max(10_000).default(1024),
         maxOutputBytes: z.number().int().min(1024).max(4_194_304).default(262_144),
         shutdownMs: z.number().int().min(10).max(30_000).default(5_000),
       })
