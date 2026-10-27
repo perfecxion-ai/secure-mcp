@@ -8,7 +8,7 @@ permissions:
   contents: read
 jobs:
   validate:
-    name: Validate stdio runtime
+    name: Validate runtime
     runs-on: ubuntu-24.04
     timeout-minutes: 10
     steps:
@@ -20,4 +20,7 @@ jobs:
       - run: npm ci
       - run: npm run check
       - run: npm run test:package
+      - run: npm --prefix labs/oauth ci
+      - run: npm run test:oauth
       - run: npm audit --audit-level=high
+      - run: npm --prefix labs/oauth audit --audit-level=high

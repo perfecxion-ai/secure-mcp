@@ -4,6 +4,7 @@ import { parseArgs } from 'node:util';
 import { dirname, resolve } from 'node:path';
 import { serveStdio, StdioServerTransport } from '@modelcontextprotocol/server/stdio';
 import { SecureRuntime, VERSION } from './runtime.js';
+import { serveHttp } from './http.js';
 
 async function main(): Promise<void> {
   const { values } = parseArgs({
@@ -17,7 +18,7 @@ async function main(): Promise<void> {
   });
   if (values.help) {
     process.stdout.write(
-      'secure-mcp [--config FILE] [--workspace DIRECTORY] [--doctor] [--version]\nDefault: stdio, read-only document tools.\n',
+      'secure-mcp [--config FILE] [--workspace DIRECTORY] [--doctor] [--version]\nDefault: stdio, read-only document tools. HTTP requires a config file.\n',
     );
     return;
   }
@@ -53,7 +54,7 @@ async function main(): Promise<void> {
         transport: runtime.config.transport,
         readOnly: runtime.config.readOnly,
         tools: runtime.config.allowedTools,
-        externalAuthentication: false,
+        externalAuthentication: !!runtime.config.http,
         limits: runtime.config.limits,
       }) + '\n',
     );
@@ -62,7 +63,14 @@ async function main(): Promise<void> {
   }
   let close: () => Promise<number>;
   let protocolFailed = false;
-  {
+  if (runtime.config.transport === 'http') {
+    const handle = await serveHttp(runtime).catch(async (error) => {
+      await runtime.close();
+      throw error;
+    });
+    process.stderr.write(JSON.stringify({ event: 'listening', url: handle.url }) + '\n');
+    close = () => handle.close();
+  } else {
     const transport = new StdioServerTransport(process.stdin, process.stdout, {
       maxBufferSize: runtime.config.limits.maxInputBytes,
     });

@@ -1,13 +1,36 @@
 # Trust boundaries
 
-This local alpha hosts approved tools. Operators control configuration, code, workspace contents, and API destinations. Stdio clients inherit the launching process's configured authority. Handlers and audit sinks run with process privileges; policy checks do not sandbox hostile JavaScript.
+The alpha runtime hosts approved tools. It is not a sandbox for hostile JavaScript, an upstream MCP proxy, or a prompt-injection detector.
 
-Discovery and invocation require the tool allowlist, every required scope, and read-only policy. Strict schemas reject unknown arguments. Exceptions return bounded codes without internal messages. The document reader pins a Linux directory descriptor, opens components without following symlinks, denies hidden and traversal paths, and bounds regular-file UTF-8 reads. Hard links and malicious local processes rewriting approved files remain outside this boundary. Use an operator-controlled read-only workspace.
+## Trusted inputs
 
-API reads use a single configured destination, GET only, without redirects or caller-controlled URLs or credentials. The operator must trust that destination and DNS.
+The operator controls configuration, installed code, the document workspace, the fixed API destination, and identity-provider settings. Library tool handlers and audit sinks run with process privileges and must be trusted. An attacker who controls a handler can bypass middleware by using Node APIs directly.
 
-Execution has admission limits and cooperative cancellation. Timed-out work keeps its slot until it settles. In-process synchronous code cannot be preempted. Shutdown is bounded. Uncooperative library handlers can retain resources until process exit.
+Local stdio clients inherit the authority of the launching process and its configured scopes. HTTP clients must provide an access token from the configured issuer for the exact configured resource. Token subjects and scopes come only from verified claims. Client arguments, request metadata, and protocol roots never select identity, scopes, workspace, or upstream destinations.
 
-Audit events exclude arguments, file paths, tokens, and tool output. Admission audit failure prevents execution; terminal audit failure cannot undo a side effect. Saturation and cancellation may prevent terminal events. Subject hashes are pseudonymous. SDK wire rejections are not a complete durable audit trail.
+## Enforced controls
 
-This is an unpublished alpha. External HTTP identity, real assistant-host acceptance, final-candidate endurance measurements, independent review, and release provenance remain work in the roadmap. No production certification or prompt-injection prevention is claimed.
+- Tool allowlist, all required scopes, token expiry, and read-only policy govern both discovery and invocation.
+- Strict input schemas reject unknown fields instead of rewriting input. Error responses omit internal exception messages.
+- The Linux document reader anchors access to an open workspace directory, opens each component without following symlinks, rejects hidden/absolute/traversal paths, accepts only regular files, and bounds reads. File descriptor operations prevent the usual check-then-open symlink substitution.
+- A workspace must be operator-controlled. Hard links are not distinguishable from ordinary files, and the runtime does not defend against malicious local processes rewriting authorized files. Use a dedicated, read-only mount containing only data callers may read. The document tool currently requires Linux `/proc`.
+- API reads use a single operator-selected URL, GET only, no caller parameters, no forwarded bearer token, and no redirects. The operator is responsible for selecting a trusted destination and DNS. There is no arbitrary-URL fetch tool.
+- HTTP validates Host and exact Origin values before authentication. Missing Origin is allowed for native clients; every HTTP MCP call still requires a valid token. Tokens must use a configured asymmetric algorithm, carry `typ: at+jwt`, and satisfy issuer, audience, subject, issue-time, expiry, and maximum lifetime checks. JWKS lookup uses only the configured URL.
+- HTTP body, header, connection, request, and tool concurrency limits bound accepted work. Stdio bounds frames. Tool deadlines and caller cancellation signal cooperative handlers.
+- A timed-out handler retains its execution slot until it settles. Noncooperative synchronous JavaScript cannot be preempted inside the process. The CLI enforces a bounded shutdown and exits nonzero if work does not drain. Run untrusted code only in a separately designed execution service.
+
+## Audit and privacy
+
+Audit JSON goes to stderr by default, preserving stdio stdout for protocol messages. Events contain an internally generated request ID, a hash of issuer and subject, a registered tool name, outcome, timestamp, and duration. Arguments, file paths, tokens, contents, and internal exception messages are excluded. Subject hashes are pseudonymous, not anonymous; predictable subjects can be guessed.
+
+A failed admission audit prevents the handler from running. An audit failure after a side effect cannot undo that side effect; callers must not assume retry safety. A blocked audit sink is subject to the tool deadline and retains capacity until it settles. Saturation and cancellation can prevent a terminal audit event; counters expose bounded outcome labels. Invalid wire requests rejected by the SDK and failed HTTP authentication are not a complete durable audit trail in this alpha. Collect reverse-proxy access status without Authorization headers when remote audit coverage is required.
+
+Metrics require a verified token with `metrics:read`. No subject, URL, path, argument, or tool-supplied string becomes a metric label. `/health` and OAuth resource metadata are intentionally public and contain no credentials or workspace paths.
+
+## Revocation and remaining assurance
+
+This runtime does not issue, refresh, or revoke tokens. It verifies short-lived external access tokens on every HTTP request. An issuer-side logout does not immediately invalidate an already issued JWT. Expiry and the configured maximum age bound this window; deployments needing immediate revocation require an introspection or revocation integration before adoption.
+
+There are no accounts, passwords, MFA secrets, SAML assertions, refresh-token families, Redis sessions, or Vault key lifecycle in the new default runtime. V1 credentials must not be imported automatically.
+
+This is experimental software. Tests establish the cases they exercise, not general resistance to prompt injection, all authorization attacks, or all resource exhaustion. OS isolation for untrusted tools, distributed quotas, immediate revocation, browser OAuth user-journey validation, external security review, and real-host acceptance remain release gates.
