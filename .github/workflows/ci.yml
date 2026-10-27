@@ -23,6 +23,8 @@ jobs:
       - run: npm ci
       - run: npm run check
       - run: npm run test:mutations
+      - run: BENCH_SECONDS=1 npm run benchmark
+      - run: BENCH_SECONDS=1 node --max-old-space-size=256 scripts/http-benchmark.mjs
       - run: npm run test:audit
       - run: npm --prefix labs/oauth ci
       - run: npm run test:oauth

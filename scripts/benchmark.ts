@@ -1,3 +1,5 @@
+import assert from 'node:assert/strict';
+import type { ChildProcess } from 'node:child_process';
 import { mkdtemp, writeFile, rm, readFile } from 'node:fs/promises';
 import { tmpdir, cpus } from 'node:os';
 import { join, resolve } from 'node:path';
@@ -26,6 +28,10 @@ const boot = performance.now();
 try {
   await client.connect(transport);
   const startupMs = performance.now() - boot;
+  // Benchmark-only diagnostic for the pinned SDK. Fail if this private hook
+  // changes; transport.close() alone does not expose the child's exit status.
+  const child = (transport as unknown as { _process?: ChildProcess })._process;
+  assert.ok(child && child.pid === transport.pid, 'SDK child process diagnostic unavailable');
   const started = performance.now(),
     end = started + seconds * 1000;
   const memorySample = async () => {
@@ -86,7 +92,10 @@ try {
     p95Ms: sorted[Math.floor(sorted.length * 0.95)],
     memory,
   };
-  process.stdout.write(JSON.stringify(report, null, 2) + '\n');
+  await client.close();
+  const exit = { code: child.exitCode, signal: child.signalCode };
+  assert.deepEqual(exit, { code: 0, signal: null });
+  process.stdout.write(JSON.stringify({ ...report, serverExit: exit }, null, 2) + '\n');
   if (failures) process.exitCode = 1;
 } finally {
   await client.close();

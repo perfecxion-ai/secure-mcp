@@ -35,7 +35,7 @@ function failed(reason, index, started, error) {
       eventLoopMaxMs: eventLoop.max / 1e6,
     });
 }
-let processHandle, processExit, sampler;
+let processHandle, processExit, sampler, report;
 let lastProgress = 0;
 let calls = 0,
   failures = 0,
@@ -202,7 +202,31 @@ try {
   clearInterval(sampler);
   await sample();
   const sorted = latencies.filter(Number.isFinite).sort((a, b) => a - b);
-  const report = {
+  const health = await fetch(new URL('/health', resource));
+  assert.equal(health.status, 200, 'Audit readiness must be healthy after the workload');
+  const monitorToken = await new SignJWT({ scope: 'metrics:read' })
+    .setProtectedHeader({ alg: 'ES256', typ: 'at+jwt', kid: 'load-key' })
+    .setSubject('load-monitor')
+    .setIssuer(issuer)
+    .setAudience(resource)
+    .setIssuedAt()
+    .setExpirationTime('5m')
+    .sign(keys.privateKey);
+  const metricsResponse = await fetch(new URL('/metrics', resource), {
+    headers: { authorization: `Bearer ${monitorToken}` },
+  });
+  assert.equal(metricsResponse.status, 200);
+  const metrics = await metricsResponse.text();
+  const auditState = Object.fromEntries(
+    ['pending', 'failures', 'dropped'].map((name) => {
+      const match = metrics.match(new RegExp(`^secure_mcp_audit_${name} (\\d+)$`, 'm'));
+      assert.ok(match, 'Missing audit metric');
+      return [name, Number(match[1])];
+    }),
+  );
+  assert.equal(auditState.failures, 0);
+  assert.equal(auditState.dropped, 0);
+  report = {
     date: new Date().toISOString(),
     node: process.version,
     architecture: process.arch,
@@ -210,6 +234,8 @@ try {
     transport: 'HTTP on loopback, no TLS',
     concurrency: 4,
     authentication: 'Local ES256 JWT fixtures renewed every 120 seconds; real HTTP JWKS requests',
+    auditState,
+    readinessStatus: health.status,
     audit: auditSocket
       ? 'Unix socket collector, fsync acknowledgement per record'
       : 'JSON events to /dev/null',
@@ -238,7 +264,6 @@ try {
     memory,
     sha256,
   };
-  process.stdout.write(JSON.stringify(report, null, 2) + '\n');
   if (failures) process.exitCode = 1;
 } finally {
   eventLoop.disable();
@@ -249,6 +274,7 @@ try {
     const timer = setTimeout(() => processHandle.kill('SIGKILL'), 6000);
     const code = await processExit;
     clearTimeout(timer);
+    if (report) report.serverExit = code;
     if (code !== 0) process.exitCode = 1;
   }
   await new Promise((resolve) => {
@@ -257,3 +283,5 @@ try {
   });
   await rm(directory, { recursive: true, force: true });
 }
+
+if (report) process.stdout.write(JSON.stringify(report, null, 2) + '\n');
