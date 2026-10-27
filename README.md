@@ -19,13 +19,15 @@ Configure an MCP host to launch the CLI with that explicit workspace. Call `docu
 
 The official SDK provides stdio transport. Tool discovery and invocation share allowlist, all-scope, and read-only checks. Execution bounds cover input, output, concurrency, deadlines, cancellation, and shutdown. `policy_status` reports visible tools and limits. Optional `api_read` fetches one operator-configured URL without redirects or caller-supplied credentials.
 
-Library imports have no startup side effects. Tool implementations and audit sinks are trusted process code. Read the [threat model](docs/THREAT_MODEL.md) before embedding. HTTP transport is not included in this change.
+Library imports have no startup side effects. Tool implementations and audit sinks are trusted process code. Read the [threat model](docs/THREAT_MODEL.md) before embedding. Streamable HTTP requires externally issued JWT access tokens, with issuer, audience, type, expiry, and scope checks. See [operations](docs/OPERATIONS.md) for HTTP configuration and the [external issuer lab](labs/oauth/README.md) for a disposable client-credentials flow.
 
 ## Validation
 
 ```bash
 npm run check
 npm run test:package
+npm --prefix labs/oauth ci
+npm run test:oauth
 npm audit
 ```
 

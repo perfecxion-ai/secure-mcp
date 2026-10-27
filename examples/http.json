@@ -1,0 +1,16 @@
+{
+  "transport": "http",
+  "workspace": "./documents",
+  "allowedTools": ["documents_read", "policy_status"],
+  "readOnly": true,
+  "http": {
+    "host": "127.0.0.1",
+    "port": 3000,
+    "resource": "https://mcp.example.com/mcp",
+    "issuer": "https://identity.example.com",
+    "jwksUrl": "https://identity.example.com/.well-known/jwks.json",
+    "algorithms": ["RS256"],
+    "allowedOrigins": [],
+    "maxTokenAgeSeconds": 900
+  }
+}

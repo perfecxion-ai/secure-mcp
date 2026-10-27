@@ -1,0 +1,13 @@
+{
+  "dependencies": {
+    "oidc-provider": "9.13.0"
+  },
+  "name": "secure-mcp-oauth-lab",
+  "private": true,
+  "type": "module",
+  "version": "0.0.0",
+  "license": "AGPL-3.0-or-later",
+  "engines": {
+    "node": ">=24 <25"
+  }
+}

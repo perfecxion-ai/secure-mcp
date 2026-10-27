@@ -8,4 +8,6 @@ export { mayInvoke } from './policy.js';
 export type { Principal, ToolPolicy } from './policy.js';
 export { jsonAuditSink } from './audit.js';
 export type { AuditEvent, AuditSink } from './audit.js';
+export { serveHttp } from './http.js';
+export type { HttpHandle } from './http.js';
 export { RuntimeFailure } from './errors.js';
