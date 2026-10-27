@@ -1,0 +1,9 @@
+# Isolated validation performance contract
+
+Declare these gates before the candidate runs. This is a local acceptance workload, not a production throughput promise.
+
+Environment: DGX Spark ARM64 Linux, Node 24.22.1. Freeze runtime modules and record their SHA-256 hashes. Run one hour of four-client stdio with JSON audit discarded, and one hour of four-client loopback HTTP with a separate Unix-socket collector acknowledging fsync for every record. HTTP workers wait 200 ms between calls (up to 20 total calls/second) to keep the retained journal within a declared storage budget. Three HTTP identities read a 29-byte document, one has policy-only scope, and each worker attempts 10% expected denials. JWT fixtures renew every 120 seconds. TLS and browser IdP behavior are separate acceptance labs.
+
+Required: zero result/authentication mismatches, clean driver and server exit, healthy audit at completion, no dropped or failed collector delivery, matching journal request/result counts, and no content sentinels in the journal. Both protocols must retain fewer than 64 file descriptors and less than 512 MiB RSS at all samples. After the first ten minutes, compare median RSS in the second and final ten-minute windows; growth must remain below 64 MiB. The bounded last-10,000-call latency sample must have p95 below 50 ms for stdio and 100 ms for durable HTTP. HTTP full readiness must be below 2 seconds. Stdio's existing startup timer measures transport connection only and is not an application readiness gate.
+
+Also measure a short identical in-process tool workload with audit omitted and with acknowledged durable audit. Report both timings and absolute overhead; do not infer network or model latency from that comparison. A failed run must retain its report and diagnosis before retry. Published evidence must identify the exact code and actual exit status, and distinguish startup, steady-state, driver, and storage costs.
