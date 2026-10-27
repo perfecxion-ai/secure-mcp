@@ -23,6 +23,12 @@ export const configSchema = z
     workspace: z.string().min(1).default('.'),
     allowedTools: z.array(name).max(128).default(['documents_read', 'policy_status']),
     readOnly: z.boolean().default(true),
+    audit: z
+      .strictObject({
+        maxPending: z.number().int().min(1).max(1024).default(64),
+        timeoutMs: z.number().int().min(10).max(5000).default(1000),
+      })
+      .prefault({}),
     localScopes: z.array(scope).max(128).default(['documents:read', 'policy:read']),
     limits: z
       .strictObject({

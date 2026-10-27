@@ -73,7 +73,7 @@ test(
         return textResult(String(values.length));
       },
     });
-    const { runtime } = await fixture(t, {
+    const { runtime, events } = await fixture(t, {
       tools: [tool, collection],
       config: {
         transport: 'http',
@@ -110,6 +110,9 @@ test(
     assert.equal(rejected.isError, true);
     assert.equal(collectionValidations, 0);
     assert.equal(collectionCalls, 0);
+    assert.ok(
+      events.some((event) => event.kind === 'protocol' && event.outcome === 'tool_rejected'),
+    );
     assert.equal(
       text(await client.callTool({ name: 'collect', arguments: { values: Array(7).fill('x') } })),
       '7',
@@ -138,5 +141,11 @@ test(
     await last;
     assert.equal(handle.server.listening, false);
     assert.equal(cancelled, 3);
+    for (const outcome of ['busy', 'timeout', 'cancelled', 'shutting_down'])
+      assert.ok(
+        events.some((event) => event.kind === 'tool' && event.outcome === outcome),
+        outcome,
+      );
+    assert.ok(events.some((event) => event.kind === 'http' && event.outcome === 'disconnected'));
   },
 );

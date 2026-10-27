@@ -1,11 +1,11 @@
-import { McpServer } from '@modelcontextprotocol/server';
+import type { McpServer } from '@modelcontextprotocol/server';
 import type { CallToolResult } from '@modelcontextprotocol/server';
 import { z } from 'zod';
 import { parseConfig } from './config.js';
 import type { RuntimeConfig } from './config.js';
 import { mayInvoke } from './policy.js';
 import type { Principal } from './policy.js';
-import { auditContext, jsonAuditSink, record } from './audit.js';
+import { auditContext, AuditDispatcher, AuditedMcpServer, jsonAuditSink, record } from './audit.js';
 import type { AuditSink } from './audit.js';
 import { ExecutionController } from './execution.js';
 import { failureCode, RuntimeFailure } from './errors.js';
@@ -24,7 +24,7 @@ export class SecureRuntime {
   readonly config: RuntimeConfig;
   readonly execution: ExecutionController;
   private readonly registry = new Map<string, ToolDefinition>();
-  private readonly audit: AuditSink;
+  readonly audit: AuditDispatcher;
   private readonly counts = new Map<string, number>();
   private readonly disposers: (() => Promise<void>)[] = [];
   private closing: Promise<number> | undefined;
@@ -35,7 +35,11 @@ export class SecureRuntime {
       this.config.limits.maxConcurrent,
       this.config.limits.timeoutMs,
     );
-    this.audit = options.audit ?? jsonAuditSink(process.stderr);
+    this.audit = new AuditDispatcher(
+      options.audit ?? jsonAuditSink(process.stderr),
+      this.config.audit.maxPending,
+      this.config.audit.timeoutMs,
+    );
   }
 
   static async create(options: RuntimeOptions = {}): Promise<SecureRuntime> {
@@ -100,13 +104,13 @@ export class SecureRuntime {
     return [...this.registry.values()].filter((tool) => mayInvoke(this.config, principal, tool));
   }
 
-  createServer(principal: Principal): McpServer {
+  createServer(principal: Principal, requestId?: string): McpServer {
     // Capture identity at the trusted transport boundary, never from arguments or _meta.
     const identity: Principal = Object.freeze({
       ...principal,
       scopes: Object.freeze([...principal.scopes]),
     });
-    const server = new McpServer(
+    const server = new AuditedMcpServer(
       { name: 'secure-mcp', version: VERSION },
       {
         maxToolInputElements: this.config.limits.maxInputElements,
@@ -114,6 +118,35 @@ export class SecureRuntime {
         cacheHints: { 'tools/list': { ttlMs: 0, cacheScope: 'private' } },
       },
     );
+    server.observeProtocolError = async (code) => {
+      const outcome =
+        (
+          {
+            '-32700': 'parse_error',
+            '-32600': 'invalid_request',
+            '-32601': 'unknown_method',
+            '-32602': 'invalid_params',
+          } as Record<string, string>
+        )[String(code)] ?? 'protocol_error';
+      await this.audit.write({
+        schema: 1,
+        time: new Date().toISOString(),
+        ...auditContext(identity, 'unknown', requestId),
+        kind: 'protocol',
+        outcome,
+        durationMs: 0,
+      });
+    };
+    server.observeToolRejection = async () => {
+      await this.audit.write({
+        schema: 1,
+        time: new Date().toISOString(),
+        ...auditContext(identity, 'unknown', requestId),
+        kind: 'protocol',
+        outcome: 'tool_rejected',
+        durationMs: 0,
+      });
+    };
     for (const tool of this.visibleTools(identity))
       server.registerTool(
         tool.name,
@@ -126,7 +159,7 @@ export class SecureRuntime {
             openWorldHint: !['documents_read', 'policy_status'].includes(tool.name),
           },
         },
-        (args, ctx) => this.invoke(identity, tool.name, args, ctx.mcpReq.signal),
+        (args, ctx) => this.invoke(identity, tool.name, args, ctx.mcpReq.signal, requestId),
       );
     return server;
   }
@@ -136,9 +169,13 @@ export class SecureRuntime {
     name: string,
     args: Record<string, unknown>,
     signal = new AbortController().signal,
+    requestId?: string,
   ): Promise<CallToolResult> {
     const tool = this.registry.get(name);
-    const event = auditContext(principal, tool?.name ?? 'unknown');
+    const event = {
+      ...auditContext(principal, tool?.name ?? 'unknown', requestId),
+      kind: 'tool' as const,
+    };
     const start = performance.now();
     let outcome = 'internal';
     try {
@@ -156,27 +193,27 @@ export class SecureRuntime {
         }
         boundedSignal.throwIfAborted();
         if (!parsed.success) throw new RuntimeFailure('invalid_input');
-        await record(this.audit, event, 'allowed', start);
+        await record((event) => this.audit.write(event), event, 'allowed', start);
         boundedSignal.throwIfAborted();
-        try {
-          const value = await tool.invoke(parsed.data, { principal, signal: boundedSignal });
-          boundedSignal.throwIfAborted();
-          if (Buffer.byteLength(JSON.stringify(value)) > this.config.limits.maxOutputBytes)
-            throw new RuntimeFailure('output_too_large');
-          await record(this.audit, event, value.isError ? 'tool_error' : 'success', start);
-          return value;
-        } catch (error) {
-          if (!boundedSignal.aborted) await record(this.audit, event, failureCode(error), start);
-          throw error;
-        }
+        const value = await tool.invoke(parsed.data, { principal, signal: boundedSignal });
+        boundedSignal.throwIfAborted();
+        if (Buffer.byteLength(JSON.stringify(value)) > this.config.limits.maxOutputBytes)
+          throw new RuntimeFailure('output_too_large');
+        await record(
+          (event) => this.audit.write(event),
+          event,
+          value.isError ? 'tool_error' : 'success',
+          start,
+        );
+        return value;
       }, signal);
       outcome = result.isError ? 'tool_error' : 'success';
       return result;
     } catch (error) {
       outcome = failureCode(error);
-      if (outcome === 'denied' || outcome === 'invalid_input') {
+      if (outcome !== 'audit_unavailable') {
         try {
-          await this.execution.run(() => record(this.audit, event, outcome, start), signal);
+          await record((event) => this.audit.write(event), event, outcome, start);
         } catch (auditError) {
           outcome = failureCode(auditError);
         }
@@ -195,6 +232,9 @@ export class SecureRuntime {
       '# TYPE secure_mcp_calls_total counter\n' +
       [...this.counts]
         .map(([outcome, count]) => `secure_mcp_calls_total{outcome="${outcome}"} ${count}\n`)
+        .join('') +
+      Object.entries(this.audit.state)
+        .map(([key, value]) => `secure_mcp_audit_${key} ${value}\n`)
         .join('')
     );
   }
@@ -204,7 +244,7 @@ export class SecureRuntime {
       const remaining = await this.execution.close(this.config.limits.shutdownMs);
       // Trusted handlers which ignore cancellation can retain resources until process exit.
       if (!remaining) await Promise.all(this.disposers.map((dispose) => dispose()));
-      return remaining;
+      return remaining + (await this.audit.close());
     })();
     return this.closing;
   }

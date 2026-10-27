@@ -25,9 +25,9 @@ The improved harness records bounded error categories, driver heap/RSS, event-lo
 
 Use a current Node 24 patch for both the server and benchmark driver. Do not describe a small number of successful short requests as endurance evidence. Do not discard the failed run when presenting newer results. A stable-release gate still needs a declared workload and sustained performance under the supported deployment environment.
 
-### A02 P1 Remote audit coverage is incomplete
+### A02 P1 Remote audit coverage and durable delivery
 
-Admission audit failure prevents handler execution, and tool outcomes have content-free audit records. However, failed authentication, Host/Origin rejection, SDK wire/schema rejection, and some cancellation/saturation outcomes do not have a complete correlated audit trail. A successful call also does not prove durable remote ingestion: current load tests send JSON audit to `/dev/null`.
+The initial assessment found missing transport rejection and terminal records. Bounded transport audit now records HTTP status/rejection, SDK protocol failures, and tool cancellation/saturation with server-generated correlation IDs. Audit failure latches readiness unhealthy. Durable collector fault/load validation remains required; earlier load tests used `/dev/null` and do not establish persistence.
 
 Next change: define bounded transport events and trusted correlation IDs, then cover authentication and wire rejection without recording bearer tokens, arguments, raw paths, or unbounded labels. Test backpressure, collector failure, cancellation, and shutdown. Specify which failures deny work and how an operator detects incomplete delivery. Do not add an unbounded logging queue.
 

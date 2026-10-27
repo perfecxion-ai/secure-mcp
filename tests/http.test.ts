@@ -236,6 +236,56 @@ test('HTTP resource server and official SDK integration', { timeout: 30_000 }, a
     },
   );
 
+  await t.test(
+    'unknown routes and protocol errors produce content-free correlated audit',
+    async () => {
+      const headers = {
+        authorization: `Bearer ${good}`,
+        'content-type': 'application/json',
+        accept: 'application/json, text/event-stream',
+      };
+      assert.equal((await fetch(base + '/private-sentinel?token=secret-sentinel')).status, 404);
+      const response = await fetch(handle.url, {
+        method: 'POST',
+        headers,
+        body: JSON.stringify({
+          jsonrpc: '2.0',
+          id: 'client-sentinel',
+          method: 'unknown-sentinel',
+          params: { secret: 'argument-sentinel' },
+        }),
+      });
+      await response.text();
+      assert.ok(
+        events.some((event) => event.kind === 'protocol' && event.outcome === 'unknown_method'),
+      );
+      assert.ok(
+        events.some((event) => event.kind === 'protocol' && event.outcome === 'invalid_params'),
+      );
+      assert.ok(
+        events.some(
+          (event) => event.kind === 'http' && event.status === 401 && event.actor === 'anonymous',
+        ),
+      );
+      assert.ok(events.some((event) => event.outcome === 'host_denied'));
+      assert.ok(events.some((event) => event.outcome === 'origin_denied'));
+      for (const status of [400, 413, 404])
+        assert.ok(events.some((event) => event.kind === 'http' && event.status === status));
+      const tool = events.find((event) => event.kind === 'tool' && event.outcome === 'success')!;
+      assert.ok(
+        events.some(
+          (event) =>
+            event.kind === 'http' &&
+            event.requestId === tool.requestId &&
+            event.actor === tool.actor,
+        ),
+      );
+      assert.ok(!JSON.stringify(events).includes('sentinel'));
+      assert.ok(!JSON.stringify(events).includes('alice'));
+      for (const event of events) assert.match(event.requestId, /^[a-f0-9-]{36}$/);
+    },
+  );
+
   await t.test('metrics require a verified token with metrics scope', async () => {
     assert.equal((await fetch(base + '/metrics')).status, 401);
     assert.equal(
