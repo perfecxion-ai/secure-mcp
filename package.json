@@ -44,7 +44,8 @@
     "format:check": "prettier --check src tests scripts package.json tsconfig*.json eslint.config.js .github examples",
     "schema": "node --import tsx scripts/config-schema.ts",
     "test:coverage": "node --import tsx --test --experimental-test-coverage --test-coverage-include=src/*.ts tests/*.test.ts",
-    "test:oauth": "node labs/oauth/verify.mjs && node labs/oauth/verify-code.mjs"
+    "test:oauth": "node labs/oauth/verify.mjs && node labs/oauth/verify-code.mjs",
+    "benchmark:http": "node scripts/http-benchmark.mjs"
   },
   "engines": {
     "node": ">=24 <25",
