@@ -104,9 +104,26 @@ export class AuditedMcpServer extends McpServer {
   override async connect(transport: Transport): Promise<void> {
     const send = transport.send.bind(transport);
     transport.send = async (message, options) => {
-      if ('error' in message) await this.observeProtocolError?.(message.error.code);
-      if ('result' in message && message.result.isError === true)
-        await this.observeToolRejection?.();
+      try {
+        if ('error' in message) await this.observeProtocolError?.(message.error.code);
+        if ('result' in message && message.result.isError === true)
+          await this.observeToolRejection?.();
+      } catch {
+        // Audit loss must deny the call without suppressing its failure response.
+        // Never forward an unaudited SDK error's free-form message or data.
+        if ('id' in message) {
+          await send(
+            {
+              jsonrpc: '2.0',
+              id: message.id,
+              error: { code: -32603, message: 'audit_unavailable' },
+            },
+            options,
+          );
+          return;
+        }
+        throw new RuntimeFailure('audit_unavailable');
+      }
       await send(message, options);
     };
     await super.connect(transport);
