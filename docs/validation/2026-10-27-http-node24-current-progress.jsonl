@@ -1,0 +1,14 @@
+{"progress":60,"calls":169867,"failures":0,"memory":{"elapsedSeconds":60,"rssKiB":327500,"descriptors":28,"clientRssKiB":298280,"clientHeapUsedKiB":39373}}
+{"progress":120,"calls":343646,"failures":0,"memory":{"elapsedSeconds":120,"rssKiB":328172,"descriptors":28,"clientRssKiB":298760,"clientHeapUsedKiB":57727}}
+{"progress":180,"calls":503603,"failures":0,"memory":{"elapsedSeconds":180,"rssKiB":332460,"descriptors":27,"clientRssKiB":298760,"clientHeapUsedKiB":45626}}
+{"progress":240,"calls":663134,"failures":0,"memory":{"elapsedSeconds":240,"rssKiB":334772,"descriptors":28,"clientRssKiB":299080,"clientHeapUsedKiB":51566}}
+{"progress":300,"calls":797655,"failures":0,"memory":{"elapsedSeconds":300,"rssKiB":344244,"descriptors":30,"clientRssKiB":299080,"clientHeapUsedKiB":78519}}
+{"progress":360,"calls":945116,"failures":0,"memory":{"elapsedSeconds":360,"rssKiB":349340,"descriptors":28,"clientRssKiB":299560,"clientHeapUsedKiB":46883}}
+{"progress":420,"calls":1099255,"failures":0,"memory":{"elapsedSeconds":420,"rssKiB":349640,"descriptors":27,"clientRssKiB":299560,"clientHeapUsedKiB":42449}}
+{"progress":480,"calls":1255194,"failures":0,"memory":{"elapsedSeconds":480,"rssKiB":349640,"descriptors":28,"clientRssKiB":299560,"clientHeapUsedKiB":44205}}
+{"progress":540,"calls":1412940,"failures":0,"memory":{"elapsedSeconds":540,"rssKiB":349760,"descriptors":29,"clientRssKiB":299560,"clientHeapUsedKiB":61765}}
+{"progress":600,"calls":1576801,"failures":0,"memory":{"elapsedSeconds":600,"rssKiB":349892,"descriptors":29,"clientRssKiB":299560,"clientHeapUsedKiB":25508}}
+{"progress":660,"calls":1742931,"failures":0,"memory":{"elapsedSeconds":660,"rssKiB":349632,"descriptors":28,"clientRssKiB":299720,"clientHeapUsedKiB":41212}}
+{"progress":720,"calls":1908746,"failures":0,"memory":{"elapsedSeconds":720,"rssKiB":349632,"descriptors":30,"clientRssKiB":300200,"clientHeapUsedKiB":77914}}
+{"progress":780,"calls":2075726,"failures":0,"memory":{"elapsedSeconds":780,"rssKiB":349632,"descriptors":28,"clientRssKiB":301320,"clientHeapUsedKiB":46860}}
+{"progress":840,"calls":2242094,"failures":0,"memory":{"elapsedSeconds":840,"rssKiB":349632,"descriptors":28,"clientRssKiB":301320,"clientHeapUsedKiB":45354}}

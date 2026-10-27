@@ -1,0 +1,52 @@
+{
+  "runtimeSourceCommit": "c0a5f95b48253f69451be0cc8d7447f5eb970917",
+  "runtimeSha256": {
+    "dist/audit.js": "efba99d8ef374ec66acf903378d11ce8dd154e1359d4d4e561b30ba749fc5baf",
+    "dist/cli.js": "1a024822fdf503a3e3fe73f36884b4fac18d7d614ac51f46644c8778eb1163c5",
+    "dist/config.js": "450e61a38815ab4d77d77933de1e43ee17175350d8b0a1ce1056e4572649bf7e",
+    "dist/errors.js": "af76f4cb2b27c84c7cfebae19dfcde21c524531072a5be4b5f941bd0a981cd50",
+    "dist/execution.js": "c6688ffbb180105872ee6a9885d399c6fbb276a0bec32886b0b0a7d496be75cc",
+    "dist/http.js": "5a5be59d0326049e25a1956448e7cd1ddb8f363d4bed38dad5b81406ed8b0fc5",
+    "dist/identity.js": "1b7f724d787f3062909fe2b70414a476a182fcef619281b54a5a4dacb76c044e",
+    "dist/index.js": "19eba50073372730a97b12533c23b64ec29785c2c871712fb2b05f7528277224",
+    "dist/input.js": "7e67ab45dfc0d310a3965734bf6a175f466d2e6dc1c981c851cf0f8060269f58",
+    "dist/policy.js": "23b3f3c42894e8849e5bda94a21db709906eac69b049d426c52b53889b326ac3",
+    "dist/runtime.js": "0069fc2501c176c16e03f00011294e8ff4d34a14a5cbb639d73db3996c3869e6",
+    "dist/tools.js": "a49c3819063abf12989790b4adeb96dbb8581dc7862564a458665b743f27ce23"
+  },
+  "benchmarkSources": {
+    "scripts/benchmark.ts": {
+      "sourceCommit": "c0a5f95b48253f69451be0cc8d7447f5eb970917",
+      "sha256": "66c5245403eb3af28bece2bf2fab266b4fd672133680ae4df4e3b1d49b8859ad"
+    },
+    "scripts/http-benchmark.mjs": {
+      "sourceCommit": "c4bd4e63c4c0b912cfb2e8dd585887062e88ca50",
+      "sha256": "82a4e12ac06fa1848c5936d1a27e5e5b65d0d189398ad0221535d64298c979c4"
+    }
+  },
+  "environment": {
+    "hardware": "NVIDIA DGX Spark, 128 GiB unified memory (operator-supplied description)",
+    "architecture": "arm64",
+    "operatingSystem": "Linux",
+    "isolation": "Shared host; overlapping benchmarks, builds, and validation work",
+    "auditDestination": "/dev/null; no durable collector"
+  },
+  "runs": [
+    {
+      "report": "2026-10-27-http-node24-old-diagnostic.json",
+      "exitCode": 1,
+      "result": "failed: 13 request errors"
+    },
+    {
+      "report": "2026-10-27-http-node24-old-bounded.json",
+      "exitCode": 143,
+      "result": "not a clean pass: workload completed with zero result mismatches, but throughput degraded and the runner reported exit 143",
+      "exitReason": "Not established; do not infer successful process cleanup from workload JSON alone"
+    },
+    {
+      "report": "2026-10-27-http-node24-current-diagnostic.json",
+      "exitCode": 0,
+      "result": "pass for the recorded 15-minute workload"
+    }
+  ]
+}

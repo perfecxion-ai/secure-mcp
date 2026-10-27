@@ -1,6 +1,6 @@
 # Validation evidence
 
-Reports identify a workload and a particular runtime. Passing results are not transferable to arbitrary tools, clients, deployment settings, or later source changes.
+Reports identify a workload and a particular runtime. The [run identity record](2026-10-27-endurance-run-identities.json) ties completed guarded runs to source/build hashes and separately records their process exit status. Passing results are not transferable to arbitrary tools, clients, deployment settings, or later source changes.
 
 ## Guarded runtime
 
@@ -15,7 +15,15 @@ Runtime source: `c0a5f95b48253f69451be0cc8d7447f5eb970917`. Later lab and docume
 
 The [older-Node HTTP diagnostic](2026-10-27-http-node24-old-diagnostic.json) completed with 13 request errors in 1,386,459 calls and a maximum driver event-loop stall of 20.75 seconds. It used the guarded runtime and Node 24.13.0. The [standalone AbortSignal probe](../reviews/evidence/reproduce-abort-signal.mjs) completed one million operations in [1.75 seconds on Node 24.22.1](2026-10-27-abort-signal-node24-current.json); the [24.13.0 attempt was stopped after at least 120 seconds](2026-10-27-abort-signal-node24-old-stopped.json) without completing. These observations support investigating the client runtime; they do not prove the exact cause of every HTTP failure.
 
-A one-hour guarded stdio run and current-Node HTTP comparisons are in progress. Their results will be added only after completion. The earlier HTTP run failed; it is retained below rather than relabeled as a pass.
+The [15-minute current-Node comparison](2026-10-27-http-node24-current-diagnostic.json) completed 2,410,303 calls with zero unexpected results on Node 24.22.1 and a 256 MiB driver heap limit. Its maximum sampled driver RSS was 294.4 MiB and its maximum event-loop delay was 28.61 ms. The [older-Node 256 MiB driver](2026-10-27-http-node24-old-bounded.json) completed its 30-minute workload with 724,453 calls and zero result mismatches, but throughput degraded and the runner reported exit status 143. It is not counted as a clean pass. Reducing its heap did not restore sustained throughput. The reason for that exit status was not established.
+
+![Driver memory and throughput for three Node patch and heap configurations](2026-10-27-http-driver-comparison.svg)
+
+The chart shows the first 15 minutes from the checked-in progress reports. Runs overlapped with other work, so this is an observational comparison rather than a controlled capacity claim. The [rendering script](render-http-comparison.py) uses Matplotlib and can regenerate the SVG from those reports.
+
+The [artifact verification record](2026-10-27-guarded-artifact-verification.json) verifies the exact tarball from main commit `eee12d17c5bb86559fdad12785b67b4d1614696b`, requiring this repository's CI workflow and main ref. Both build provenance and the production SBOM verified; an altered tarball was rejected. All 12 packaged JavaScript module hashes match the guarded local lab builds. This does not mean the artifact was published or promoted.
+
+A one-hour guarded stdio run and a 30-minute current-Node HTTP run are in progress. Their results will be added only after completion. The earlier HTTP run failed; it is retained below rather than relabeled as a pass.
 
 ## Historical runs
 
