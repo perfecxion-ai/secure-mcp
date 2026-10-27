@@ -1,6 +1,6 @@
 # Measuring the runtime
 
-Build before measuring. Both scripts use a four-call workload and keep only the most recent 10,000 latency observations, so the reported percentiles are a rolling sample rather than percentiles over every call.
+Use a current Node 24 patch for both the server and the load driver. The [versioned driver comparison](validation/README.md) found substantial slowdown on 24.13.0 that did not occur in the recorded 24.22.1 run. Build before measuring. Both scripts use a four-call workload and keep only the most recent 10,000 latency observations, so the reported percentiles are a rolling sample rather than percentiles over every call.
 
 ```bash
 npm ci

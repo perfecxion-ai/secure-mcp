@@ -1,0 +1,399 @@
+{
+  "date": "2026-10-27T14:33:58.546587+00:00",
+  "sourceCommit": "eee12d17c5bb86559fdad12785b67b4d1614696b",
+  "workflowRun": "https://github.com/perfecxion-ai/secure-mcp/actions/runs/40520535699",
+  "artifact": "perfecxion-secure-mcp-server-2.0.0-alpha.1.tgz",
+  "sha256": "0b737f8101d22757f05aa5aa89bc9d95c1c400066ba5a0e8981648b98433873a",
+  "verifier": "gh 2.103.3, official ARM64 release digest verified",
+  "requiredWorkflow": "perfecxion-ai/secure-mcp/.github/workflows/ci.yml",
+  "requiredRef": "refs/heads/main",
+  "buildProvenance": "verified",
+  "productionSbom": "verified",
+  "tamperedArtifact": "rejected: no attestation for modified digest",
+  "runtimeModuleMatch": "All 12 packaged JavaScript module hashes match the guarded stdio, HTTP, and host-lab builds",
+  "verification": {
+    "provenance": {
+      "mediaType": "application/vnd.dev.sigstore.verificationresult+json;version=0.1",
+      "signature": {
+        "certificate": {
+          "certificateIssuer": "CN=sigstore-intermediate,O=sigstore.dev",
+          "subjectAlternativeName": "https://github.com/perfecxion-ai/secure-mcp/.github/workflows/ci.yml@refs/heads/main",
+          "issuer": "https://token.actions.githubusercontent.com",
+          "githubWorkflowTrigger": "push",
+          "githubWorkflowSHA": "eee12d17c5bb86559fdad12785b67b4d1614696b",
+          "githubWorkflowName": "CI",
+          "githubWorkflowRepository": "perfecxion-ai/secure-mcp",
+          "githubWorkflowRef": "refs/heads/main",
+          "buildSignerURI": "https://github.com/perfecxion-ai/secure-mcp/.github/workflows/ci.yml@refs/heads/main",
+          "buildSignerDigest": "eee12d17c5bb86559fdad12785b67b4d1614696b",
+          "runnerEnvironment": "github-hosted",
+          "sourceRepositoryURI": "https://github.com/perfecxion-ai/secure-mcp",
+          "sourceRepositoryDigest": "eee12d17c5bb86559fdad12785b67b4d1614696b",
+          "sourceRepositoryRef": "refs/heads/main",
+          "sourceRepositoryIdentifier": "1065031633",
+          "sourceRepositoryOwnerURI": "https://github.com/perfecxion-ai",
+          "sourceRepositoryOwnerIdentifier": "222053267",
+          "buildConfigURI": "https://github.com/perfecxion-ai/secure-mcp/.github/workflows/ci.yml@refs/heads/main",
+          "buildConfigDigest": "eee12d17c5bb86559fdad12785b67b4d1614696b",
+          "buildTrigger": "push",
+          "runInvocationURI": "https://github.com/perfecxion-ai/secure-mcp/actions/runs/40520535699/attempts/1",
+          "sourceRepositoryVisibilityAtSigning": "public"
+        }
+      },
+      "verifiedTimestamps": [
+        {
+          "type": "Tlog",
+          "uri": "https://rekor.sigstore.dev",
+          "timestamp": "2026-10-27T10:23:41-04:00"
+        }
+      ],
+      "verifiedIdentity": {
+        "subjectAlternativeName": {
+          "subjectAlternativeName": "",
+          "regexp": "^https://github\\.com/perfecxion-ai/secure-mcp/\\.github/workflows/ci\\.yml(@(refs/.*|[0-9a-fA-F]+))?$"
+        },
+        "issuer": {
+          "issuer": "",
+          "regexp": ".*"
+        }
+      },
+      "statement": {
+        "_type": "https://in-toto.io/Statement/v1",
+        "subject": [
+          {
+            "name": "perfecxion-secure-mcp-server-2.0.0-alpha.1.tgz",
+            "digest": {
+              "sha256": "0b737f8101d22757f05aa5aa89bc9d95c1c400066ba5a0e8981648b98433873a"
+            }
+          }
+        ],
+        "predicateType": "https://slsa.dev/provenance/v1",
+        "predicate": {
+          "buildDefinition": {
+            "buildType": "https://actions.github.io/buildtypes/workflow/v1",
+            "externalParameters": {
+              "workflow": {
+                "path": ".github/workflows/ci.yml",
+                "ref": "refs/heads/main",
+                "repository": "https://github.com/perfecxion-ai/secure-mcp"
+              }
+            },
+            "internalParameters": {
+              "github": {
+                "event_name": "push",
+                "repository_id": "1065031633",
+                "repository_owner_id": "222053267",
+                "runner_environment": "github-hosted"
+              }
+            },
+            "resolvedDependencies": [
+              {
+                "digest": {
+                  "gitCommit": "eee12d17c5bb86559fdad12785b67b4d1614696b"
+                },
+                "uri": "git+https://github.com/perfecxion-ai/secure-mcp@refs/heads/main"
+              }
+            ]
+          },
+          "runDetails": {
+            "builder": {
+              "id": "https://github.com/perfecxion-ai/secure-mcp/.github/workflows/ci.yml@refs/heads/main"
+            },
+            "metadata": {
+              "invocationId": "https://github.com/perfecxion-ai/secure-mcp/actions/runs/40520535699/attempts/1"
+            }
+          }
+        }
+      }
+    },
+    "sbom-verification": {
+      "mediaType": "application/vnd.dev.sigstore.verificationresult+json;version=0.1",
+      "signature": {
+        "certificate": {
+          "certificateIssuer": "CN=sigstore-intermediate,O=sigstore.dev",
+          "subjectAlternativeName": "https://github.com/perfecxion-ai/secure-mcp/.github/workflows/ci.yml@refs/heads/main",
+          "issuer": "https://token.actions.githubusercontent.com",
+          "githubWorkflowTrigger": "push",
+          "githubWorkflowSHA": "eee12d17c5bb86559fdad12785b67b4d1614696b",
+          "githubWorkflowName": "CI",
+          "githubWorkflowRepository": "perfecxion-ai/secure-mcp",
+          "githubWorkflowRef": "refs/heads/main",
+          "buildSignerURI": "https://github.com/perfecxion-ai/secure-mcp/.github/workflows/ci.yml@refs/heads/main",
+          "buildSignerDigest": "eee12d17c5bb86559fdad12785b67b4d1614696b",
+          "runnerEnvironment": "github-hosted",
+          "sourceRepositoryURI": "https://github.com/perfecxion-ai/secure-mcp",
+          "sourceRepositoryDigest": "eee12d17c5bb86559fdad12785b67b4d1614696b",
+          "sourceRepositoryRef": "refs/heads/main",
+          "sourceRepositoryIdentifier": "1065031633",
+          "sourceRepositoryOwnerURI": "https://github.com/perfecxion-ai",
+          "sourceRepositoryOwnerIdentifier": "222053267",
+          "buildConfigURI": "https://github.com/perfecxion-ai/secure-mcp/.github/workflows/ci.yml@refs/heads/main",
+          "buildConfigDigest": "eee12d17c5bb86559fdad12785b67b4d1614696b",
+          "buildTrigger": "push",
+          "runInvocationURI": "https://github.com/perfecxion-ai/secure-mcp/actions/runs/40520535699/attempts/1",
+          "sourceRepositoryVisibilityAtSigning": "public"
+        }
+      },
+      "verifiedTimestamps": [
+        {
+          "type": "Tlog",
+          "uri": "https://rekor.sigstore.dev",
+          "timestamp": "2026-10-27T10:23:42-04:00"
+        }
+      ],
+      "verifiedIdentity": {
+        "subjectAlternativeName": {
+          "subjectAlternativeName": "",
+          "regexp": "^https://github\\.com/perfecxion-ai/secure-mcp/\\.github/workflows/ci\\.yml(@(refs/.*|[0-9a-fA-F]+))?$"
+        },
+        "issuer": {
+          "issuer": "",
+          "regexp": ".*"
+        }
+      },
+      "statement": {
+        "_type": "https://in-toto.io/Statement/v1",
+        "subject": [
+          {
+            "name": "perfecxion-secure-mcp-server-2.0.0-alpha.1.tgz",
+            "digest": {
+              "sha256": "0b737f8101d22757f05aa5aa89bc9d95c1c400066ba5a0e8981648b98433873a"
+            }
+          }
+        ],
+        "predicateType": "https://cyclonedx.org/bom",
+        "predicate": {
+          "$schema": "http://cyclonedx.org/schema/bom-1.5.schema.json",
+          "bomFormat": "CycloneDX",
+          "components": [
+            {
+              "author": "Yusuke Wada <yusuke@kamawada.com> (https://github.com/yusukebe)",
+              "bom-ref": "@hono/node-server@2.1.5",
+              "description": "Node.js Adapter for Hono",
+              "externalReferences": [
+                {
+                  "type": "distribution",
+                  "url": "https://registry.npmjs.org/@hono/node-server/-/node-server-2.1.5.tgz"
+                },
+                {
+                  "type": "vcs",
+                  "url": "git+https://github.com/honojs/node-server.git"
+                },
+                {
+                  "type": "website",
+                  "url": "https://github.com/honojs/node-server"
+                }
+              ],
+              "hashes": [
+                {
+                  "alg": "SHA-512",
+                  "content": "3203ff234e8676fb22943b29324fea991ce993c2ce512b4fea31406d2462e345b4f43868c949fe323edec8a2023ea7982b26ce8d514b548010cefbb56df21aed"
+                }
+              ],
+              "licenses": [
+                {
+                  "license": {
+                    "id": "MIT"
+                  }
+                }
+              ],
+              "name": "@hono/node-server",
+              "properties": [],
+              "purl": "pkg:npm/%40hono/node-server@2.1.5",
+              "scope": "required",
+              "type": "library",
+              "version": "2.1.5"
+            },
+            {
+              "author": "Anthropic, PBC (https://anthropic.com)",
+              "bom-ref": "@modelcontextprotocol/node@2.1.2",
+              "description": "Model Context Protocol implementation for TypeScript - Node.js middleware",
+              "externalReferences": [
+                {
+                  "type": "distribution",
+                  "url": "https://registry.npmjs.org/@modelcontextprotocol/node/-/node-2.1.2.tgz"
+                },
+                {
+                  "type": "vcs",
+                  "url": "git+https://github.com/modelcontextprotocol/typescript-sdk.git"
+                },
+                {
+                  "type": "website",
+                  "url": "https://modelcontextprotocol.io"
+                }
+              ],
+              "hashes": [
+                {
+                  "alg": "SHA-512",
+                  "content": "208708a81a6be8d09042ce438094e0bdb48e030fb789a47fbaabaa83e7b49d709db9d7e33e0ffcd31d13b1e527431d7801402d1387ec24212924a3f26fa58f54"
+                }
+              ],
+              "licenses": [
+                {
+                  "license": {
+                    "id": "Apache-2.0"
+                  }
+                }
+              ],
+              "name": "@modelcontextprotocol/node",
+              "properties": [],
+              "purl": "pkg:npm/%40modelcontextprotocol/node@2.1.2",
+              "scope": "required",
+              "type": "library",
+              "version": "2.1.2"
+            },
+            {
+              "author": "Anthropic, PBC (https://anthropic.com)",
+              "bom-ref": "@modelcontextprotocol/server@2.4.0",
+              "description": "Model Context Protocol implementation for TypeScript - Server package",
+              "externalReferences": [
+                {
+                  "type": "distribution",
+                  "url": "https://registry.npmjs.org/@modelcontextprotocol/server/-/server-2.4.0.tgz"
+                },
+                {
+                  "type": "vcs",
+                  "url": "git+https://github.com/modelcontextprotocol/typescript-sdk.git"
+                },
+                {
+                  "type": "website",
+                  "url": "https://modelcontextprotocol.io"
+                }
+              ],
+              "hashes": [
+                {
+                  "alg": "SHA-512",
+                  "content": "ae047dcb149a009f9b72c8bf5eba13fd2d807cf8885a5a17027add7d84829acf62bd58eed22b21bbfc16d09db51e8ebe64e475afb4727916e3891b85f3b8b1e5"
+                }
+              ],
+              "licenses": [
+                {
+                  "license": {
+                    "id": "Apache-2.0"
+                  }
+                }
+              ],
+              "name": "@modelcontextprotocol/server",
+              "properties": [],
+              "purl": "pkg:npm/%40modelcontextprotocol/server@2.4.0",
+              "scope": "required",
+              "type": "library",
+              "version": "2.4.0"
+            },
+            {
+              "author": "Yusuke Wada <yusuke@kamawada.com> (https://github.com/yusukebe)",
+              "bom-ref": "hono@4.13.14",
+              "description": "Web framework built on Web Standards",
+              "externalReferences": [
+                {
+                  "type": "distribution",
+                  "url": "https://registry.npmjs.org/hono/-/hono-4.13.14.tgz"
+                },
+                {
+                  "type": "vcs",
+                  "url": "git+https://github.com/honojs/hono.git"
+                },
+                {
+                  "type": "website",
+                  "url": "https://hono.dev"
+                }
+              ],
+              "hashes": [
+                {
+                  "alg": "SHA-512",
+                  "content": "ca144b436d54eaa6bd1ecbb637b41c6e1f2d13e58a11ca04ae3228e7a2de4868865c6a7db00ed4a44f3a522f6e7b16fad4a6a4886c2e1cc9f641d57bc3a8ba91"
+                }
+              ],
+              "licenses": [
+                {
+                  "license": {
+                    "id": "MIT"
+                  }
+                }
+              ],
+              "name": "hono",
+              "properties": [],
+              "purl": "pkg:npm/hono@4.13.14",
+              "scope": "required",
+              "type": "library",
+              "version": "4.13.14"
+            }
+          ],
+          "dependencies": [
+            {
+              "dependsOn": [
+                "@modelcontextprotocol/node@2.1.2",
+                "@modelcontextprotocol/server@2.4.0"
+              ],
+              "ref": "@perfecxion/secure-mcp-server@2.0.0-alpha.1"
+            },
+            {
+              "dependsOn": [
+                "hono@4.13.14"
+              ],
+              "ref": "@hono/node-server@2.1.5"
+            },
+            {
+              "dependsOn": [
+                "@modelcontextprotocol/server@2.4.0",
+                "@hono/node-server@2.1.5",
+                "hono@4.13.14"
+              ],
+              "ref": "@modelcontextprotocol/node@2.1.2"
+            },
+            {
+              "dependsOn": [],
+              "ref": "@modelcontextprotocol/server@2.4.0"
+            },
+            {
+              "dependsOn": [],
+              "ref": "hono@4.13.14"
+            }
+          ],
+          "metadata": {
+            "component": {
+              "author": "perfecxion-ai",
+              "bom-ref": "@perfecxion/secure-mcp-server@2.0.0-alpha.1",
+              "description": "Experimental MCP runtime for approved tools, explicit access policies, bounded execution, and audit events",
+              "externalReferences": [
+                {
+                  "type": "vcs",
+                  "url": "https://github.com/perfecxion-ai/secure-mcp.git"
+                }
+              ],
+              "licenses": [
+                {
+                  "license": {
+                    "id": "AGPL-3.0-or-later"
+                  }
+                }
+              ],
+              "name": "secure-mcp",
+              "properties": [],
+              "purl": "pkg:npm/%40perfecxion/secure-mcp-server@2.0.0-alpha.1",
+              "scope": "required",
+              "type": "library",
+              "version": "2.0.0-alpha.1"
+            },
+            "lifecycles": [
+              {
+                "phase": "build"
+              }
+            ],
+            "timestamp": "2026-10-27T14:23:31.619Z",
+            "tools": [
+              {
+                "name": "cli",
+                "vendor": "npm",
+                "version": "11.19.0"
+              }
+            ]
+          },
+          "serialNumber": "urn:uuid:33f3e307-6a8b-4b0c-b56d-46078bd43e87",
+          "specVersion": "1.5",
+          "version": 1
+        }
+      }
+    }
+  }
+}
