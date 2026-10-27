@@ -38,7 +38,7 @@ V1 source and tests are preserved in `legacy/v1`, outside the runtime dependency
 
 ## Verification
 
-The current runtime passes 44 tests, strict TypeScript, lint, formatting, build, configuration/registry metadata checks, and four security mutation probes. The [candidate evidence](validation/CANDIDATE.md) binds the package, container, both real MCP hosts, browser IdP lab, and endurance measurements to the same 13 compiled runtime modules. Native coverage is 96.81% lines, 90.31% branches, and 91.55% functions; it is not a security guarantee.
+The current regression suite passes 64 tests, strict TypeScript, lint, formatting, build, configuration/registry metadata checks, and five security mutation probes. The added RS256 cases detect an expanded signing-algorithm allowlist; the selected candidate retains its original 44-test evidence. The [candidate evidence](validation/CANDIDATE.md) binds the package, container, both real MCP hosts, browser IdP lab, and endurance measurements to the same 13 compiled runtime modules. Native coverage is 96.81% lines, 90.31% branches, and 91.55% functions; it is not a security guarantee.
 
 Fresh-consumer checks install the exact attested tarball, verify silent import, invoke the CLI, and require clean EOF shutdown. A separate strict TypeScript consumer compiles the public runtime, transformed tool input, collector, and SDK transport types. Container checks exercise nonroot execution with a read-only root, no network, dropped capabilities, resource bounds, and a read-only document mount.
 
@@ -47,6 +47,8 @@ The Keycloak lab uses real Chromium password login and consent, PostgreSQL, issu
 Audit tests cover failed authentication, Host/Origin and wire rejection, correlation/privacy, timeout/cancellation/saturation, blocked delivery, collector kill/restart, journal limits, actual filesystem exhaustion, and a bounded safe error response when logging that response also fails. The collector reference has explicit capacity, retention, and local-trust limits.
 
 Both candidate one-hour runs meet the predeclared performance contract: 13,317,342 stdio calls and 60,906 durable HTTP calls, zero unexpected results, clean driver/server exits, healthy audit, bounded resources, and complete durable journal reconciliation. The candidate is ready for independent fresh-install validation. Earlier failed and interrupted runs remain in the validation index.
+
+The [reported attack review](validation/2026-10-27-reported-attack-review.md) supplies additional feedback tied to the same runtime source. Its raw artifacts have not been reproduced here and are not counted as local acceptance or independent user adoption.
 
 ## Remaining gates
 
