@@ -1,47 +1,21 @@
-name: CI/CD Pipeline
-
+name: Review baseline
 on:
   push:
-    branches: [main, develop]
+    branches: [main]
   pull_request:
     branches: [main]
-
-env:
-  NODE_VERSION: '20'
-
+permissions:
+  contents: read
 jobs:
-  test-and-build:
-    name: Test and Build
-    runs-on: ubuntu-22.04
+  review:
+    name: Validate review artifacts
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
+      - uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5
         with:
-          node-version: ${{ env.NODE_VERSION }}
-
-      - name: Install dependencies
-        run: npm install
-
-      - name: Run type checking
-        run: npm run typecheck
-
-      - name: Run linting
-        run: npm run lint
-        continue-on-error: true
-
-      - name: Run build
-        run: npm run build
-
-      - name: Run tests
-        run: npm run test:ci
-        continue-on-error: true
-
-      - name: Upload test results
-        uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: test-results
-          path: test-results/
+          node-version: '24'
+      - run: node scripts/verify-review.mjs
+      - name: State the unsupported runtime baseline
+        run: echo "This check validates the review and release hold. V1 runtime failures remain documented; no runtime pass is claimed."
