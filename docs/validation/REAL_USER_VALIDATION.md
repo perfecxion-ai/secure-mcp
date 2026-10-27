@@ -14,6 +14,21 @@ sha256sum --check SHA256SUMS
 
 The script downloads the successful main CI artifact without rebuilding it, verifies its provenance against that exact commit and workflow, and compares the included SBOM with its signed predicate. It refuses expired artifacts, non-main commits, and an existing output directory. Retain the manifest and verification records. The bundle can be handed to another tester through an approved channel; verify its provenance again after transfer. GitHub artifact retention is finite, so archive the verified bundle before its manifest's expiry date. A checksum alone does not establish provenance.
 
+## Check the downloaded package
+
+From this repository checkout, run the smoke check against the verified tarball before configuring a host:
+
+```bash
+npm ci --ignore-scripts
+node scripts/package-smoke.mjs \
+  --artifact /tmp/secure-mcp-candidate/perfecxion-secure-mcp-server-2.0.0-alpha.1.tgz \
+  > /tmp/secure-mcp-package-check.json
+```
+
+This installs that exact tarball in a temporary consumer directory with install scripts disabled. It tests silent import, both MCP protocol generations, tool discovery, an approved read, read-only policy, traversal/absolute/hidden/symlink/directory rejection, audit canaries, and stdin-EOF shutdown. The JSON result includes the package digest and per-protocol outcomes; it contains no tokens, fixture content, or machine paths. Temporary files are removed when the check finishes. This step needs npm registry access for dependencies and does not modify an existing MCP host configuration.
+
+Keep the result with your feedback. This automated SDK check establishes that the package works on your machine; continue with your actual host below to validate its setup and workflow. A successful smoke check does not substitute for artifact provenance verification or user feedback.
+
 ## Start with stdio
 
 Use Node 24.22.1 or a later supported Node 24 security patch on Linux. Create separate install and document directories, copy one harmless UTF-8 text file into the document directory, and install the downloaded tarball locally:

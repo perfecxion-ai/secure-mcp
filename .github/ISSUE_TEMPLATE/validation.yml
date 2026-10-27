@@ -19,6 +19,11 @@ body:
     validations:
       required: true
   - type: textarea
+    id: package_smoke
+    attributes:
+      label: Package smoke result
+      description: Paste the sanitized JSON from scripts/package-smoke.mjs --artifact if you ran it. Do not attach raw host logs or configuration secrets.
+  - type: textarea
     id: behavior
     attributes:
       label: Steps, expected result, and actual result
