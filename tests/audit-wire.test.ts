@@ -49,6 +49,9 @@ for (const mode of [{ pin: '2026-07-28' }, 'legacy'] as const)
           stderr: 'ignore',
         }),
       );
+      // Modern stdio connect can complete before the child finishes loading.
+      // Discovery establishes readiness without invoking the failing audit sink.
+      await client.listTools();
       const start = performance.now();
       await assert.rejects(
         client.callTool(
