@@ -6,11 +6,14 @@ on:
     branches: [main]
 permissions:
   contents: read
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
 jobs:
   validate:
     name: Validate runtime
     runs-on: ubuntu-24.04
-    timeout-minutes: 10
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
       - uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5
@@ -19,8 +22,19 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm run check
-      - run: npm run test:package
+      - run: npm run test:mutations
       - run: npm --prefix labs/oauth ci
       - run: npm run test:oauth
       - run: npm audit --audit-level=high
       - run: npm --prefix labs/oauth audit --audit-level=high
+      - run: npm run test:package
+      - run: npm run test:container
+      - run: npm sbom --omit=dev --sbom-format=cyclonedx > sbom.cdx.json
+      - run: npm pack --ignore-scripts
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: verified-alpha-${{ github.sha }}
+          path: |
+            *.tgz
+            sbom.cdx.json
+          if-no-files-found: error

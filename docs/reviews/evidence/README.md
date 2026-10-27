@@ -6,7 +6,7 @@ These artifacts accompany the [October 26 assessment](../2026-10-26-assessment.m
 - `reproduce-critical-paths.cjs` loads actual source through the installed TypeScript transpiler. It substitutes configuration, logging, and infrastructure dependencies to isolate protocol validation, response filtering, token lifecycle, and MFA key-context behavior. It uses real signing and cryptographic helper code. No live services or credentials are needed.
 - `reproduce-backup-code-generation.cjs` inspects the actual backup-code entropy rule. Its `generate` mode calls the affected generator and must be run with an external process timeout because the baseline code loops synchronously.
 
-Run from the repository root in a disposable copy with development dependencies installed:
+Run from the root of a disposable checkout of baseline commit `1df0af55bd2cebde48d643e3d3c852e64d37ce18`, with these evidence scripts copied into `docs/reviews/evidence`. The successor archives v1 under `legacy/v1`; these probes intentionally target the original layout. Install development dependencies in that disposable baseline checkout:
 
 ```bash
 npm install --ignore-scripts --no-audit --no-fund

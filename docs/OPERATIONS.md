@@ -30,12 +30,28 @@ Audit is newline-delimited JSON on stderr. Route it to a bounded, monitored log 
 
 SIGINT, SIGTERM, and stdio EOF initiate shutdown. HTTP stops accepting requests, cancels active tools, and closes sockets. The process exits nonzero if trusted handlers fail to settle within the deadline. Library users must call `close()` and handle its remaining-work count.
 
+## Container
+
+```bash
+docker build -t secure-mcp:local .
+docker run --rm -i --network none --read-only --cap-drop ALL \
+  --security-opt no-new-privileges --pids-limit 64 --memory 512m --cpus 2 \
+  --mount type=bind,src="$(pwd)/examples/documents",dst=/workspace,readonly \
+  secure-mcp:local --workspace /workspace
+```
+
+The image runs as the unprivileged `node` user. Mounted documents must be readable by that user. The command above is for stdio with network disabled. A remote HTTP deployment needs deliberate networking, a read-only config mount, and TLS routing. Never mount a Docker socket or a broad home directory.
+
 ## Verification and troubleshooting
 
 ```bash
 npm run check
 npm run test:package
+npm run test:container
 npm audit
+BENCH_SECONDS=60 npm run benchmark
 ```
 
 Startup rejects unknown configuration keys, missing HTTP issuer information, unknown allowlisted tools, and inaccessible workspaces. Tool errors are short stable codes: `denied`, `invalid_input`, `busy`, `timeout`, `cancelled`, `shutting_down`, `output_too_large`, `not_found`, `upstream_failed`, `audit_unavailable`, and `internal`. Filesystem errors intentionally do not reveal paths. Diagnose using operator-owned configuration and audit outcomes, never by logging raw access tokens.
+
+Configuration editor schema: `config.schema.json`, generated from the runtime schema with `npm run schema`. Custom URL and cross-field constraints are also enforced by the runtime. Registry metadata in `server.json` is prepared but unpublished.

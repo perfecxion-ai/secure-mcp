@@ -1,0 +1,63 @@
+
+> @perfecxion/secure-mcp-server@2.0.0-alpha.1 test:coverage
+> node --import tsx --test --experimental-test-coverage --test-coverage-include=src/*.ts tests/*.test.ts
+
+✔ fixed-destination API tool refuses redirects, arbitrary URL arguments, and oversized output (30.66498ms)
+✔ HTTP cancellation, deadlines, capacity, and shutdown reach the handler (297.423927ms)
+▶ HTTP resource server and official SDK integration
+  ✔ metadata and authentication challenge use configured canonical resource (20.31909ms)
+  ✔ SDK round trip with modern protocol (51.449431ms)
+  ✔ SDK round trip with legacy protocol (25.792763ms)
+  ✔ principal isolation: token scopes control both listing and direct calls (8.581295ms)
+  ✔ reject wrong issuer, audience, expiry, token type, future issuance and excessive lifetime (9.055359ms)
+  ✔ DNS rebinding and cross-origin requests are rejected before authentication (3.996678ms)
+  ✔ malformed and oversized bodies fail safely (2.702085ms)
+  ✔ request ID zero and identical requests from separate calls remain valid (3.967079ms)
+  ✔ metrics require a verified token with metrics scope (3.003301ms)
+✔ HTTP resource server and official SDK integration (149.130477ms)
+✔ schema rejects unknown options and unauthenticated HTTP configuration (3.34207ms)
+✔ document read preserves text and emits safe structured evidence (10.503586ms)
+✔ traversal, hidden paths, and symlink escape cannot read outside the workspace (3.547478ms)
+✔ input schema denies missing fields and identity injection (3.387798ms)
+✔ tool discovery and invocation agree on scopes, allowlist, and expiry (2.451748ms)
+✔ all scopes are required and read-only mode prevents mutation (1.790771ms)
+✔ large files and binary files return bounded safe errors (1.919235ms)
+✔ exceptions do not disclose secrets or create arbitrary metric labels (1.445763ms)
+✔ audit failure prevents execution (1.27581ms)
+✔ a failed writable audit stream denies work without an unhandled error event (5.498234ms)
+✔ timeout retains capacity for noncooperative work and shutdown rejects new work (33.371496ms)
+✔ caller cancellation reaches a cooperative handler (9.238528ms)
+✔ unknown allowlist entries and tools without policy fail startup (0.636401ms)
+✔ official SDK over stdio: modern (728.659761ms)
+✔ official SDK over stdio: legacy (346.937931ms)
+✔ package source import is silent and does not start listeners (304.960308ms)
+✔ CLI requires an explicit document workspace (310.724606ms)
+✔ oversized stdio frame exits even while the caller keeps stdin open (320.700799ms)
+ℹ tests 30
+ℹ suites 0
+ℹ pass 30
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 2455.44862
+ℹ start of coverage report
+ℹ ----------------------------------------------------------------------------------
+ℹ file          | line % | branch % | funcs % | uncovered lines
+ℹ ----------------------------------------------------------------------------------
+ℹ src           |        |          |         |
+ℹ  audit.ts     | 100.00 |   100.00 |  100.00 |
+ℹ  cli.ts       |  75.21 |    66.67 |   61.54 | 18-20 22-24 27-32 42-50 55-57 90-94
+ℹ  config.ts    |  96.39 |    92.31 |  100.00 | 58-60
+ℹ  errors.ts    | 100.00 |   100.00 |  100.00 |
+ℹ  execution.ts | 100.00 |    92.59 |   94.12 |
+ℹ  http.ts      |  98.39 |    83.64 |   86.67 | 11 44 83
+ℹ  identity.ts  | 100.00 |   100.00 |  100.00 |
+ℹ  index.ts     | 100.00 |   100.00 |  100.00 |
+ℹ  policy.ts    | 100.00 |   100.00 |  100.00 |
+ℹ  runtime.ts   | 100.00 |    93.33 |  100.00 |
+ℹ  tools.ts     |  98.70 |    92.00 |  100.00 | 57 94
+ℹ ----------------------------------------------------------------------------------
+ℹ all files     |  96.20 |    90.23 |   92.16 |
+ℹ ----------------------------------------------------------------------------------
+ℹ end of coverage report

@@ -1,0 +1,1824 @@
+{
+  "date": "2026-10-27T04:36:21.919Z",
+  "node": "v24.13.0",
+  "architecture": "arm64",
+  "cpu": "unknown",
+  "protocol": "2026-07-28",
+  "transport": "stdio",
+  "concurrency": 4,
+  "audit": "JSON events to /dev/null",
+  "workload": "29-byte local document; 10% denied traversal attempts; last 10000 calls sampled",
+  "durationSeconds": 3600.00519133,
+  "calls": 12550140,
+  "failures": 0,
+  "startupMs": 120.90063400000003,
+  "p50Ms": 1.227859000209719,
+  "p95Ms": 2.474293999839574,
+  "memory": [
+    {
+      "elapsedSeconds": 0,
+      "rssKiB": 2896,
+      "descriptors": 3
+    },
+    {
+      "elapsedSeconds": 10,
+      "rssKiB": 242224,
+      "descriptors": 22
+    },
+    {
+      "elapsedSeconds": 20,
+      "rssKiB": 242940,
+      "descriptors": 22
+    },
+    {
+      "elapsedSeconds": 30,
+      "rssKiB": 242940,
+      "descriptors": 25
+    },
+    {
+      "elapsedSeconds": 40,
+      "rssKiB": 243092,
+      "descriptors": 23
+    },
+    {
+      "elapsedSeconds": 50,
+      "rssKiB": 243176,
+      "descriptors": 25
+    },
+    {
+      "elapsedSeconds": 60,
+      "rssKiB": 243280,
+      "descriptors": 23
+    },
+    {
+      "elapsedSeconds": 70,
+      "rssKiB": 243280,
+      "descriptors": 24
+    },
+    {
+      "elapsedSeconds": 80,
+      "rssKiB": 243280,
+      "descriptors": 22
+    },
+    {
+      "elapsedSeconds": 90,
+      "rssKiB": 243280,
+      "descriptors": 22
+    },
+    {
+      "elapsedSeconds": 100,
+      "rssKiB": 243280,
+      "descriptors": 22
+    },
+    {
+      "elapsedSeconds": 110,
+      "rssKiB": 243032,
+      "descriptors": 22
+    },
+    {
+      "elapsedSeconds": 120,
+      "rssKiB": 243212,
+      "descriptors": 22
+    },
+    {
+      "elapsedSeconds": 130,
+      "rssKiB": 245528,
+      "descriptors": 23
+    },
+    {
+      "elapsedSeconds": 140,
+      "rssKiB": 245740,
+      "descriptors": 22
+    },
+    {
+      "elapsedSeconds": 150,
+      "rssKiB": 245740,
+      "descriptors": 25
+    },
+    {
+      "elapsedSeconds": 160,
+      "rssKiB": 245740,
+      "descriptors": 26
+    },
+    {
+      "elapsedSeconds": 170,
+      "rssKiB": 245740,
+      "descriptors": 23
+    },
+    {
+      "elapsedSeconds": 180,
+      "rssKiB": 245716,
+      "descriptors": 24
+    },
+    {
+      "elapsedSeconds": 190,
+      "rssKiB": 245716,
+      "descriptors": 26
+    },
+    {
+      "elapsedSeconds": 200,
+      "rssKiB": 245832,
+      "descriptors": 24
+    },
+    {
+      "elapsedSeconds": 210,
+      "rssKiB": 245572,
+      "descriptors": 22
+    },
+    {
+      "elapsedSeconds": 220,
+      "rssKiB": 245720,
+      "descriptors": 23
+    },
+    {
+      "elapsedSeconds": 230,
+      "rssKiB": 245688,
+      "descriptors": 22
+    },
+    {
+      "elapsedSeconds": 240,
+      "rssKiB": 245836,
+      "descriptors": 24
+    },
+    {
+      "elapsedSeconds": 250,
+      "rssKiB": 245840,
+      "descriptors": 24
+    },
+    {
+      "elapsedSeconds": 260,
+      "rssKiB": 245840,
+      "descriptors": 25
+    },
+    {
+      "elapsedSeconds": 270,
+      "rssKiB": 245848,
+      "descriptors": 25
+    },
+    {
+      "elapsedSeconds": 280,
+      "rssKiB": 245848,
+      "descriptors": 22
+    },
+    {
+      "elapsedSeconds": 290,
+      "rssKiB": 247756,
+      "descriptors": 22
+    },
+    {
+      "elapsedSeconds": 300,
+      "rssKiB": 245980,
+      "descriptors": 23
+    },
+    {
+      "elapsedSeconds": 310,
+      "rssKiB": 246000,
+      "descriptors": 25
+    },
+    {
+      "elapsedSeconds": 320,
+      "rssKiB": 246000,
+      "descriptors": 25
+    },
+    {
+      "elapsedSeconds": 330,
+      "rssKiB": 246000,
+      "descriptors": 26
+    },
+    {
+      "elapsedSeconds": 340,
+      "rssKiB": 246000,
+      "descriptors": 22
+    },
+    {
+      "elapsedSeconds": 350,
+      "rssKiB": 246008,
+      "descriptors": 24
+    },
+    {
+      "elapsedSeconds": 360,
+      "rssKiB": 246008,
+      "descriptors": 24
+    },
+    {
+      "elapsedSeconds": 370,
+      "rssKiB": 246008,
+      "descriptors": 22
+    },
+    {
+      "elapsedSeconds": 380,
+      "rssKiB": 246008,
+      "descriptors": 22
+    },
+    {
+      "elapsedSeconds": 390,
+      "rssKiB": 246008,
+      "descriptors": 22
+    },
+    {
+      "elapsedSeconds": 400,
+      "rssKiB": 245536,
+      "descriptors": 25
+    },
+    {
+      "elapsedSeconds": 410,
+      "rssKiB": 245752,
+      "descriptors": 23
+    },
+    {
+      "elapsedSeconds": 420,
+      "rssKiB": 245864,
+      "descriptors": 22
+    },
+    {
+      "elapsedSeconds": 430,
+      "rssKiB": 245864,
+      "descriptors": 25
+    },
+    {
+      "elapsedSeconds": 440,
+      "rssKiB": 245304,
+      "descriptors": 22
+    },
+    {
+      "elapsedSeconds": 450,
+      "rssKiB": 245592,
+      "descriptors": 23
+    },
+    {
+      "elapsedSeconds": 460,
+      "rssKiB": 245448,
+      "descriptors": 22
+    },
+    {
+      "elapsedSeconds": 470,
+      "rssKiB": 245604,
+      "descriptors": 26
+    },
+    {
+      "elapsedSeconds": 480,
+      "rssKiB": 245656,
+      "descriptors": 26
+    },
+    {
+      "elapsedSeconds": 490,
+      "rssKiB": 245904,
+      "descriptors": 25
+    },
+    {
+      "elapsedSeconds": 500,
+      "rssKiB": 245904,
+      "descriptors": 25
+    },
+    {
+      "elapsedSeconds": 510,
+      "rssKiB": 245904,
+      "descriptors": 22
+    },
+    {
+      "elapsedSeconds": 520,
+      "rssKiB": 245904,
+      "descriptors": 22
+    },
+    {
+      "elapsedSeconds": 530,
+      "rssKiB": 245904,
+      "descriptors": 26
+    },
+    {
+      "elapsedSeconds": 540,
+      "rssKiB": 245904,
+      "descriptors": 23
+    },
+    {
+      "elapsedSeconds": 550,
+      "rssKiB": 245904,
+      "descriptors": 23
+    },
+    {
+      "elapsedSeconds": 560,
+      "rssKiB": 245912,
+      "descriptors": 22
+    },
+    {
+      "elapsedSeconds": 570,
+      "rssKiB": 245912,
+      "descriptors": 24
+    },
+    {
+      "elapsedSeconds": 580,
+      "rssKiB": 245912,
+      "descriptors": 24
+    },
+    {
+      "elapsedSeconds": 590,
+      "rssKiB": 245912,
+      "descriptors": 22
+    },
+    {
+      "elapsedSeconds": 600,
+      "rssKiB": 245912,
+      "descriptors": 23
+    },
+    {
+      "elapsedSeconds": 610,
+      "rssKiB": 245912,
+      "descriptors": 24
+    },
+    {
+      "elapsedSeconds": 620,
+      "rssKiB": 247224,
+      "descriptors": 22
+    },
+    {
+      "elapsedSeconds": 630,
+      "rssKiB": 245592,
+      "descriptors": 23
+    },
+    {
+      "elapsedSeconds": 640,
+      "rssKiB": 245592,
+      "descriptors": 25
+    },
+    {
+      "elapsedSeconds": 650,
+      "rssKiB": 245748,
+      "descriptors": 26
+    },
+    {
+      "elapsedSeconds": 660,
+      "rssKiB": 245748,
+      "descriptors": 25
+    },
+    {
+      "elapsedSeconds": 670,
+      "rssKiB": 245816,
+      "descriptors": 23
+    },
+    {
+      "elapsedSeconds": 680,
+      "rssKiB": 245816,
+      "descriptors": 23
+    },
+    {
+      "elapsedSeconds": 690,
+      "rssKiB": 246016,
+      "descriptors": 22
+    },
+    {
+      "elapsedSeconds": 700,
+      "rssKiB": 246016,
+      "descriptors": 23
+    },
+    {
+      "elapsedSeconds": 710,
+      "rssKiB": 246016,
+      "descriptors": 22
+    },
+    {
+      "elapsedSeconds": 720,
+      "rssKiB": 246016,
+      "descriptors": 22
+    },
+    {
+      "elapsedSeconds": 730,
+      "rssKiB": 246028,
+      "descriptors": 25
+    },
+    {
+      "elapsedSeconds": 740,
+      "rssKiB": 246028,
+      "descriptors": 26
+    },
+    {
+      "elapsedSeconds": 750,
+      "rssKiB": 246028,
+      "descriptors": 25
+    },
+    {
+      "elapsedSeconds": 760,
+      "rssKiB": 245828,
+      "descriptors": 23
+    },
+    {
+      "elapsedSeconds": 770,
+      "rssKiB": 245828,
+      "descriptors": 24
+    },
+    {
+      "elapsedSeconds": 780,
+      "rssKiB": 245828,
+      "descriptors": 26
+    },
+    {
+      "elapsedSeconds": 790,
+      "rssKiB": 245848,
+      "descriptors": 25
+    },
+    {
+      "elapsedSeconds": 800,
+      "rssKiB": 245604,
+      "descriptors": 24
+    },
+    {
+      "elapsedSeconds": 810,
+      "rssKiB": 245792,
+      "descriptors": 23
+    },
+    {
+      "elapsedSeconds": 820,
+      "rssKiB": 245792,
+      "descriptors": 24
+    },
+    {
+      "elapsedSeconds": 830,
+      "rssKiB": 245792,
+      "descriptors": 25
+    },
+    {
+      "elapsedSeconds": 840,
+      "rssKiB": 245792,
+      "descriptors": 25
+    },
+    {
+      "elapsedSeconds": 850,
+      "rssKiB": 245792,
+      "descriptors": 22
+    },
+    {
+      "elapsedSeconds": 860,
+      "rssKiB": 245792,
+      "descriptors": 24
+    },
+    {
+      "elapsedSeconds": 870,
+      "rssKiB": 246484,
+      "descriptors": 22
+    },
+    {
+      "elapsedSeconds": 880,
+      "rssKiB": 246484,
+      "descriptors": 22
+    },
+    {
+      "elapsedSeconds": 890,
+      "rssKiB": 246484,
+      "descriptors": 22
+    },
+    {
+      "elapsedSeconds": 900,
+      "rssKiB": 246492,
+      "descriptors": 24
+    },
+    {
+      "elapsedSeconds": 910,
+      "rssKiB": 246492,
+      "descriptors": 25
+    },
+    {
+      "elapsedSeconds": 920,
+      "rssKiB": 246372,
+      "descriptors": 24
+    },
+    {
+      "elapsedSeconds": 930,
+      "rssKiB": 246536,
+      "descriptors": 23
+    },
+    {
+      "elapsedSeconds": 940,
+      "rssKiB": 246536,
+      "descriptors": 22
+    },
+    {
+      "elapsedSeconds": 950,
+      "rssKiB": 246668,
+      "descriptors": 23
+    },
+    {
+      "elapsedSeconds": 960,
+      "rssKiB": 246296,
+      "descriptors": 24
+    },
+    {
+      "elapsedSeconds": 970,
+      "rssKiB": 246448,
+      "descriptors": 22
+    },
+    {
+      "elapsedSeconds": 980,
+      "rssKiB": 246424,
+      "descriptors": 22
+    },
+    {
+      "elapsedSeconds": 990,
+      "rssKiB": 246596,
+      "descriptors": 24
+    },
+    {
+      "elapsedSeconds": 1000,
+      "rssKiB": 246596,
+      "descriptors": 26
+    },
+    {
+      "elapsedSeconds": 1010,
+      "rssKiB": 246472,
+      "descriptors": 22
+    },
+    {
+      "elapsedSeconds": 1020,
+      "rssKiB": 246472,
+      "descriptors": 23
+    },
+    {
+      "elapsedSeconds": 1030,
+      "rssKiB": 246472,
+      "descriptors": 26
+    },
+    {
+      "elapsedSeconds": 1040,
+      "rssKiB": 246472,
+      "descriptors": 25
+    },
+    {
+      "elapsedSeconds": 1050,
+      "rssKiB": 246344,
+      "descriptors": 23
+    },
+    {
+      "elapsedSeconds": 1060,
+      "rssKiB": 246464,
+      "descriptors": 23
+    },
+    {
+      "elapsedSeconds": 1070,
+      "rssKiB": 246120,
+      "descriptors": 22
+    },
+    {
+      "elapsedSeconds": 1080,
+      "rssKiB": 246480,
+      "descriptors": 22
+    },
+    {
+      "elapsedSeconds": 1090,
+      "rssKiB": 246480,
+      "descriptors": 24
+    },
+    {
+      "elapsedSeconds": 1100,
+      "rssKiB": 246488,
+      "descriptors": 26
+    },
+    {
+      "elapsedSeconds": 1110,
+      "rssKiB": 246484,
+      "descriptors": 23
+    },
+    {
+      "elapsedSeconds": 1120,
+      "rssKiB": 246536,
+      "descriptors": 23
+    },
+    {
+      "elapsedSeconds": 1130,
+      "rssKiB": 246548,
+      "descriptors": 23
+    },
+    {
+      "elapsedSeconds": 1140,
+      "rssKiB": 246548,
+      "descriptors": 25
+    },
+    {
+      "elapsedSeconds": 1150,
+      "rssKiB": 246204,
+      "descriptors": 23
+    },
+    {
+      "elapsedSeconds": 1160,
+      "rssKiB": 246468,
+      "descriptors": 23
+    },
+    {
+      "elapsedSeconds": 1170,
+      "rssKiB": 246468,
+      "descriptors": 23
+    },
+    {
+      "elapsedSeconds": 1180,
+      "rssKiB": 246468,
+      "descriptors": 23
+    },
+    {
+      "elapsedSeconds": 1190,
+      "rssKiB": 246468,
+      "descriptors": 24
+    },
+    {
+      "elapsedSeconds": 1200,
+      "rssKiB": 246768,
+      "descriptors": 24
+    },
+    {
+      "elapsedSeconds": 1210,
+      "rssKiB": 246704,
+      "descriptors": 22
+    },
+    {
+      "elapsedSeconds": 1220,
+      "rssKiB": 246704,
+      "descriptors": 22
+    },
+    {
+      "elapsedSeconds": 1230,
+      "rssKiB": 246336,
+      "descriptors": 23
+    },
+    {
+      "elapsedSeconds": 1240,
+      "rssKiB": 246564,
+      "descriptors": 26
+    },
+    {
+      "elapsedSeconds": 1250,
+      "rssKiB": 247868,
+      "descriptors": 25
+    },
+    {
+      "elapsedSeconds": 1260,
+      "rssKiB": 246572,
+      "descriptors": 22
+    },
+    {
+      "elapsedSeconds": 1270,
+      "rssKiB": 246572,
+      "descriptors": 25
+    },
+    {
+      "elapsedSeconds": 1280,
+      "rssKiB": 246572,
+      "descriptors": 25
+    },
+    {
+      "elapsedSeconds": 1290,
+      "rssKiB": 246508,
+      "descriptors": 23
+    },
+    {
+      "elapsedSeconds": 1300,
+      "rssKiB": 247660,
+      "descriptors": 22
+    },
+    {
+      "elapsedSeconds": 1310,
+      "rssKiB": 246528,
+      "descriptors": 22
+    },
+    {
+      "elapsedSeconds": 1320,
+      "rssKiB": 246528,
+      "descriptors": 22
+    },
+    {
+      "elapsedSeconds": 1330,
+      "rssKiB": 246528,
+      "descriptors": 22
+    },
+    {
+      "elapsedSeconds": 1340,
+      "rssKiB": 246528,
+      "descriptors": 22
+    },
+    {
+      "elapsedSeconds": 1350,
+      "rssKiB": 246528,
+      "descriptors": 23
+    },
+    {
+      "elapsedSeconds": 1360,
+      "rssKiB": 246528,
+      "descriptors": 24
+    },
+    {
+      "elapsedSeconds": 1370,
+      "rssKiB": 246528,
+      "descriptors": 24
+    },
+    {
+      "elapsedSeconds": 1380,
+      "rssKiB": 246528,
+      "descriptors": 24
+    },
+    {
+      "elapsedSeconds": 1390,
+      "rssKiB": 246528,
+      "descriptors": 23
+    },
+    {
+      "elapsedSeconds": 1400,
+      "rssKiB": 246252,
+      "descriptors": 22
+    },
+    {
+      "elapsedSeconds": 1410,
+      "rssKiB": 246404,
+      "descriptors": 26
+    },
+    {
+      "elapsedSeconds": 1420,
+      "rssKiB": 246404,
+      "descriptors": 24
+    },
+    {
+      "elapsedSeconds": 1430,
+      "rssKiB": 246416,
+      "descriptors": 22
+    },
+    {
+      "elapsedSeconds": 1440,
+      "rssKiB": 246416,
+      "descriptors": 23
+    },
+    {
+      "elapsedSeconds": 1450,
+      "rssKiB": 246424,
+      "descriptors": 22
+    },
+    {
+      "elapsedSeconds": 1460,
+      "rssKiB": 246436,
+      "descriptors": 25
+    },
+    {
+      "elapsedSeconds": 1470,
+      "rssKiB": 246436,
+      "descriptors": 23
+    },
+    {
+      "elapsedSeconds": 1480,
+      "rssKiB": 246436,
+      "descriptors": 24
+    },
+    {
+      "elapsedSeconds": 1490,
+      "rssKiB": 246436,
+      "descriptors": 23
+    },
+    {
+      "elapsedSeconds": 1500,
+      "rssKiB": 246436,
+      "descriptors": 23
+    },
+    {
+      "elapsedSeconds": 1510,
+      "rssKiB": 246436,
+      "descriptors": 26
+    },
+    {
+      "elapsedSeconds": 1520,
+      "rssKiB": 246436,
+      "descriptors": 24
+    },
+    {
+      "elapsedSeconds": 1530,
+      "rssKiB": 246436,
+      "descriptors": 24
+    },
+    {
+      "elapsedSeconds": 1540,
+      "rssKiB": 246488,
+      "descriptors": 23
+    },
+    {
+      "elapsedSeconds": 1550,
+      "rssKiB": 246492,
+      "descriptors": 25
+    },
+    {
+      "elapsedSeconds": 1560,
+      "rssKiB": 246492,
+      "descriptors": 24
+    },
+    {
+      "elapsedSeconds": 1570,
+      "rssKiB": 246508,
+      "descriptors": 23
+    },
+    {
+      "elapsedSeconds": 1580,
+      "rssKiB": 246508,
+      "descriptors": 22
+    },
+    {
+      "elapsedSeconds": 1590,
+      "rssKiB": 246508,
+      "descriptors": 26
+    },
+    {
+      "elapsedSeconds": 1600,
+      "rssKiB": 246508,
+      "descriptors": 23
+    },
+    {
+      "elapsedSeconds": 1610,
+      "rssKiB": 246508,
+      "descriptors": 22
+    },
+    {
+      "elapsedSeconds": 1620,
+      "rssKiB": 246656,
+      "descriptors": 22
+    },
+    {
+      "elapsedSeconds": 1630,
+      "rssKiB": 246656,
+      "descriptors": 25
+    },
+    {
+      "elapsedSeconds": 1640,
+      "rssKiB": 246428,
+      "descriptors": 25
+    },
+    {
+      "elapsedSeconds": 1650,
+      "rssKiB": 246428,
+      "descriptors": 26
+    },
+    {
+      "elapsedSeconds": 1660,
+      "rssKiB": 246564,
+      "descriptors": 22
+    },
+    {
+      "elapsedSeconds": 1670,
+      "rssKiB": 246572,
+      "descriptors": 23
+    },
+    {
+      "elapsedSeconds": 1680,
+      "rssKiB": 246572,
+      "descriptors": 22
+    },
+    {
+      "elapsedSeconds": 1690,
+      "rssKiB": 246572,
+      "descriptors": 25
+    },
+    {
+      "elapsedSeconds": 1700,
+      "rssKiB": 246572,
+      "descriptors": 23
+    },
+    {
+      "elapsedSeconds": 1710,
+      "rssKiB": 246424,
+      "descriptors": 22
+    },
+    {
+      "elapsedSeconds": 1720,
+      "rssKiB": 246424,
+      "descriptors": 22
+    },
+    {
+      "elapsedSeconds": 1730,
+      "rssKiB": 246248,
+      "descriptors": 25
+    },
+    {
+      "elapsedSeconds": 1740,
+      "rssKiB": 246396,
+      "descriptors": 22
+    },
+    {
+      "elapsedSeconds": 1750,
+      "rssKiB": 246552,
+      "descriptors": 22
+    },
+    {
+      "elapsedSeconds": 1760,
+      "rssKiB": 246560,
+      "descriptors": 22
+    },
+    {
+      "elapsedSeconds": 1770,
+      "rssKiB": 246560,
+      "descriptors": 23
+    },
+    {
+      "elapsedSeconds": 1780,
+      "rssKiB": 246560,
+      "descriptors": 26
+    },
+    {
+      "elapsedSeconds": 1790,
+      "rssKiB": 246560,
+      "descriptors": 26
+    },
+    {
+      "elapsedSeconds": 1800,
+      "rssKiB": 246568,
+      "descriptors": 23
+    },
+    {
+      "elapsedSeconds": 1810,
+      "rssKiB": 246568,
+      "descriptors": 23
+    },
+    {
+      "elapsedSeconds": 1820,
+      "rssKiB": 246464,
+      "descriptors": 22
+    },
+    {
+      "elapsedSeconds": 1830,
+      "rssKiB": 246464,
+      "descriptors": 25
+    },
+    {
+      "elapsedSeconds": 1840,
+      "rssKiB": 246432,
+      "descriptors": 22
+    },
+    {
+      "elapsedSeconds": 1850,
+      "rssKiB": 246432,
+      "descriptors": 22
+    },
+    {
+      "elapsedSeconds": 1860,
+      "rssKiB": 246432,
+      "descriptors": 23
+    },
+    {
+      "elapsedSeconds": 1870,
+      "rssKiB": 246432,
+      "descriptors": 23
+    },
+    {
+      "elapsedSeconds": 1880,
+      "rssKiB": 246432,
+      "descriptors": 23
+    },
+    {
+      "elapsedSeconds": 1890,
+      "rssKiB": 246432,
+      "descriptors": 24
+    },
+    {
+      "elapsedSeconds": 1900,
+      "rssKiB": 246432,
+      "descriptors": 22
+    },
+    {
+      "elapsedSeconds": 1910,
+      "rssKiB": 246432,
+      "descriptors": 24
+    },
+    {
+      "elapsedSeconds": 1920,
+      "rssKiB": 246160,
+      "descriptors": 24
+    },
+    {
+      "elapsedSeconds": 1930,
+      "rssKiB": 246340,
+      "descriptors": 23
+    },
+    {
+      "elapsedSeconds": 1940,
+      "rssKiB": 246396,
+      "descriptors": 25
+    },
+    {
+      "elapsedSeconds": 1950,
+      "rssKiB": 246396,
+      "descriptors": 26
+    },
+    {
+      "elapsedSeconds": 1960,
+      "rssKiB": 246416,
+      "descriptors": 23
+    },
+    {
+      "elapsedSeconds": 1970,
+      "rssKiB": 246280,
+      "descriptors": 24
+    },
+    {
+      "elapsedSeconds": 1980,
+      "rssKiB": 246408,
+      "descriptors": 25
+    },
+    {
+      "elapsedSeconds": 1990,
+      "rssKiB": 246324,
+      "descriptors": 26
+    },
+    {
+      "elapsedSeconds": 2000,
+      "rssKiB": 246432,
+      "descriptors": 23
+    },
+    {
+      "elapsedSeconds": 2010,
+      "rssKiB": 246340,
+      "descriptors": 25
+    },
+    {
+      "elapsedSeconds": 2020,
+      "rssKiB": 246716,
+      "descriptors": 26
+    },
+    {
+      "elapsedSeconds": 2030,
+      "rssKiB": 246716,
+      "descriptors": 22
+    },
+    {
+      "elapsedSeconds": 2040,
+      "rssKiB": 246776,
+      "descriptors": 25
+    },
+    {
+      "elapsedSeconds": 2050,
+      "rssKiB": 246776,
+      "descriptors": 22
+    },
+    {
+      "elapsedSeconds": 2060,
+      "rssKiB": 246776,
+      "descriptors": 26
+    },
+    {
+      "elapsedSeconds": 2070,
+      "rssKiB": 246776,
+      "descriptors": 25
+    },
+    {
+      "elapsedSeconds": 2080,
+      "rssKiB": 246776,
+      "descriptors": 25
+    },
+    {
+      "elapsedSeconds": 2090,
+      "rssKiB": 246776,
+      "descriptors": 23
+    },
+    {
+      "elapsedSeconds": 2100,
+      "rssKiB": 246260,
+      "descriptors": 22
+    },
+    {
+      "elapsedSeconds": 2110,
+      "rssKiB": 246500,
+      "descriptors": 24
+    },
+    {
+      "elapsedSeconds": 2120,
+      "rssKiB": 246660,
+      "descriptors": 25
+    },
+    {
+      "elapsedSeconds": 2130,
+      "rssKiB": 246660,
+      "descriptors": 24
+    },
+    {
+      "elapsedSeconds": 2140,
+      "rssKiB": 246660,
+      "descriptors": 22
+    },
+    {
+      "elapsedSeconds": 2150,
+      "rssKiB": 246672,
+      "descriptors": 24
+    },
+    {
+      "elapsedSeconds": 2160,
+      "rssKiB": 246672,
+      "descriptors": 22
+    },
+    {
+      "elapsedSeconds": 2170,
+      "rssKiB": 246672,
+      "descriptors": 26
+    },
+    {
+      "elapsedSeconds": 2180,
+      "rssKiB": 246672,
+      "descriptors": 23
+    },
+    {
+      "elapsedSeconds": 2190,
+      "rssKiB": 246672,
+      "descriptors": 22
+    },
+    {
+      "elapsedSeconds": 2200,
+      "rssKiB": 246672,
+      "descriptors": 25
+    },
+    {
+      "elapsedSeconds": 2210,
+      "rssKiB": 246672,
+      "descriptors": 25
+    },
+    {
+      "elapsedSeconds": 2220,
+      "rssKiB": 246680,
+      "descriptors": 22
+    },
+    {
+      "elapsedSeconds": 2230,
+      "rssKiB": 246324,
+      "descriptors": 23
+    },
+    {
+      "elapsedSeconds": 2240,
+      "rssKiB": 246496,
+      "descriptors": 24
+    },
+    {
+      "elapsedSeconds": 2250,
+      "rssKiB": 246496,
+      "descriptors": 22
+    },
+    {
+      "elapsedSeconds": 2260,
+      "rssKiB": 246496,
+      "descriptors": 25
+    },
+    {
+      "elapsedSeconds": 2270,
+      "rssKiB": 246504,
+      "descriptors": 22
+    },
+    {
+      "elapsedSeconds": 2280,
+      "rssKiB": 246504,
+      "descriptors": 25
+    },
+    {
+      "elapsedSeconds": 2290,
+      "rssKiB": 246572,
+      "descriptors": 22
+    },
+    {
+      "elapsedSeconds": 2300,
+      "rssKiB": 246572,
+      "descriptors": 25
+    },
+    {
+      "elapsedSeconds": 2310,
+      "rssKiB": 246572,
+      "descriptors": 25
+    },
+    {
+      "elapsedSeconds": 2320,
+      "rssKiB": 246572,
+      "descriptors": 22
+    },
+    {
+      "elapsedSeconds": 2330,
+      "rssKiB": 246484,
+      "descriptors": 23
+    },
+    {
+      "elapsedSeconds": 2340,
+      "rssKiB": 246584,
+      "descriptors": 26
+    },
+    {
+      "elapsedSeconds": 2350,
+      "rssKiB": 246584,
+      "descriptors": 24
+    },
+    {
+      "elapsedSeconds": 2360,
+      "rssKiB": 246584,
+      "descriptors": 25
+    },
+    {
+      "elapsedSeconds": 2370,
+      "rssKiB": 246584,
+      "descriptors": 26
+    },
+    {
+      "elapsedSeconds": 2380,
+      "rssKiB": 246584,
+      "descriptors": 22
+    },
+    {
+      "elapsedSeconds": 2390,
+      "rssKiB": 246584,
+      "descriptors": 26
+    },
+    {
+      "elapsedSeconds": 2400,
+      "rssKiB": 246584,
+      "descriptors": 26
+    },
+    {
+      "elapsedSeconds": 2410,
+      "rssKiB": 246520,
+      "descriptors": 25
+    },
+    {
+      "elapsedSeconds": 2420,
+      "rssKiB": 246488,
+      "descriptors": 22
+    },
+    {
+      "elapsedSeconds": 2430,
+      "rssKiB": 246504,
+      "descriptors": 22
+    },
+    {
+      "elapsedSeconds": 2440,
+      "rssKiB": 246504,
+      "descriptors": 23
+    },
+    {
+      "elapsedSeconds": 2450,
+      "rssKiB": 246504,
+      "descriptors": 22
+    },
+    {
+      "elapsedSeconds": 2460,
+      "rssKiB": 246504,
+      "descriptors": 25
+    },
+    {
+      "elapsedSeconds": 2470,
+      "rssKiB": 246504,
+      "descriptors": 23
+    },
+    {
+      "elapsedSeconds": 2480,
+      "rssKiB": 246504,
+      "descriptors": 25
+    },
+    {
+      "elapsedSeconds": 2490,
+      "rssKiB": 246504,
+      "descriptors": 25
+    },
+    {
+      "elapsedSeconds": 2500,
+      "rssKiB": 246664,
+      "descriptors": 22
+    },
+    {
+      "elapsedSeconds": 2510,
+      "rssKiB": 246664,
+      "descriptors": 24
+    },
+    {
+      "elapsedSeconds": 2520,
+      "rssKiB": 246664,
+      "descriptors": 22
+    },
+    {
+      "elapsedSeconds": 2530,
+      "rssKiB": 246664,
+      "descriptors": 24
+    },
+    {
+      "elapsedSeconds": 2540,
+      "rssKiB": 246664,
+      "descriptors": 24
+    },
+    {
+      "elapsedSeconds": 2550,
+      "rssKiB": 246280,
+      "descriptors": 22
+    },
+    {
+      "elapsedSeconds": 2560,
+      "rssKiB": 246444,
+      "descriptors": 23
+    },
+    {
+      "elapsedSeconds": 2570,
+      "rssKiB": 246444,
+      "descriptors": 24
+    },
+    {
+      "elapsedSeconds": 2580,
+      "rssKiB": 246444,
+      "descriptors": 24
+    },
+    {
+      "elapsedSeconds": 2590,
+      "rssKiB": 246444,
+      "descriptors": 24
+    },
+    {
+      "elapsedSeconds": 2600,
+      "rssKiB": 246444,
+      "descriptors": 22
+    },
+    {
+      "elapsedSeconds": 2610,
+      "rssKiB": 246444,
+      "descriptors": 25
+    },
+    {
+      "elapsedSeconds": 2620,
+      "rssKiB": 246456,
+      "descriptors": 25
+    },
+    {
+      "elapsedSeconds": 2630,
+      "rssKiB": 246464,
+      "descriptors": 23
+    },
+    {
+      "elapsedSeconds": 2640,
+      "rssKiB": 246464,
+      "descriptors": 25
+    },
+    {
+      "elapsedSeconds": 2650,
+      "rssKiB": 246336,
+      "descriptors": 25
+    },
+    {
+      "elapsedSeconds": 2660,
+      "rssKiB": 246336,
+      "descriptors": 26
+    },
+    {
+      "elapsedSeconds": 2670,
+      "rssKiB": 246336,
+      "descriptors": 22
+    },
+    {
+      "elapsedSeconds": 2680,
+      "rssKiB": 246136,
+      "descriptors": 24
+    },
+    {
+      "elapsedSeconds": 2690,
+      "rssKiB": 246292,
+      "descriptors": 24
+    },
+    {
+      "elapsedSeconds": 2700,
+      "rssKiB": 246236,
+      "descriptors": 22
+    },
+    {
+      "elapsedSeconds": 2710,
+      "rssKiB": 246440,
+      "descriptors": 22
+    },
+    {
+      "elapsedSeconds": 2720,
+      "rssKiB": 246448,
+      "descriptors": 22
+    },
+    {
+      "elapsedSeconds": 2730,
+      "rssKiB": 246448,
+      "descriptors": 26
+    },
+    {
+      "elapsedSeconds": 2740,
+      "rssKiB": 246448,
+      "descriptors": 22
+    },
+    {
+      "elapsedSeconds": 2750,
+      "rssKiB": 246344,
+      "descriptors": 24
+    },
+    {
+      "elapsedSeconds": 2760,
+      "rssKiB": 246448,
+      "descriptors": 25
+    },
+    {
+      "elapsedSeconds": 2770,
+      "rssKiB": 246448,
+      "descriptors": 25
+    },
+    {
+      "elapsedSeconds": 2780,
+      "rssKiB": 246448,
+      "descriptors": 25
+    },
+    {
+      "elapsedSeconds": 2790,
+      "rssKiB": 246448,
+      "descriptors": 22
+    },
+    {
+      "elapsedSeconds": 2800,
+      "rssKiB": 246448,
+      "descriptors": 22
+    },
+    {
+      "elapsedSeconds": 2810,
+      "rssKiB": 246456,
+      "descriptors": 23
+    },
+    {
+      "elapsedSeconds": 2820,
+      "rssKiB": 246464,
+      "descriptors": 22
+    },
+    {
+      "elapsedSeconds": 2830,
+      "rssKiB": 246464,
+      "descriptors": 23
+    },
+    {
+      "elapsedSeconds": 2840,
+      "rssKiB": 246464,
+      "descriptors": 23
+    },
+    {
+      "elapsedSeconds": 2850,
+      "rssKiB": 246412,
+      "descriptors": 22
+    },
+    {
+      "elapsedSeconds": 2860,
+      "rssKiB": 246448,
+      "descriptors": 22
+    },
+    {
+      "elapsedSeconds": 2870,
+      "rssKiB": 246448,
+      "descriptors": 22
+    },
+    {
+      "elapsedSeconds": 2880,
+      "rssKiB": 246448,
+      "descriptors": 25
+    },
+    {
+      "elapsedSeconds": 2890,
+      "rssKiB": 246464,
+      "descriptors": 24
+    },
+    {
+      "elapsedSeconds": 2900,
+      "rssKiB": 246464,
+      "descriptors": 24
+    },
+    {
+      "elapsedSeconds": 2910,
+      "rssKiB": 246464,
+      "descriptors": 26
+    },
+    {
+      "elapsedSeconds": 2920,
+      "rssKiB": 246464,
+      "descriptors": 23
+    },
+    {
+      "elapsedSeconds": 2930,
+      "rssKiB": 246464,
+      "descriptors": 23
+    },
+    {
+      "elapsedSeconds": 2940,
+      "rssKiB": 246300,
+      "descriptors": 24
+    },
+    {
+      "elapsedSeconds": 2950,
+      "rssKiB": 246456,
+      "descriptors": 24
+    },
+    {
+      "elapsedSeconds": 2960,
+      "rssKiB": 246456,
+      "descriptors": 25
+    },
+    {
+      "elapsedSeconds": 2970,
+      "rssKiB": 246456,
+      "descriptors": 22
+    },
+    {
+      "elapsedSeconds": 2980,
+      "rssKiB": 246456,
+      "descriptors": 24
+    },
+    {
+      "elapsedSeconds": 2990,
+      "rssKiB": 246660,
+      "descriptors": 26
+    },
+    {
+      "elapsedSeconds": 3000,
+      "rssKiB": 246660,
+      "descriptors": 25
+    },
+    {
+      "elapsedSeconds": 3010,
+      "rssKiB": 246660,
+      "descriptors": 25
+    },
+    {
+      "elapsedSeconds": 3020,
+      "rssKiB": 246660,
+      "descriptors": 25
+    },
+    {
+      "elapsedSeconds": 3030,
+      "rssKiB": 246660,
+      "descriptors": 25
+    },
+    {
+      "elapsedSeconds": 3040,
+      "rssKiB": 246660,
+      "descriptors": 25
+    },
+    {
+      "elapsedSeconds": 3050,
+      "rssKiB": 246660,
+      "descriptors": 22
+    },
+    {
+      "elapsedSeconds": 3060,
+      "rssKiB": 246468,
+      "descriptors": 26
+    },
+    {
+      "elapsedSeconds": 3070,
+      "rssKiB": 246296,
+      "descriptors": 22
+    },
+    {
+      "elapsedSeconds": 3080,
+      "rssKiB": 246296,
+      "descriptors": 22
+    },
+    {
+      "elapsedSeconds": 3090,
+      "rssKiB": 246296,
+      "descriptors": 23
+    },
+    {
+      "elapsedSeconds": 3100,
+      "rssKiB": 246516,
+      "descriptors": 22
+    },
+    {
+      "elapsedSeconds": 3110,
+      "rssKiB": 246516,
+      "descriptors": 26
+    },
+    {
+      "elapsedSeconds": 3120,
+      "rssKiB": 246516,
+      "descriptors": 23
+    },
+    {
+      "elapsedSeconds": 3130,
+      "rssKiB": 246516,
+      "descriptors": 23
+    },
+    {
+      "elapsedSeconds": 3140,
+      "rssKiB": 246516,
+      "descriptors": 26
+    },
+    {
+      "elapsedSeconds": 3150,
+      "rssKiB": 246516,
+      "descriptors": 25
+    },
+    {
+      "elapsedSeconds": 3160,
+      "rssKiB": 246532,
+      "descriptors": 25
+    },
+    {
+      "elapsedSeconds": 3170,
+      "rssKiB": 246472,
+      "descriptors": 24
+    },
+    {
+      "elapsedSeconds": 3180,
+      "rssKiB": 246508,
+      "descriptors": 25
+    },
+    {
+      "elapsedSeconds": 3190,
+      "rssKiB": 246508,
+      "descriptors": 24
+    },
+    {
+      "elapsedSeconds": 3200,
+      "rssKiB": 246508,
+      "descriptors": 23
+    },
+    {
+      "elapsedSeconds": 3210,
+      "rssKiB": 246516,
+      "descriptors": 26
+    },
+    {
+      "elapsedSeconds": 3220,
+      "rssKiB": 246516,
+      "descriptors": 24
+    },
+    {
+      "elapsedSeconds": 3230,
+      "rssKiB": 246516,
+      "descriptors": 24
+    },
+    {
+      "elapsedSeconds": 3240,
+      "rssKiB": 246516,
+      "descriptors": 23
+    },
+    {
+      "elapsedSeconds": 3250,
+      "rssKiB": 246516,
+      "descriptors": 24
+    },
+    {
+      "elapsedSeconds": 3260,
+      "rssKiB": 246516,
+      "descriptors": 22
+    },
+    {
+      "elapsedSeconds": 3270,
+      "rssKiB": 246516,
+      "descriptors": 24
+    },
+    {
+      "elapsedSeconds": 3280,
+      "rssKiB": 246516,
+      "descriptors": 23
+    },
+    {
+      "elapsedSeconds": 3290,
+      "rssKiB": 246524,
+      "descriptors": 24
+    },
+    {
+      "elapsedSeconds": 3300,
+      "rssKiB": 246524,
+      "descriptors": 24
+    },
+    {
+      "elapsedSeconds": 3310,
+      "rssKiB": 246524,
+      "descriptors": 26
+    },
+    {
+      "elapsedSeconds": 3320,
+      "rssKiB": 246524,
+      "descriptors": 23
+    },
+    {
+      "elapsedSeconds": 3330,
+      "rssKiB": 246400,
+      "descriptors": 25
+    },
+    {
+      "elapsedSeconds": 3340,
+      "rssKiB": 246564,
+      "descriptors": 22
+    },
+    {
+      "elapsedSeconds": 3350,
+      "rssKiB": 246556,
+      "descriptors": 26
+    },
+    {
+      "elapsedSeconds": 3360,
+      "rssKiB": 246556,
+      "descriptors": 26
+    },
+    {
+      "elapsedSeconds": 3370,
+      "rssKiB": 246556,
+      "descriptors": 26
+    },
+    {
+      "elapsedSeconds": 3380,
+      "rssKiB": 246336,
+      "descriptors": 23
+    },
+    {
+      "elapsedSeconds": 3390,
+      "rssKiB": 246336,
+      "descriptors": 25
+    },
+    {
+      "elapsedSeconds": 3400,
+      "rssKiB": 246312,
+      "descriptors": 24
+    },
+    {
+      "elapsedSeconds": 3410,
+      "rssKiB": 246312,
+      "descriptors": 24
+    },
+    {
+      "elapsedSeconds": 3420,
+      "rssKiB": 246528,
+      "descriptors": 26
+    },
+    {
+      "elapsedSeconds": 3430,
+      "rssKiB": 246528,
+      "descriptors": 26
+    },
+    {
+      "elapsedSeconds": 3440,
+      "rssKiB": 246528,
+      "descriptors": 24
+    },
+    {
+      "elapsedSeconds": 3450,
+      "rssKiB": 246528,
+      "descriptors": 23
+    },
+    {
+      "elapsedSeconds": 3460,
+      "rssKiB": 246196,
+      "descriptors": 22
+    },
+    {
+      "elapsedSeconds": 3470,
+      "rssKiB": 246344,
+      "descriptors": 24
+    },
+    {
+      "elapsedSeconds": 3480,
+      "rssKiB": 246344,
+      "descriptors": 23
+    },
+    {
+      "elapsedSeconds": 3490,
+      "rssKiB": 246532,
+      "descriptors": 25
+    },
+    {
+      "elapsedSeconds": 3500,
+      "rssKiB": 246532,
+      "descriptors": 23
+    },
+    {
+      "elapsedSeconds": 3510,
+      "rssKiB": 246532,
+      "descriptors": 23
+    },
+    {
+      "elapsedSeconds": 3520,
+      "rssKiB": 246756,
+      "descriptors": 26
+    },
+    {
+      "elapsedSeconds": 3530,
+      "rssKiB": 246764,
+      "descriptors": 26
+    },
+    {
+      "elapsedSeconds": 3540,
+      "rssKiB": 246764,
+      "descriptors": 23
+    },
+    {
+      "elapsedSeconds": 3550,
+      "rssKiB": 246764,
+      "descriptors": 24
+    },
+    {
+      "elapsedSeconds": 3560,
+      "rssKiB": 246764,
+      "descriptors": 25
+    },
+    {
+      "elapsedSeconds": 3570,
+      "rssKiB": 246764,
+      "descriptors": 23
+    },
+    {
+      "elapsedSeconds": 3580,
+      "rssKiB": 246764,
+      "descriptors": 24
+    },
+    {
+      "elapsedSeconds": 3590,
+      "rssKiB": 246764,
+      "descriptors": 24
+    },
+    {
+      "elapsedSeconds": 3600,
+      "rssKiB": 247092,
+      "descriptors": 22
+    }
+  ]
+}
