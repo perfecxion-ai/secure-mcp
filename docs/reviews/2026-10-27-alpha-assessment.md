@@ -31,13 +31,13 @@ Admission audit failure prevents handler execution, and tool outcomes have conte
 
 Next change: define bounded transport events and trusted correlation IDs, then cover authentication and wire rejection without recording bearer tokens, arguments, raw paths, or unbounded labels. Test backpressure, collector failure, cancellation, and shutdown. Specify which failures deny work and how an operator detects incomplete delivery. Do not add an unbounded logging queue.
 
-### A03 P2 Custom schema transforms are applied repeatedly
+### A03 P2 Custom schema transforms were applied repeatedly (resolved)
 
 `SecureRuntime.invoke()` parses input, and the `defineTool()` wrapper parses it again. SDK invocation adds its own input parse. A type-changing transform such as `z.strictObject({ n: z.string().transform(Number) })` accepts `{ n: '1' }` on its first parse, then fails when the parsed number is validated as a string again. The [direct library reproduction](evidence/reproduce-alpha-transform.mjs) returned `internal` without calling the handler. Run it after `npm ci` and `npm run build`; it deliberately exits nonzero while the defect is present. Shape-preserving transforms and refinements can also run more than once.
 
-The built-in tools use strict schemas without transforms. Custom integrations should do conversion inside their trusted handler until this contract is repaired. Refinements should be deterministic and free of side effects.
+The validation boundary now belongs to `SecureRuntime`. The SDK advertises the input JSON schema and checks the wire envelope and element budget; custom schema parsing runs once inside runtime policy, capacity, deadline, and safe-error handling. Asynchronous refinements are supported. A timed-out validator retains its slot until it settles and cannot subsequently invoke the handler. Validator exception text is not returned to callers.
 
-Next change: give the trusted SDK callback and raw library invocation explicit validation boundaries, preserve typed parsed values, and execute transforms exactly once. Regression cases must cover direct calls and both transports, defaults/coercion/transforms, rejected input, and exceptions from custom validation. Keep the pre-validation element bound and safe error handling intact.
+Regression tests cover direct calls and both stdio/HTTP protocol generations, advertised input types, transforms, defaults, coercion, unknown fields, unsafe validator exceptions, and delayed validation. The historical reproduction now passes.
 
 ### A04 P1 Release and migration decisions need external evidence
 
@@ -47,7 +47,7 @@ Private vulnerability reporting and artifact attestation are configured. Publica
 
 ## Next execution sequence
 
-1. Repair custom-tool validation ownership with regression cases. Keep it separate from new tools or providers.
+1. Custom-tool validation ownership is repaired with direct and transport regression cases.
 2. Complete bounded remote audit coverage and exercise a real collector under failure and load.
 3. Validate one operator-owned identity provider through actual browser login, consent, logout/expiry, rotation, and outage behavior behind TLS. Record exact host and provider versions.
 4. Finish the performance contract: current Node patch, fixed workload and concurrency, no-op overhead measured separately from document I/O, explicit acceptance thresholds, and repeatable long runs.

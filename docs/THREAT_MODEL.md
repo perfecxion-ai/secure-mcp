@@ -11,7 +11,7 @@ Local stdio clients inherit the authority of the launching process and its confi
 ## Enforced controls
 
 - Tool allowlist, all required scopes, token expiry, and read-only policy govern both discovery and invocation.
-- Strict input schemas reject unknown fields instead of rewriting input. A collection-entry budget runs before schema validation in the SDK and before serialization/validation in direct library calls. Error responses omit internal exception messages.
+- Strict input schemas reject unknown fields instead of rewriting input. A collection-entry budget runs before schema validation in the SDK and before serialization/validation in direct library calls. Custom schema validation runs once inside the runtime execution limit, including asynchronous refinements. Error responses omit internal exception messages, including validator exceptions.
 - The Linux document reader anchors access to an open workspace directory, opens each component without following symlinks, rejects hidden/absolute/traversal paths, accepts only regular files, and bounds reads. File descriptor operations prevent the usual check-then-open symlink substitution.
 - A workspace must be operator-controlled. Hard links are not distinguishable from ordinary files, and the runtime does not defend against malicious local processes rewriting authorized files. Use a dedicated, read-only mount containing only data callers may read. The document tool currently requires Linux `/proc`.
 - API reads use a single operator-selected URL, GET only, no caller parameters, no forwarded bearer token, and no redirects. The operator is responsible for selecting a trusted destination and DNS. There is no arbitrary-URL fetch tool.

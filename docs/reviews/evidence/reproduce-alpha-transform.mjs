@@ -1,4 +1,4 @@
-// Known alpha defect: run after npm ci and npm run build. Exits nonzero while unfixed.
+// Regression probe for the former repeated-transform defect. Run after npm ci and npm run build.
 import assert from 'node:assert/strict';
 import { z } from 'zod';
 import { SecureRuntime, defineTool, textResult } from '../../../dist/index.js';
