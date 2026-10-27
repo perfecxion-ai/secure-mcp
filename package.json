@@ -30,7 +30,7 @@
     "typecheck": "tsc -p tsconfig.check.json --noEmit",
     "lint": "eslint src tests scripts --max-warnings=0",
     "test": "node --import tsx --test --test-concurrency=4 tests/*.test.ts",
-    "test:security": "node --import tsx --test tests/security.test.ts tests/http.test.ts tests/http-limits.test.ts tests/api.test.ts",
+    "test:security": "node --import tsx --test tests/security.test.ts tests/identity.test.ts tests/http.test.ts tests/http-limits.test.ts tests/api.test.ts",
     "test:ci": "npm test",
     "check": "npm run typecheck && npm run lint && npm run format:check && npm test && npm run build && node scripts/release-metadata.mjs && node --import tsx scripts/config-schema.ts --check",
     "test:package": "node scripts/package-smoke.mjs",

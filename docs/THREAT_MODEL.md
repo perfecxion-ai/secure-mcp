@@ -29,7 +29,7 @@ Metrics require a verified token with `metrics:read`. No subject, URL, path, arg
 
 ## Revocation and remaining assurance
 
-This runtime does not issue, refresh, or revoke tokens. It verifies short-lived external access tokens on every HTTP request. An issuer-side logout does not immediately invalidate an already issued JWT. Expiry and the configured maximum age bound this window; deployments needing immediate revocation require an introspection or revocation integration before adoption.
+This runtime does not issue, refresh, or revoke tokens. It verifies short-lived external access tokens on every HTTP request. An issuer-side logout does not immediately invalidate an already issued JWT. Expiry and the configured maximum age bound this window. Cached keys can remain usable for five minutes after issuer-side removal; a cold or stale cache fails closed when JWKS is unavailable. Key rotation and outage transitions are covered by deterministic HTTP-backed tests, but not yet by an operator-run production IdP exercise. Deployments needing immediate revocation require an introspection or revocation integration before adoption.
 
 There are no accounts, passwords, MFA secrets, SAML assertions, refresh-token families, Redis sessions, or Vault key lifecycle in the new default runtime. V1 credentials must not be imported automatically.
 
