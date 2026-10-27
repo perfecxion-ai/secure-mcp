@@ -30,7 +30,11 @@ Default tool limits: 16 concurrent operations, 10-second deadline, 64 KiB input,
 
 The explicit element budget addresses the SDK's [configuration-dependent input-validation advisory](https://github.com/modelcontextprotocol/typescript-sdk/security/advisories/GHSA-46jr-4wx8-v453). Installing a patched SDK alone does not enable this control. Keep both byte and element limits appropriate to the registered tools.
 
-Audit is newline-delimited JSON on stderr. Route it to a bounded, monitored log collector. Never redirect stdout logging into the stdio protocol stream. Audit events omit request content. If a sink fails before execution, the operation is denied. See [the threat model](THREAT_MODEL.md) for failure and coverage limits.
+Audit is newline-delimited JSON on stderr by default. Route it to a durable collector for remote validation. Never redirect stdout logging into the stdio protocol stream. Events omit request content, tokens, paths, client-supplied IDs, and raw exceptions. HTTP records use fixed endpoint/method categories and status codes; only verified identities receive a hashed actor. Server-generated request IDs correlate HTTP, SDK protocol failures, and tool decisions. Unknown tool names are recorded as `unknown`.
+
+`audit.maxPending` defaults to 64 and `audit.timeoutMs` to 1,000 ms. There is no queue beyond pending sink writes. A timed-out write retains its slot until the underlying sink settles. Any failed, timed-out, or dropped write latches audit readiness unhealthy until restart; `/health` returns 503 and new work fails closed. Metrics and the library's `runtime.audit.state` expose pending writes, failures, and dropped records. Because HTTP admission itself requires audit, scrape failure is also an alert signal after sink failure.
+
+Tool admission and completion, SDK error responses, and HTTP response preparation await sink acknowledgement. The final socket completion/disconnect record is necessarily asynchronous. Denials are audited independently of tool capacity. Stderr acknowledgement means a stream write completed, not that a remote collector persisted the record. See [the threat model](THREAT_MODEL.md) for unavoidable loss boundaries.
 
 SIGINT, SIGTERM, and stdio EOF initiate shutdown. HTTP stops accepting requests, cancels active tools, and closes sockets. The process exits nonzero if trusted handlers fail to settle within the deadline. Library users must call `close()` and handle its remaining-work count.
 
