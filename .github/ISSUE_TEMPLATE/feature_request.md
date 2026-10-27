@@ -1,27 +1,23 @@
 ---
 name: Feature request
-about: Suggest an idea for this project
-title: '[FEATURE] '
+about: Describe a workflow the current runtime cannot support
+title: ''
 labels: 'enhancement'
 assignees: ''
 ---
 
-## Is your feature request related to a problem?
+## Workflow
 
-A clear and concise description of what the problem is. Ex. I'm always frustrated when [...]
+Who needs this, what are they trying to do, and what prevents them from doing it today? Give a concrete example.
 
-## Describe the solution you'd like
+## Proposed behavior
 
-A clear and concise description of what you want to happen.
+Describe the smallest useful change and how a caller would know it worked.
 
-## Describe alternatives you've considered
+## Permissions and deployment
 
-A clear and concise description of any alternative solutions or features you've considered.
+Does the feature read new data, contact a service, or perform a write? Describe the permissions and deployment assumptions it needs. Say whether an optional integration would meet the need.
 
-## Use case
+## Alternatives
 
-Describe the use case for this feature. Who would benefit and how?
-
-## Additional context
-
-Add any other context, mockups, or examples about the feature request here.
+What have you tried? Link relevant protocol specifications or existing integrations, if any.
