@@ -16,6 +16,7 @@ const clients = [];
 const memory = [];
 const latencies = [];
 let processHandle, processExit, sampler;
+let lastProgress = 0;
 let calls = 0,
   failures = 0,
   deniedCalls = 0,
@@ -120,11 +121,24 @@ try {
       elapsedSeconds: Math.round((performance.now() - started) / 1000),
       rssKiB: Number(status.match(/^VmRSS:\s+(\d+)/m)?.[1]),
       descriptors: (await readdir(`/proc/${processHandle.pid}/fd`)).length,
+      clientRssKiB: Math.round(process.memoryUsage().rss / 1024),
+      clientHeapUsedKiB: Math.round(process.memoryUsage().heapUsed / 1024),
     });
   }
   await sample();
   sampler = setInterval(() => {
-    void sample().catch(() => {});
+    void sample()
+      .then(() => {
+        const latest = memory.at(-1);
+        if (process.env.BENCH_PROGRESS === '1' && latest.elapsedSeconds >= lastProgress + 60) {
+          lastProgress = latest.elapsedSeconds;
+          process.stderr.write(
+            JSON.stringify({ progress: latest.elapsedSeconds, calls, failures, memory: latest }) +
+              '\n',
+          );
+        }
+      })
+      .catch(() => {});
   }, 10_000);
   await Promise.all(
     clients.map(async (client, index) => {
