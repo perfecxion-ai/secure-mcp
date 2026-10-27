@@ -11,6 +11,9 @@ import { generateKeyPair, exportJWK, SignJWT } from 'jose';
 import { Client, StreamableHTTPClientTransport } from '@modelcontextprotocol/client';
 
 const seconds = Number(process.env.BENCH_SECONDS ?? '60');
+const intervalMs = Number(process.env.BENCH_INTERVAL_MS ?? '0');
+assert.ok(Number.isInteger(intervalMs) && intervalMs >= 0 && intervalMs <= 1000);
+const auditSocket = process.env.BENCH_AUDIT_SOCKET;
 assert.ok(Number.isInteger(seconds) && seconds >= 1 && seconds <= 7200);
 const directory = await mkdtemp(join(tmpdir(), 'secure-mcp-http-load-'));
 const clients = [];
@@ -61,6 +64,7 @@ try {
     join(directory, 'config.json'),
     JSON.stringify({
       transport: 'http',
+      ...(auditSocket ? { audit: { socketPath: auditSocket } } : {}),
       workspace: join(directory, 'documents'),
       http: { port, resource, issuer, jwksUrl: issuer + '/jwks', algorithms: ['ES256'] },
     }),
@@ -162,6 +166,7 @@ try {
       let iteration = 0;
       const restricted = index === 3;
       while (performance.now() - started < seconds * 1000) {
+        if (intervalMs) await delay(intervalMs);
         const denied = iteration++ % 10 === 0;
         const start = performance.now();
         if (denied) deniedCalls++;
@@ -205,7 +210,10 @@ try {
     transport: 'HTTP on loopback, no TLS',
     concurrency: 4,
     authentication: 'Local ES256 JWT fixtures renewed every 120 seconds; real HTTP JWKS requests',
-    audit: 'JSON events to /dev/null',
+    audit: auditSocket
+      ? 'Unix socket collector, fsync acknowledgement per record'
+      : 'JSON events to /dev/null',
+    workerIntervalMs: intervalMs,
     workload: 'Three document readers, one policy-only subject; 10% expected denials per worker',
     latencySample: 'Last 10000 calls',
     durationSeconds: (performance.now() - started) / 1000,
