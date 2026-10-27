@@ -348,13 +348,3 @@ Define benchmark hardware, runtime, transport, payload sizes, authentication mod
 ## Immediate execution handoff
 
 Start with PR 01 and PR 02 on an isolated branch. Use the stored diagnostic cases to prove which legacy behavior is being retired or repaired. Do not start by expanding the container executor or adding more AI tools.
-
-Before any commit, push, or PR operation, repeat the identity checks required by Scott's working instructions. At review time the global/effective identity was `perfecxion-ai` with `pluckymon@proton.me`, and local identity overrides were unset. However, origin uses HTTPS rather than the required SSH alias. The exact correction for this repository is:
-
-```bash
-git remote set-url origin git@github-perfecxion:perfecxion-ai/secure-mcp.git
-```
-
-That remote was not changed by this review. Resolve the mismatch explicitly before the first commit/push/PR operation, then recheck identity and all remotes. Review and planning can proceed without that change.
-
-Execution note: the origin URL was explicitly corrected to the SSH alias above after the request to create and merge PRs. Global/effective identity and unset local overrides were verified again before Git writes.
