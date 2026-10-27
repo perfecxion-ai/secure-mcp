@@ -43,11 +43,11 @@ Codex 0.164.0 and Claude Code 2.1.307 both completed the guarded runtime's allow
 
 Root and optional issuer-lab dependency audits reported zero findings in their locked trees. The SDK input-validation advisory still required explicitly enabling an element budget; a clean dependency audit alone did not establish safety.
 
-The initial and follow-up stdio runs, failed HTTP run, newer driver diagnostics, and ongoing guarded runs are kept separate in the validation index. Do not treat a report from an earlier runtime or driver as certification of every later change. Benchmark startup and percentile fields have documented limits in [BENCHMARKS.md](BENCHMARKS.md).
+The guarded one-hour stdio run completed 16,901,942 calls on Node 24.13.0; the guarded 30-minute HTTP run completed 5,094,415 calls on Node 24.22.1. Both had zero unexpected results and exited 0. A fresh ARM64 container check passed and its runtime hashes match the attested tarball. The initial runs, failed older-Node HTTP results, driver diagnostics, and completed guarded runs are kept separate in the validation index. Do not treat a report from an earlier runtime or driver as certification of every later change. Benchmark startup and percentile fields have documented limits in [BENCHMARKS.md](BENCHMARKS.md).
 
 ## Remaining gates
 
-- Complete and publish guarded-runtime endurance results, including failures and driver limitations.
+- Define stable performance thresholds for a declared workload, measure no-op overhead separately, and repeat validation in the target operator environment. The initial guarded soak gate has completed.
 - Repair repeated custom-schema parsing and verify exactly-once transforms across direct and transport calls.
 - Complete remote authentication/wire-rejection audit coverage and validate a durable collector under load and failure.
 - Validate a production-like operator IdP and actual browser journey, including key rotation and outage behavior.

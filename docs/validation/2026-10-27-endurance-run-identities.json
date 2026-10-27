@@ -22,6 +22,10 @@
     "scripts/http-benchmark.mjs": {
       "sourceCommit": "c4bd4e63c4c0b912cfb2e8dd585887062e88ca50",
       "sha256": "82a4e12ac06fa1848c5936d1a27e5e5b65d0d189398ad0221535d64298c979c4"
+    },
+    "scripts/http-benchmark.mjs (before failure diagnostics)": {
+      "sourceCommit": "2882594e4e1bd383d91310e7a3cc3401686958fc",
+      "sha256": "8e0cd3e3b75a20dc9ac3be18bc13d2393a4fb392c79aae175c9ea22542271c4e"
     }
   },
   "environment": {
@@ -35,18 +39,34 @@
     {
       "report": "2026-10-27-http-node24-old-diagnostic.json",
       "exitCode": 1,
-      "result": "failed: 13 request errors"
+      "result": "failed: 13 request errors",
+      "benchmarkSourceCommit": "c4bd4e63c4c0b912cfb2e8dd585887062e88ca50"
     },
     {
       "report": "2026-10-27-http-node24-old-bounded.json",
       "exitCode": 143,
       "result": "not a clean pass: workload completed with zero result mismatches, but throughput degraded and the runner reported exit 143",
-      "exitReason": "Not established; do not infer successful process cleanup from workload JSON alone"
+      "exitReason": "Not established; do not infer successful process cleanup from workload JSON alone",
+      "benchmarkSourceCommit": "2882594e4e1bd383d91310e7a3cc3401686958fc"
     },
     {
       "report": "2026-10-27-http-node24-current-diagnostic.json",
       "exitCode": 0,
-      "result": "pass for the recorded 15-minute workload"
+      "result": "pass for the recorded 15-minute workload",
+      "benchmarkSourceCommit": "c4bd4e63c4c0b912cfb2e8dd585887062e88ca50"
+    },
+    {
+      "report": "2026-10-27-guarded-http-node24-current.json",
+      "benchmarkSourceCommit": "c4bd4e63c4c0b912cfb2e8dd585887062e88ca50",
+      "exitCode": 0,
+      "result": "pass for the recorded 30-minute workload"
+    },
+    {
+      "report": "2026-10-27-guarded-stdio.json",
+      "benchmarkSourceCommit": "c0a5f95b48253f69451be0cc8d7447f5eb970917",
+      "exitCode": 0,
+      "result": "pass for the recorded one-hour workload",
+      "runtimeHashCheck": "Built modules matched the recorded guarded hashes after the run; this worktree was not rebuilt during the run"
     }
   ]
 }

@@ -23,7 +23,14 @@ The chart shows the first 15 minutes from the checked-in progress reports. Runs 
 
 The [artifact verification record](2026-10-27-guarded-artifact-verification.json) verifies the exact tarball from main commit `eee12d17c5bb86559fdad12785b67b4d1614696b`, requiring this repository's CI workflow and main ref. Both build provenance and the production SBOM verified; an altered tarball was rejected. All 12 packaged JavaScript module hashes match the guarded local lab builds. This does not mean the artifact was published or promoted.
 
-A one-hour guarded stdio run and a 30-minute current-Node HTTP run are in progress. Their results will be added only after completion. The earlier HTTP run failed; it is retained below rather than relabeled as a pass.
+Both extended guarded-runtime runs completed with exit status 0:
+
+| Run                                                 | Node    | Duration   | Calls      | Unexpected results | Last-10,000 p95 | Peak sampled server RSS |
+| --------------------------------------------------- | ------- | ---------- | ---------- | ------------------ | --------------- | ----------------------- |
+| [stdio](2026-10-27-guarded-stdio.json)              | 24.13.0 | 60 minutes | 16,901,942 | 0                  | 2.00 ms         | 242.60 MiB              |
+| [HTTP](2026-10-27-guarded-http-node24-current.json) | 24.22.1 | 30 minutes | 5,094,415  | 0                  | 2.11 ms         | 345.98 MiB              |
+
+The HTTP driver used a 256 MiB heap limit and its maximum measured event-loop delay was 28.08 ms. The [ARM64 container check](2026-10-27-guarded-arm64-container.json) also passed on Node 24.22.1 with the same 12 runtime module hashes. These reports establish their recorded workflows, not an isolated capacity or production-readiness claim. The failed older-Node results remain below.
 
 ## Historical runs
 
