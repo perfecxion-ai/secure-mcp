@@ -1,6 +1,10 @@
 # Contributing
 
-Use Node 24 on Linux. Run `npm ci`, then `npm run check`. Package or CLI changes also require `npm run test:package`; container changes require `npm run test:container`.
+Use Node 24 on Linux. Run `npm ci`, then `npm run check`. This checks formatting, lint, strict types, builds, configuration metadata, and the runtime tests. Package or CLI changes also require `npm run test:package`; container changes require `npm run test:container` with Docker available.
+
+For authentication changes, install the separate lab dependencies with `npm --prefix labs/oauth ci`, then run `npm run test:oauth`. The [issuer lab](labs/oauth/README.md) covers client credentials and authorization code with PKCE. Security changes should also pass `npm run test:mutations`, which confirms that selected weakened controls are caught by regression tests.
+
+The [assistant host lab](labs/hosts/README.md) is optional and uses an existing authenticated Codex or Claude Code installation. It can consume model quota. Do not add account credentials or model-dependent acceptance runs to unattended CI. Use synthetic fixtures and include only the filtered report when sharing results.
 
 Keep PRs focused on one caller-visible problem. Describe the resulting behavior, relevant tradeoffs, actual validation, and any untested boundary. Include a failing regression case for security fixes. Do not replace a failing assertion with a skipped test or unconditional success.
 
