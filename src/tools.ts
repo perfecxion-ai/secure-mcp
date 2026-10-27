@@ -15,6 +15,7 @@ export interface ToolContext {
 export interface ToolDefinition extends ToolPolicy {
   readonly description: string;
   readonly inputSchema: z.ZodObject;
+  // Called by SecureRuntime with already validated schema output.
   invoke(args: Record<string, unknown>, context: ToolContext): Promise<CallToolResult>;
 }
 
@@ -27,7 +28,8 @@ export function defineTool<S extends z.ZodRawShape>(
 ): ToolDefinition {
   return {
     ...definition,
-    invoke: (args, context) => definition.invoke(definition.inputSchema.parse(args), context),
+    // Erase the generic shape only at registration. The runtime parses once before dispatch.
+    invoke: (args, context) => definition.invoke(args as z.output<z.ZodObject<S>>, context),
   };
 }
 

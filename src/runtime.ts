@@ -9,7 +9,7 @@ import { auditContext, jsonAuditSink, record } from './audit.js';
 import type { AuditSink } from './audit.js';
 import { ExecutionController } from './execution.js';
 import { failureCode, RuntimeFailure } from './errors.js';
-import { withinInputElementLimit } from './input.js';
+import { deferredInputSchema, withinInputElementLimit } from './input.js';
 import { createApiTool, createDocumentTool, defineTool, textResult } from './tools.js';
 import type { ToolDefinition } from './tools.js';
 
@@ -119,7 +119,7 @@ export class SecureRuntime {
         tool.name,
         {
           description: tool.description,
-          inputSchema: tool.inputSchema,
+          inputSchema: deferredInputSchema(tool.inputSchema),
           annotations: {
             readOnlyHint: tool.readOnly,
             destructiveHint: !tool.readOnly,
@@ -147,9 +147,15 @@ export class SecureRuntime {
         throw new RuntimeFailure('invalid_input');
       if (Buffer.byteLength(JSON.stringify(args)) > this.config.limits.maxInputBytes)
         throw new RuntimeFailure('invalid_input');
-      const parsed = tool.inputSchema.safeParse(args);
-      if (!parsed.success) throw new RuntimeFailure('invalid_input');
       const result = await this.execution.run(async (boundedSignal) => {
+        let parsed: z.ZodSafeParseResult<Record<string, unknown>>;
+        try {
+          parsed = await tool.inputSchema.safeParseAsync(args);
+        } catch {
+          throw new RuntimeFailure('invalid_input');
+        }
+        boundedSignal.throwIfAborted();
+        if (!parsed.success) throw new RuntimeFailure('invalid_input');
         await record(this.audit, event, 'allowed', start);
         boundedSignal.throwIfAborted();
         try {

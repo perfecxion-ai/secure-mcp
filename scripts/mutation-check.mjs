@@ -13,6 +13,10 @@ const mutations = [
     to: '',
     test: 'tests/http-limits.test.ts',
     pattern: 'HTTP cancellation',
+    additional: {
+      from: 'if (!withinInputElementLimit(args, this.config.limits.maxInputElements))',
+      to: 'if (false)',
+    },
   },
   {
     name: 'all-scopes-required',
@@ -58,7 +62,12 @@ for (const mutation of mutations) {
     const target = join(directory, mutation.file);
     const before = await readFile(target, 'utf8');
     assert.ok(before.includes(mutation.from), `Mutation anchor missing: ${mutation.name}`);
-    await writeFile(target, before.replaceAll(mutation.from, mutation.to));
+    let weakened = before.replaceAll(mutation.from, mutation.to);
+    if (mutation.additional) {
+      assert.ok(weakened.includes(mutation.additional.from));
+      weakened = weakened.replaceAll(mutation.additional.from, mutation.additional.to);
+    }
+    await writeFile(target, weakened);
     let detected = false;
     try {
       execFileSync(process.execPath, args, { cwd: directory, timeout: 20_000, stdio: 'pipe' });
