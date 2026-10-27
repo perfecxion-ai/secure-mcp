@@ -2,6 +2,8 @@
 
 Use Node 24 on Linux. The CLI defaults to stdio. `--config FILE` reads strict JSON; relative workspaces in that file resolve relative to the file. `--workspace DIRECTORY` overrides that value relative to the current directory. `--doctor` validates configuration and workspace access without starting a listener and prints only a sanitized summary. It does not verify identity-provider or audit-collector availability.
 
+Prepare the document workspace from trusted copies of approved files, then mount it read-only for the server. Do not preserve hard links from untrusted imports: read-only access does not hide an already linked file or prevent changes through another writable alias. Workspace preparation and local writers remain operator trust boundaries; see [the threat model](THREAT_MODEL.md).
+
 ## HTTP
 
 Copy `examples/http.json`, select an approved workspace, and replace the example resource, issuer, and JWKS URLs. The resource path must be `/mcp`. Run:
@@ -31,6 +33,8 @@ Default tool limits: 16 concurrent operations, 10-second deadline, 64 KiB input,
 The explicit element budget addresses the SDK's [configuration-dependent input-validation advisory](https://github.com/modelcontextprotocol/typescript-sdk/security/advisories/GHSA-46jr-4wx8-v453). Installing a patched SDK alone does not enable this control. Keep both byte and element limits appropriate to the registered tools.
 
 Audit is newline-delimited JSON on stderr by default. Route it to a durable collector for remote validation. Never redirect stdout logging into the stdio protocol stream. Events omit request content, tokens, paths, client-supplied IDs, and raw exceptions. HTTP records use fixed endpoint/method categories and status codes; only verified identities receive a hashed actor. Server-generated request IDs correlate HTTP, SDK protocol failures, and tool decisions. Unknown tool names are recorded as `unknown`.
+
+Actor hashes are deterministic and unsalted, so treat audit records as pseudonymous identity data. They permit correlation and do not prevent guessing predictable issuer/subject pairs.
 
 `audit.maxPending` defaults to 64 and `audit.timeoutMs` to 1,000 ms. There is no queue beyond pending sink writes. A timed-out write retains its slot until the underlying sink settles. Any failed, timed-out, or dropped write latches audit readiness unhealthy until restart; `/health` returns 503 and new work fails closed. Metrics and the library's `runtime.audit.state` expose pending writes, failures, and dropped records. Because HTTP admission itself requires audit, scrape failure is also an alert signal after sink failure.
 
