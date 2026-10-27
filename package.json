@@ -1,7 +1,7 @@
 {
   "name": "@perfecxion/secure-mcp-server",
   "version": "1.0.0",
-  "description": "Enterprise-grade Model Context Protocol server with advanced security and scalability",
+  "description": "Experimental MCP server prototype; see the repository assessment before use",
   "main": "dist/index.js",
   "scripts": {
     "dev": "tsx watch src/index.ts",
@@ -130,5 +130,5 @@
     "performance"
   ],
   "author": "perfecXion.ai Team <dev@perfecxion.ai>",
-  "license": "Apache-2.0"
+  "license": "AGPL-3.0-or-later"
 }

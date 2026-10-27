@@ -1,0 +1,489 @@
+{
+  "review_date": "2026-10-26",
+  "timezone": "America/New_York",
+  "baseline_commit": "1df0af55bd2cebde48d643e3d3c852e64d37ce18",
+  "environment": {
+    "node": "24.13.0",
+    "npm": "11.6.2",
+    "platform": "linux",
+    "architecture": "arm64",
+    "initial_install": "npm install --ignore-scripts --no-audit --no-fund",
+    "generated_lock_sha256": "cc005c0770f7cd571456a86236fa043da8c9096222533696f023d5f974b21291",
+    "note": "Fresh dependency resolution, no committed root lockfile. Prisma generation performed explicitly. Consumer install used normal lifecycle scripts."
+  },
+  "checks": [
+    {
+      "command": "npm ci --ignore-scripts --no-audit --no-fund",
+      "exit_code": 1,
+      "result": "EUSAGE: missing root lockfile"
+    },
+    {
+      "command": "prisma validate; prisma generate",
+      "exit_code": 0,
+      "result": "Synthetic DATABASE_URL supplied. Schema valid and client generated; no live database used."
+    },
+    {
+      "command": "npm run typecheck",
+      "exit_code": 0
+    },
+    {
+      "command": "npm run build",
+      "exit_code": 0
+    },
+    {
+      "command": "npm run lint",
+      "exit_code": 1,
+      "errors": 2,
+      "warnings": 162
+    },
+    {
+      "command": "npm run test:unit -- --runInBand",
+      "exit_code": 1,
+      "suites_failed": 6,
+      "suites_passed": 3,
+      "tests_failed": 52,
+      "tests_passed": 179
+    },
+    {
+      "command": "jest --selectProjects security --runInBand --testPathPattern=mcp-protocol-security.test.ts",
+      "exit_code": 1,
+      "suites_failed": 1,
+      "tests_failed": 7,
+      "tests_passed": 28
+    },
+    {
+      "command": "timeout 60s npm run test:security -- --runInBand --testPathIgnorePatterns=automated-security-framework.test.ts --testPathIgnorePatterns=performance-security-testing.test.ts",
+      "exit_code": 124,
+      "result": "Timed out; no full-suite pass/fail count established"
+    },
+    {
+      "command": "npm audit --omit=dev --json",
+      "exit_code": 1,
+      "vulnerabilities": {
+        "info": 0,
+        "low": 3,
+        "moderate": 7,
+        "high": 11,
+        "critical": 2,
+        "total": 23
+      }
+    },
+    {
+      "command": "npm pack --dry-run --ignore-scripts --json",
+      "exit_code": 0,
+      "files": 126,
+      "unpacked_bytes": 1038502,
+      "compiled_test_artifacts": 12,
+      "prisma_schema_included": false
+    },
+    {
+      "command": "Install locally packed server in an empty consumer; construct PrismaClient",
+      "install_exit_code": 0,
+      "constructor_exit_code": 1,
+      "result": "Prisma client not initialized; package omits schema"
+    },
+    {
+      "command": "Import packaged logger with NODE_ENV=production",
+      "exit_code": 1,
+      "result": "Invalid Pino redaction path: x-api-key"
+    },
+    {
+      "command": "Load example env with dotenv; import built config",
+      "exit_code": 1,
+      "result": [
+        "VAULT_URL required",
+        "JWT_SECRET shorter than 32 characters",
+        "SESSION_SECRET required"
+      ]
+    },
+    {
+      "command": "docker compose config --quiet",
+      "exit_code": 0,
+      "result": "YAML valid; obsolete version warning; no service startup"
+    },
+    {
+      "command": "kubectl kustomize kubernetes/overlays/dev",
+      "exit_code": 1,
+      "result": "ConfigMap generator merge target not found; no cluster contact or deployment"
+    },
+    {
+      "command": "helm lint helm/secure-mcp",
+      "exit_code": 0,
+      "result": "Missing dependencies warning for postgresql, redis, prometheus, grafana; no deployment"
+    }
+  ],
+  "function_probes": {
+    "protocolDefaultVersion": {
+      "valid": false,
+      "error": "Invalid"
+    },
+    "protocolSemver": true,
+    "sharedReplayCache": {
+      "first": true,
+      "second": {
+        "valid": false,
+        "error": "Duplicate request"
+      }
+    },
+    "requestIdZero": false,
+    "echoMissingRequiredArgument": {
+      "valid": true,
+      "sanitizedArgs": {}
+    },
+    "authResponseAfterMiddleware": {
+      "success": true,
+      "expiresIn": 900
+    },
+    "ioredisPrefixHandling": {
+      "keys": [
+        "active_token:*"
+      ],
+      "get": [
+        "mcp:active_token:a"
+      ]
+    },
+    "revocation": [
+      {
+        "prefix": "",
+        "aliceActive": false,
+        "bobActive": false,
+        "aliceRefreshFamilyActive": false
+      },
+      {
+        "prefix": "mcp:",
+        "aliceActive": true,
+        "bobActive": true,
+        "aliceRefreshFamilyActive": true
+      }
+    ],
+    "uninitializedJWT": "JWT service not initialized",
+    "refreshFirstUse": "Invalid refresh token - security violation detected",
+    "mfaPublicIdentityDecrypts": true,
+    "mfaEnrollment": "Failed to verify MFA setup",
+    "mfaEnabledOnStorageError": false
+  },
+  "probe_limits": [
+    "Actual repository functions loaded through TypeScript transpilation; logger/config/infrastructure dependencies replaced where needed",
+    "Redis key behavior checked against installed ioredis Command implementation and an in-memory model; no live Redis test",
+    "MFA encryption and decryption used actual crypto helper; TOTP generation substituted in the context/decryption probe",
+    "Backup-code generation separately tested in a subprocess with actual generator and a two-second external timeout"
+  ],
+  "backup_code_generation": {
+    "codeLength": 8,
+    "minimumEntropy": 40,
+    "maxPossibleMeasuredEntropy": 24,
+    "uniqueExampleAccepted": false,
+    "generation_exit_code": 124,
+    "external_timeout_seconds": 2
+  },
+  "logger_context_probe": {
+    "call_shape": "logger.info(message, object)",
+    "emitted_fields": [
+      "level",
+      "time",
+      "pid",
+      "hostname",
+      "service",
+      "version",
+      "environment",
+      "message"
+    ],
+    "missing_fields": [
+      "userId",
+      "tool",
+      "decision"
+    ],
+    "environment": "test"
+  },
+  "npm_metadata": {
+    "@perfecxion/secure-mcp-server": {
+      "exit_code": 0,
+      "data": {
+        "version": "1.0.0",
+        "dist-tags": {
+          "latest": "1.0.0"
+        }
+      }
+    },
+    "@perfecxion/secure-mcp-client": {
+      "exit_code": 0,
+      "data": {
+        "version": "1.0.0",
+        "dist-tags": {
+          "latest": "1.0.0"
+        }
+      }
+    },
+    "@modelcontextprotocol/server": {
+      "exit_code": 0,
+      "data": {
+        "version": "2.4.0",
+        "dist-tags": {
+          "latest": "2.4.0"
+        }
+      }
+    }
+  },
+  "github_snapshot": {
+    "stars": 2,
+    "forks": 0,
+    "open_issues": 0,
+    "discussions_enabled": false,
+    "main_protected": false,
+    "repository_rulesets": [],
+    "latest_release": "1.0.0",
+    "release_published_at": "2025-09-27T01:26:41Z",
+    "head_ci_url": "https://github.com/perfecxion-ai/secure-mcp/actions/runs/22083726798",
+    "head_ci_conclusion": "cancelled",
+    "head_security_url": "https://github.com/perfecxion-ai/secure-mcp/actions/runs/22083726793",
+    "head_security_conclusion": "failure"
+  },
+  "audit_packages": [
+    {
+      "name": "@mapbox/node-pre-gyp",
+      "severity": "high",
+      "direct": false,
+      "range": "<=1.0.11",
+      "advisory_urls": []
+    },
+    {
+      "name": "@modelcontextprotocol/sdk",
+      "severity": "high",
+      "direct": true,
+      "range": "<=1.31.0",
+      "advisory_urls": [
+        "https://github.com/advisories/GHSA-w48q-cv73-mx4w",
+        "https://github.com/advisories/GHSA-6prh-2h8m-c8cw"
+      ]
+    },
+    {
+      "name": "@xmldom/xmldom",
+      "severity": "high",
+      "direct": false,
+      "range": "<=0.8.14",
+      "advisory_urls": [
+        "https://github.com/advisories/GHSA-wh4c-j3r5-mjhp",
+        "https://github.com/advisories/GHSA-2v35-w6hq-6mfw",
+        "https://github.com/advisories/GHSA-f6ww-3ggp-fr8h",
+        "https://github.com/advisories/GHSA-x6wf-f3px-wcqx",
+        "https://github.com/advisories/GHSA-j759-j44w-7fr8",
+        "https://github.com/advisories/GHSA-6gmq-8vp8-gcm6",
+        "https://github.com/advisories/GHSA-w2rr-34g9-rvrj",
+        "https://github.com/advisories/GHSA-4w3w-2rp5-g8jm",
+        "https://github.com/advisories/GHSA-c7q8-3ch8-vqpv",
+        "https://github.com/advisories/GHSA-27p8-2357-5qqv",
+        "https://github.com/advisories/GHSA-6h8r-xr42-gp59",
+        "https://github.com/advisories/GHSA-8344-3jmq-59r6",
+        "https://github.com/advisories/GHSA-x4fp-j954-r2f4",
+        "https://github.com/advisories/GHSA-965w-775f-mr7g",
+        "https://github.com/advisories/GHSA-93r5-fhx6-vmg9"
+      ]
+    },
+    {
+      "name": "body-parser",
+      "severity": "high",
+      "direct": false,
+      "range": "<=1.20.8 || 2.0.0-beta.1 - 2.0.2",
+      "advisory_urls": [
+        "https://github.com/advisories/GHSA-qwcr-r2fm-qrc7",
+        "https://github.com/advisories/GHSA-v422-hmwv-36x6",
+        "https://github.com/advisories/GHSA-27r3-jxmh-p828"
+      ]
+    },
+    {
+      "name": "cookie",
+      "severity": "low",
+      "direct": false,
+      "range": "<0.7.0",
+      "advisory_urls": [
+        "https://github.com/advisories/GHSA-pxg6-pf52-xh8x"
+      ]
+    },
+    {
+      "name": "engine.io",
+      "severity": "high",
+      "direct": false,
+      "range": "0.7.8 - 0.7.9 || 1.8.0 - 6.6.6",
+      "advisory_urls": [
+        "https://github.com/advisories/GHSA-r635-g3xr-vw7x"
+      ]
+    },
+    {
+      "name": "express",
+      "severity": "high",
+      "direct": true,
+      "range": "<=4.22.2 || 5.0.0-alpha.1 - 5.0.1",
+      "advisory_urls": [
+        "https://github.com/advisories/GHSA-qw6h-vgh9-j6wx",
+        "https://github.com/advisories/GHSA-rv95-896h-c2vc"
+      ]
+    },
+    {
+      "name": "joi",
+      "severity": "high",
+      "direct": true,
+      "range": "<=17.13.7",
+      "advisory_urls": [
+        "https://github.com/advisories/GHSA-q7cg-457f-vx79",
+        "https://github.com/advisories/GHSA-6w3j-5fw6-r9vr",
+        "https://github.com/advisories/GHSA-gg4h-3hg2-grpc",
+        "https://github.com/advisories/GHSA-wr44-6hxh-3jwq",
+        "https://github.com/advisories/GHSA-6h2x-m376-mqjq"
+      ]
+    },
+    {
+      "name": "node-vault",
+      "severity": "moderate",
+      "direct": true,
+      "range": "0.9.22-canary.0 || 0.9.23-canary.1 - 0.10.9",
+      "advisory_urls": []
+    },
+    {
+      "name": "passport-saml",
+      "severity": "critical",
+      "direct": true,
+      "range": "*",
+      "advisory_urls": [
+        "https://github.com/advisories/GHSA-4mxg-3p6v-xgq3"
+      ]
+    },
+    {
+      "name": "path-to-regexp",
+      "severity": "high",
+      "direct": false,
+      "range": "<=0.1.12",
+      "advisory_urls": [
+        "https://github.com/advisories/GHSA-9wv6-86v2-598j",
+        "https://github.com/advisories/GHSA-rhx6-c78j-4q9w",
+        "https://github.com/advisories/GHSA-37ch-88jc-xwx2"
+      ]
+    },
+    {
+      "name": "postman-request",
+      "severity": "moderate",
+      "direct": false,
+      "range": "*",
+      "advisory_urls": []
+    },
+    {
+      "name": "qs",
+      "severity": "moderate",
+      "direct": false,
+      "range": "<=6.15.3",
+      "advisory_urls": [
+        "https://github.com/advisories/GHSA-w7fw-mjwx-w883",
+        "https://github.com/advisories/GHSA-6rw7-vpxm-498p",
+        "https://github.com/advisories/GHSA-q8mj-m7cp-5q26",
+        "https://github.com/advisories/GHSA-x5fp-wj9c-mxmx",
+        "https://github.com/advisories/GHSA-4mjr-xmp4-gh2g"
+      ]
+    },
+    {
+      "name": "send",
+      "severity": "low",
+      "direct": false,
+      "range": "<0.19.0",
+      "advisory_urls": [
+        "https://github.com/advisories/GHSA-m6fv-jmcg-4jfg"
+      ]
+    },
+    {
+      "name": "serve-static",
+      "severity": "low",
+      "direct": false,
+      "range": "<=1.16.0",
+      "advisory_urls": [
+        "https://github.com/advisories/GHSA-cm22-4g7w-348p"
+      ]
+    },
+    {
+      "name": "socket.io",
+      "severity": "high",
+      "direct": true,
+      "range": "3.0.0 - 4.7.5",
+      "advisory_urls": [
+        "https://github.com/advisories/GHSA-25hc-qcg6-38wj"
+      ]
+    },
+    {
+      "name": "tar",
+      "severity": "critical",
+      "direct": false,
+      "range": "<=7.5.20",
+      "advisory_urls": [
+        "https://github.com/advisories/GHSA-34x7-hfp2-rc4v",
+        "https://github.com/advisories/GHSA-8qq5-rm4j-mr97",
+        "https://github.com/advisories/GHSA-83g3-92jg-28cx",
+        "https://github.com/advisories/GHSA-qffp-2rhf-9h96",
+        "https://github.com/advisories/GHSA-9ppj-qmqm-q256",
+        "https://github.com/advisories/GHSA-r6q2-hw4h-h46w",
+        "https://github.com/advisories/GHSA-vmf3-w455-68vh",
+        "https://github.com/advisories/GHSA-w8wr-v893-vjvp",
+        "https://github.com/advisories/GHSA-23hp-3jrh-7fpw",
+        "https://github.com/advisories/GHSA-8x88-c5mf-7j5w",
+        "https://github.com/advisories/GHSA-gvwx-54wh-qm9j",
+        "https://github.com/advisories/GHSA-r292-9mhp-454m"
+      ]
+    },
+    {
+      "name": "uuid",
+      "severity": "moderate",
+      "direct": true,
+      "range": "<11.1.1",
+      "advisory_urls": [
+        "https://github.com/advisories/GHSA-w5hq-g745-h8pq"
+      ]
+    },
+    {
+      "name": "ws",
+      "severity": "high",
+      "direct": true,
+      "range": "8.0.0 - 8.20.1",
+      "advisory_urls": [
+        "https://github.com/advisories/GHSA-3h5v-q93c-6h6q",
+        "https://github.com/advisories/GHSA-58qx-3vcg-4xpx",
+        "https://github.com/advisories/GHSA-96hv-2xvq-fx4p"
+      ]
+    },
+    {
+      "name": "xml-crypto",
+      "severity": "moderate",
+      "direct": false,
+      "range": "1.5.6 || 2.1.3 - 2.1.6 || 3.1.0",
+      "advisory_urls": []
+    },
+    {
+      "name": "xml-encryption",
+      "severity": "moderate",
+      "direct": false,
+      "range": "1.3.0 - 2.0.0",
+      "advisory_urls": []
+    },
+    {
+      "name": "xml2js",
+      "severity": "moderate",
+      "direct": false,
+      "range": "<0.5.0",
+      "advisory_urls": [
+        "https://github.com/advisories/GHSA-776f-qx25-q3cc"
+      ]
+    },
+    {
+      "name": "zod",
+      "severity": "high",
+      "direct": true,
+      "range": "<4.6.6",
+      "advisory_urls": [
+        "https://github.com/advisories/GHSA-mrhx-c7xc-m3w5"
+      ]
+    }
+  ],
+  "unverified": [
+    "Live IdP and remote MCP client flows",
+    "Full Docker startup and Kubernetes deployment",
+    "Real container isolation",
+    "Published README throughput/latency claims",
+    "Full security/performance suite",
+    "Existing deployed users and release-specific advisory reachability"
+  ]
+}

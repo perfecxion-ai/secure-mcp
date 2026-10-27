@@ -136,4 +136,4 @@ We follow semantic versioning (semver):
 
 ## License
 
-By contributing, you agree that your contributions will be licensed under Apache 2.0.
+By contributing, you agree that your contributions will be licensed under AGPL-3.0-or-later.

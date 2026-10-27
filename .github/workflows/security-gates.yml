@@ -1,41 +1,13 @@
-name: Security Gates
-
+name: Legacy security status
 on:
-  push:
-    branches: [main, develop]
-  pull_request:
-    branches: [main]
-  schedule:
-    - cron: '0 2 * * *'  # Daily at 2 AM UTC
-
-env:
-  NODE_VERSION: '20'
-
+  workflow_dispatch:
+permissions:
+  contents: read
 jobs:
-  security-scan:
-    name: Basic Security Scan
-    runs-on: ubuntu-22.04
+  unsupported:
+    runs-on: ubuntu-24.04
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-
-      - name: Install dependencies
-        run: npm install
-
-      - name: Run npm audit
-        run: npm audit --audit-level=high
-        continue-on-error: true
-
-      - name: Run security tests
-        run: npm run test:security
-        continue-on-error: true
-
-      - name: Check for secrets
-        uses: gitleaks/gitleaks-action@v2
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - run: |
+          echo "V1 security checks are not a release gate: the review found failures and unconditional passing assertions."
+          echo "See docs/reviews/2026-10-26-assessment.md. Publication is blocked until the successor has real regression checks."
+          exit 1
