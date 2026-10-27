@@ -1,6 +1,6 @@
 # Execution record
 
-The replacement runtime is merged as an unpublished `2.0.0-alpha.1`. This is an experimental checkpoint, not completion of the stable-release roadmap. The [v1 assessment](reviews/2026-10-26-assessment.md) remains a historical review of its recorded commit; the [alpha assessment](reviews/2026-10-27-alpha-assessment.md) identifies current gaps and the next execution sequence.
+The replacement runtime is merged as an unpublished `2.0.0-alpha.1`. The [candidate record](validation/CANDIDATE.md) tracks the current fresh-install acceptance gate; independent user validation and stable-release work remain. The [v1 assessment](reviews/2026-10-26-assessment.md) remains a historical review of its recorded commit; the [alpha assessment](reviews/2026-10-27-alpha-assessment.md) identifies current gaps and the next execution sequence.
 
 ## Merged work
 
@@ -18,6 +18,13 @@ The replacement runtime is merged as an unpublished `2.0.0-alpha.1`. This is an 
 | Measure authenticated HTTP with distinct scopes and driver diagnostics | [#20](https://github.com/perfecxion-ai/secure-mcp/pull/20)                                                                                                                         |
 | Refresh contribution and issue-reporting guidance                      | [#21](https://github.com/perfecxion-ai/secure-mcp/pull/21)                                                                                                                         |
 | Test both protocols through a verified TLS reverse proxy               | [#22](https://github.com/perfecxion-ai/secure-mcp/pull/22)                                                                                                                         |
+| Apply custom schemas once within runtime bounds                        | [#26](https://github.com/perfecxion-ai/secure-mcp/pull/26)                                                                                                                         |
+| Bound and correlate transport audit; return safe failures              | [#27](https://github.com/perfecxion-ai/secure-mcp/pull/27), [#30](https://github.com/perfecxion-ai/secure-mcp/pull/30)                                                             |
+| Require durable collector acknowledgement and test ENOSPC              | [#28](https://github.com/perfecxion-ai/secure-mcp/pull/28), [#32](https://github.com/perfecxion-ai/secure-mcp/pull/32)                                                             |
+| Declare workload gates and capture server exit/audit readiness         | [#29](https://github.com/perfecxion-ai/secure-mcp/pull/29), [#34](https://github.com/perfecxion-ai/secure-mcp/pull/34)                                                             |
+| Prepare immutable artifacts and tester onboarding                      | [#31](https://github.com/perfecxion-ai/secure-mcp/pull/31)                                                                                                                         |
+| Exercise actual browser OAuth and provider lifecycle                   | [#33](https://github.com/perfecxion-ai/secure-mcp/pull/33)                                                                                                                         |
+| Separate stdio startup from the audit-failure deadline test            | [#35](https://github.com/perfecxion-ai/secure-mcp/pull/35)                                                                                                                         |
 
 Each merged PR passed its required validation check. Main now requires an up-to-date PR and the GitHub Actions `Validate runtime` check, including for administrators. Force pushes and deletion are disabled. Private vulnerability reporting is enabled. These settings support review discipline; they do not constitute an independent security review.
 
@@ -31,28 +38,22 @@ V1 source and tests are preserved in `legacy/v1`, outside the runtime dependency
 
 ## Verification
 
-The guarded runtime passes 33 native tests, strict TypeScript checks, lint, formatting, build, and configuration/registry validation. Four mutation checks confirm that regression tests detect weakened all-scope enforcement, symlink confinement, audience verification, and the SDK's pre-schema element limit. [Current coverage](validation/2026-10-27-guarded-coverage.txt) records 96.31% lines, 90.31% branches, and 92.31% functions; coverage is not a security guarantee.
+The current runtime passes 44 tests, strict TypeScript, lint, formatting, build, configuration/registry metadata checks, and four security mutation probes. The [candidate evidence](validation/CANDIDATE.md) binds the package, container, both real MCP hosts, browser IdP lab, and endurance measurements to the same 13 compiled runtime modules. Native coverage is 96.81% lines, 90.31% branches, and 91.55% functions; it is not a security guarantee.
 
-The tests exercise real SDK stdio and HTTP for `2026-07-28` and `2025-11-25`, signed tokens and local JWKS, cross-user scope isolation, malformed/oversized inputs, filesystem escape attempts, cancellation, capacity, deadlines, shutdown, and audit-stream failure. Inspector acceptance was also recorded during the initial implementation.
+Fresh-consumer checks install the exact attested tarball, verify silent import, invoke the CLI, and require clean EOF shutdown. A separate strict TypeScript consumer compiles the public runtime, transformed tool input, collector, and SDK transport types. Container checks exercise nonroot execution with a read-only root, no network, dropped capabilities, resource bounds, and a read-only document mount.
 
-Fresh-consumer tests install the tarball with normal lifecycle scripts, import it silently, invoke the CLI, and verify EOF shutdown. Container checks exercise a non-root process with a read-only filesystem, no network, dropped capabilities, resource limits, and a read-only document mount. The pinned container base runs Node 24.22.1.
+The Keycloak lab uses real Chromium password login and consent, PostgreSQL, issuer HTTPS, and an NGINX TLS resource proxy. It verifies both MCP protocols, scope isolation, real key rotation/cooldown, fresh versus cold JWKS cache behavior during outage, restart, logout/refresh failure, expiry, and replay. Deterministic identity tests separately cover stale-cache expiry and key removal. Production account policy and MFA remain operator validation.
 
-The external issuer lab covers client credentials and authorization code with S256 PKCE, state/issuer binding, replay rejection, and incorrect-verifier rejection. Its login and consent are scripted fixtures. Key rotation, cache cooldown, removal, outage, and recovery have deterministic HTTP-backed tests. These do not establish production browser, MFA, logout, or refresh behavior.
+Audit tests cover failed authentication, Host/Origin and wire rejection, correlation/privacy, timeout/cancellation/saturation, blocked delivery, collector kill/restart, journal limits, actual filesystem exhaustion, and a bounded safe error response when logging that response also fails. The collector reference has explicit capacity, retention, and local-trust limits.
 
-Codex 0.164.0 and Claude Code 2.1.307 both completed the guarded runtime's allowed-read, denied-traversal, and policy-discovery workflow. The TLS proxy lab tests both protocols through digest-pinned NGINX with certificate verification, canonical resource discovery, scope isolation, and Host/Origin rejection. Filtered reports and runtime hashes are indexed in [validation](validation/README.md).
-
-Root and optional issuer-lab dependency audits reported zero findings in their locked trees. The SDK input-validation advisory still required explicitly enabling an element budget; a clean dependency audit alone did not establish safety.
-
-The guarded one-hour stdio run completed 16,901,942 calls on Node 24.13.0; the guarded 30-minute HTTP run completed 5,094,415 calls on Node 24.22.1. Both had zero unexpected results and exited 0. A fresh ARM64 container check passed and its runtime hashes match the attested tarball. The initial runs, failed older-Node HTTP results, driver diagnostics, and completed guarded runs are kept separate in the validation index. Do not treat a report from an earlier runtime or driver as certification of every later change. Benchmark startup and percentile fields have documented limits in [BENCHMARKS.md](BENCHMARKS.md).
+Both candidate one-hour runs meet the predeclared performance contract: 13,317,342 stdio calls and 60,906 durable HTTP calls, zero unexpected results, clean driver/server exits, healthy audit, bounded resources, and complete durable journal reconciliation. The candidate is ready for independent fresh-install validation. Earlier failed and interrupted runs remain in the validation index.
 
 ## Remaining gates
 
-- Define stable performance thresholds for a declared workload, measure no-op overhead separately, and repeat validation in the target operator environment. The initial guarded soak gate has completed.
-- Repair repeated custom-schema parsing and verify exactly-once transforms across direct and transport calls.
-- Complete remote authentication/wire-rejection audit coverage and validate a durable collector under load and failure.
-- Validate a production-like operator IdP and actual browser journey, including key rotation and outage behavior.
-- Inventory deployed v1 users and credential state before recommending migration or publishing the successor.
-- Promote an immutable, attested artifact through an explicit release process. npm publication remains disabled.
-- Obtain independent security review and design-partner onboarding/repeat-use evidence. No external users have been contacted by this work.
+- Collect independent fresh-install onboarding and repeat-use feedback; no external users have been contacted.
+- Validate the target operator's identity/MFA policy, TLS routing, and audit capacity/retention.
+- Obtain independent security review and make a deliberate release/publication decision. npm publication remains disabled.
 
-Content screening, upstream proxying, and isolated untrusted execution remain separate optional workstreams. The core must remain useful without a paid service.
+Legacy remediation and migration are outside this fresh-install workstream.
+
+Content screening, upstream proxying, and isolated untrusted execution remain separate optional workstreams. Choose further tool workflows from user evidence while keeping the core useful without a paid service.

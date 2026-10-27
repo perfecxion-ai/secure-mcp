@@ -1,0 +1,11 @@
+{
+  "node": "v24.22.1",
+  "checks": [
+    "400 calls acknowledged after file sync and retained across collector kill",
+    "restart appends without losing prior records",
+    "journal capacity failure denies work and latches readiness",
+    "blocked collector and 200 concurrent calls remain bounded and fail closed"
+  ],
+  "callsWithDurableAcknowledgement": 401,
+  "journalRecords": 802
+}

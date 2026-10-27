@@ -1,0 +1,21 @@
+{
+  "node": "v24.22.1",
+  "workload": "Identical in-process policy_status calls; 50 warmup calls then 1000 measured sequential calls; no transport",
+  "runs": [
+    {
+      "audit": "no-op sink",
+      "calls": 1000,
+      "meanMs": 0.01713154399999985,
+      "p50Ms": 0.012351999999992813,
+      "p95Ms": 0.02689599999999359
+    },
+    {
+      "audit": "socket collector, two fsync acknowledgements per call",
+      "calls": 1000,
+      "meanMs": 9.015502259999968,
+      "p50Ms": 7.923866999999973,
+      "p95Ms": 12.124560999998721
+    }
+  ],
+  "meanOverheadMs": 8.998370715999968
+}

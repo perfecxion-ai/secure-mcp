@@ -1,0 +1,2588 @@
+{
+  "date": "2026-10-27T17:40:26.626Z",
+  "node": "v24.22.1",
+  "architecture": "arm64",
+  "protocol": "2026-07-28",
+  "transport": "HTTP on loopback, no TLS",
+  "concurrency": 4,
+  "authentication": "Local ES256 JWT fixtures renewed every 120 seconds; real HTTP JWKS requests",
+  "auditState": {
+    "pending": 0,
+    "failures": 0,
+    "dropped": 0
+  },
+  "readinessStatus": 200,
+  "audit": "Unix socket collector, fsync acknowledgement per record",
+  "workerIntervalMs": 200,
+  "workload": "Three document readers, one policy-only subject; 10% expected denials per worker",
+  "latencySample": "Last 10000 calls",
+  "durationSeconds": 3600.18687872,
+  "calls": 60906,
+  "failures": 0,
+  "failureCounts": {},
+  "failureSamples": [],
+  "driverHeapLimitMiB": "256",
+  "driverEventLoopDelayMs": {
+    "p50": 20.119551,
+    "p99": 20.873215,
+    "max": 25.460735
+  },
+  "deniedCalls": 6092,
+  "tokenIssues": 124,
+  "keyRequests": 12,
+  "readyMs": 310.233432,
+  "p50Ms": 36.186318000312895,
+  "p95Ms": 46.64641300030053,
+  "memory": [
+    {
+      "elapsedSeconds": 0,
+      "rssKiB": 100564,
+      "descriptors": 25,
+      "clientRssKiB": 104816,
+      "clientHeapUsedKiB": 25123
+    },
+    {
+      "elapsedSeconds": 10,
+      "rssKiB": 119928,
+      "descriptors": 25,
+      "clientRssKiB": 123856,
+      "clientHeapUsedKiB": 33491
+    },
+    {
+      "elapsedSeconds": 20,
+      "rssKiB": 99908,
+      "descriptors": 23,
+      "clientRssKiB": 131376,
+      "clientHeapUsedKiB": 25119
+    },
+    {
+      "elapsedSeconds": 30,
+      "rssKiB": 109556,
+      "descriptors": 23,
+      "clientRssKiB": 149936,
+      "clientHeapUsedKiB": 31704
+    },
+    {
+      "elapsedSeconds": 40,
+      "rssKiB": 124068,
+      "descriptors": 23,
+      "clientRssKiB": 163216,
+      "clientHeapUsedKiB": 28953
+    },
+    {
+      "elapsedSeconds": 50,
+      "rssKiB": 127216,
+      "descriptors": 24,
+      "clientRssKiB": 163376,
+      "clientHeapUsedKiB": 35541
+    },
+    {
+      "elapsedSeconds": 60,
+      "rssKiB": 141648,
+      "descriptors": 28,
+      "clientRssKiB": 164816,
+      "clientHeapUsedKiB": 23774
+    },
+    {
+      "elapsedSeconds": 70,
+      "rssKiB": 152256,
+      "descriptors": 23,
+      "clientRssKiB": 166256,
+      "clientHeapUsedKiB": 21466
+    },
+    {
+      "elapsedSeconds": 80,
+      "rssKiB": 153064,
+      "descriptors": 23,
+      "clientRssKiB": 166256,
+      "clientHeapUsedKiB": 46447
+    },
+    {
+      "elapsedSeconds": 90,
+      "rssKiB": 153112,
+      "descriptors": 25,
+      "clientRssKiB": 187696,
+      "clientHeapUsedKiB": 71140
+    },
+    {
+      "elapsedSeconds": 100,
+      "rssKiB": 155184,
+      "descriptors": 28,
+      "clientRssKiB": 197616,
+      "clientHeapUsedKiB": 55936
+    },
+    {
+      "elapsedSeconds": 110,
+      "rssKiB": 155280,
+      "descriptors": 24,
+      "clientRssKiB": 224976,
+      "clientHeapUsedKiB": 24946
+    },
+    {
+      "elapsedSeconds": 120,
+      "rssKiB": 155320,
+      "descriptors": 23,
+      "clientRssKiB": 225328,
+      "clientHeapUsedKiB": 49462
+    },
+    {
+      "elapsedSeconds": 130,
+      "rssKiB": 155248,
+      "descriptors": 23,
+      "clientRssKiB": 225488,
+      "clientHeapUsedKiB": 73851
+    },
+    {
+      "elapsedSeconds": 140,
+      "rssKiB": 155256,
+      "descriptors": 27,
+      "clientRssKiB": 225488,
+      "clientHeapUsedKiB": 58104
+    },
+    {
+      "elapsedSeconds": 150,
+      "rssKiB": 155260,
+      "descriptors": 23,
+      "clientRssKiB": 226288,
+      "clientHeapUsedKiB": 26889
+    },
+    {
+      "elapsedSeconds": 160,
+      "rssKiB": 155276,
+      "descriptors": 28,
+      "clientRssKiB": 226288,
+      "clientHeapUsedKiB": 51740
+    },
+    {
+      "elapsedSeconds": 170,
+      "rssKiB": 155548,
+      "descriptors": 23,
+      "clientRssKiB": 226288,
+      "clientHeapUsedKiB": 76131
+    },
+    {
+      "elapsedSeconds": 180,
+      "rssKiB": 155576,
+      "descriptors": 23,
+      "clientRssKiB": 226288,
+      "clientHeapUsedKiB": 60663
+    },
+    {
+      "elapsedSeconds": 190,
+      "rssKiB": 155588,
+      "descriptors": 28,
+      "clientRssKiB": 226448,
+      "clientHeapUsedKiB": 29244
+    },
+    {
+      "elapsedSeconds": 200,
+      "rssKiB": 155740,
+      "descriptors": 23,
+      "clientRssKiB": 226448,
+      "clientHeapUsedKiB": 53457
+    },
+    {
+      "elapsedSeconds": 210,
+      "rssKiB": 156228,
+      "descriptors": 27,
+      "clientRssKiB": 226448,
+      "clientHeapUsedKiB": 37894
+    },
+    {
+      "elapsedSeconds": 220,
+      "rssKiB": 156240,
+      "descriptors": 27,
+      "clientRssKiB": 226448,
+      "clientHeapUsedKiB": 62127
+    },
+    {
+      "elapsedSeconds": 230,
+      "rssKiB": 156680,
+      "descriptors": 23,
+      "clientRssKiB": 227408,
+      "clientHeapUsedKiB": 29947
+    },
+    {
+      "elapsedSeconds": 240,
+      "rssKiB": 156700,
+      "descriptors": 26,
+      "clientRssKiB": 227408,
+      "clientHeapUsedKiB": 54039
+    },
+    {
+      "elapsedSeconds": 250,
+      "rssKiB": 156736,
+      "descriptors": 23,
+      "clientRssKiB": 227728,
+      "clientHeapUsedKiB": 38545
+    },
+    {
+      "elapsedSeconds": 260,
+      "rssKiB": 156736,
+      "descriptors": 23,
+      "clientRssKiB": 227728,
+      "clientHeapUsedKiB": 62216
+    },
+    {
+      "elapsedSeconds": 270,
+      "rssKiB": 155920,
+      "descriptors": 29,
+      "clientRssKiB": 229328,
+      "clientHeapUsedKiB": 30131
+    },
+    {
+      "elapsedSeconds": 280,
+      "rssKiB": 155920,
+      "descriptors": 23,
+      "clientRssKiB": 229328,
+      "clientHeapUsedKiB": 54045
+    },
+    {
+      "elapsedSeconds": 290,
+      "rssKiB": 155920,
+      "descriptors": 27,
+      "clientRssKiB": 229328,
+      "clientHeapUsedKiB": 38334
+    },
+    {
+      "elapsedSeconds": 300,
+      "rssKiB": 166516,
+      "descriptors": 25,
+      "clientRssKiB": 229328,
+      "clientHeapUsedKiB": 63850
+    },
+    {
+      "elapsedSeconds": 310,
+      "rssKiB": 166380,
+      "descriptors": 28,
+      "clientRssKiB": 229328,
+      "clientHeapUsedKiB": 31150
+    },
+    {
+      "elapsedSeconds": 320,
+      "rssKiB": 166420,
+      "descriptors": 23,
+      "clientRssKiB": 229328,
+      "clientHeapUsedKiB": 54382
+    },
+    {
+      "elapsedSeconds": 330,
+      "rssKiB": 166536,
+      "descriptors": 23,
+      "clientRssKiB": 229488,
+      "clientHeapUsedKiB": 38122
+    },
+    {
+      "elapsedSeconds": 340,
+      "rssKiB": 166556,
+      "descriptors": 23,
+      "clientRssKiB": 229488,
+      "clientHeapUsedKiB": 61427
+    },
+    {
+      "elapsedSeconds": 350,
+      "rssKiB": 166880,
+      "descriptors": 23,
+      "clientRssKiB": 229488,
+      "clientHeapUsedKiB": 28520
+    },
+    {
+      "elapsedSeconds": 360,
+      "rssKiB": 166884,
+      "descriptors": 23,
+      "clientRssKiB": 229488,
+      "clientHeapUsedKiB": 51787
+    },
+    {
+      "elapsedSeconds": 370,
+      "rssKiB": 166892,
+      "descriptors": 23,
+      "clientRssKiB": 229488,
+      "clientHeapUsedKiB": 75040
+    },
+    {
+      "elapsedSeconds": 380,
+      "rssKiB": 166936,
+      "descriptors": 28,
+      "clientRssKiB": 229488,
+      "clientHeapUsedKiB": 58218
+    },
+    {
+      "elapsedSeconds": 390,
+      "rssKiB": 166956,
+      "descriptors": 26,
+      "clientRssKiB": 229808,
+      "clientHeapUsedKiB": 24776
+    },
+    {
+      "elapsedSeconds": 400,
+      "rssKiB": 166972,
+      "descriptors": 26,
+      "clientRssKiB": 229808,
+      "clientHeapUsedKiB": 47861
+    },
+    {
+      "elapsedSeconds": 410,
+      "rssKiB": 167024,
+      "descriptors": 23,
+      "clientRssKiB": 229808,
+      "clientHeapUsedKiB": 71041
+    },
+    {
+      "elapsedSeconds": 420,
+      "rssKiB": 167040,
+      "descriptors": 23,
+      "clientRssKiB": 229808,
+      "clientHeapUsedKiB": 54431
+    },
+    {
+      "elapsedSeconds": 430,
+      "rssKiB": 167060,
+      "descriptors": 23,
+      "clientRssKiB": 229808,
+      "clientHeapUsedKiB": 77432
+    },
+    {
+      "elapsedSeconds": 440,
+      "rssKiB": 167064,
+      "descriptors": 23,
+      "clientRssKiB": 229808,
+      "clientHeapUsedKiB": 43648
+    },
+    {
+      "elapsedSeconds": 450,
+      "rssKiB": 167080,
+      "descriptors": 27,
+      "clientRssKiB": 229808,
+      "clientHeapUsedKiB": 67289
+    },
+    {
+      "elapsedSeconds": 460,
+      "rssKiB": 167092,
+      "descriptors": 23,
+      "clientRssKiB": 229808,
+      "clientHeapUsedKiB": 51203
+    },
+    {
+      "elapsedSeconds": 470,
+      "rssKiB": 167052,
+      "descriptors": 23,
+      "clientRssKiB": 229808,
+      "clientHeapUsedKiB": 74265
+    },
+    {
+      "elapsedSeconds": 480,
+      "rssKiB": 167072,
+      "descriptors": 27,
+      "clientRssKiB": 231248,
+      "clientHeapUsedKiB": 41146
+    },
+    {
+      "elapsedSeconds": 490,
+      "rssKiB": 167092,
+      "descriptors": 23,
+      "clientRssKiB": 231248,
+      "clientHeapUsedKiB": 64239
+    },
+    {
+      "elapsedSeconds": 500,
+      "rssKiB": 167116,
+      "descriptors": 28,
+      "clientRssKiB": 231248,
+      "clientHeapUsedKiB": 48737
+    },
+    {
+      "elapsedSeconds": 510,
+      "rssKiB": 167116,
+      "descriptors": 23,
+      "clientRssKiB": 231248,
+      "clientHeapUsedKiB": 71726
+    },
+    {
+      "elapsedSeconds": 520,
+      "rssKiB": 167260,
+      "descriptors": 23,
+      "clientRssKiB": 231568,
+      "clientHeapUsedKiB": 37957
+    },
+    {
+      "elapsedSeconds": 530,
+      "rssKiB": 167232,
+      "descriptors": 27,
+      "clientRssKiB": 231568,
+      "clientHeapUsedKiB": 61230
+    },
+    {
+      "elapsedSeconds": 540,
+      "rssKiB": 167240,
+      "descriptors": 27,
+      "clientRssKiB": 231568,
+      "clientHeapUsedKiB": 45350
+    },
+    {
+      "elapsedSeconds": 550,
+      "rssKiB": 167256,
+      "descriptors": 23,
+      "clientRssKiB": 231568,
+      "clientHeapUsedKiB": 68715
+    },
+    {
+      "elapsedSeconds": 560,
+      "rssKiB": 167292,
+      "descriptors": 23,
+      "clientRssKiB": 231728,
+      "clientHeapUsedKiB": 34976
+    },
+    {
+      "elapsedSeconds": 570,
+      "rssKiB": 167280,
+      "descriptors": 27,
+      "clientRssKiB": 231728,
+      "clientHeapUsedKiB": 58029
+    },
+    {
+      "elapsedSeconds": 580,
+      "rssKiB": 167288,
+      "descriptors": 27,
+      "clientRssKiB": 231728,
+      "clientHeapUsedKiB": 41958
+    },
+    {
+      "elapsedSeconds": 590,
+      "rssKiB": 167300,
+      "descriptors": 23,
+      "clientRssKiB": 231728,
+      "clientHeapUsedKiB": 64958
+    },
+    {
+      "elapsedSeconds": 600,
+      "rssKiB": 167260,
+      "descriptors": 27,
+      "clientRssKiB": 231728,
+      "clientHeapUsedKiB": 31414
+    },
+    {
+      "elapsedSeconds": 610,
+      "rssKiB": 167356,
+      "descriptors": 27,
+      "clientRssKiB": 231888,
+      "clientHeapUsedKiB": 54333
+    },
+    {
+      "elapsedSeconds": 620,
+      "rssKiB": 167356,
+      "descriptors": 23,
+      "clientRssKiB": 231888,
+      "clientHeapUsedKiB": 77610
+    },
+    {
+      "elapsedSeconds": 630,
+      "rssKiB": 167396,
+      "descriptors": 23,
+      "clientRssKiB": 232368,
+      "clientHeapUsedKiB": 61495
+    },
+    {
+      "elapsedSeconds": 640,
+      "rssKiB": 167484,
+      "descriptors": 24,
+      "clientRssKiB": 234608,
+      "clientHeapUsedKiB": 27694
+    },
+    {
+      "elapsedSeconds": 650,
+      "rssKiB": 167528,
+      "descriptors": 23,
+      "clientRssKiB": 234608,
+      "clientHeapUsedKiB": 50314
+    },
+    {
+      "elapsedSeconds": 660,
+      "rssKiB": 168800,
+      "descriptors": 27,
+      "clientRssKiB": 235408,
+      "clientHeapUsedKiB": 73269
+    },
+    {
+      "elapsedSeconds": 670,
+      "rssKiB": 168884,
+      "descriptors": 23,
+      "clientRssKiB": 235568,
+      "clientHeapUsedKiB": 56746
+    },
+    {
+      "elapsedSeconds": 680,
+      "rssKiB": 168904,
+      "descriptors": 23,
+      "clientRssKiB": 235568,
+      "clientHeapUsedKiB": 79207
+    },
+    {
+      "elapsedSeconds": 690,
+      "rssKiB": 168952,
+      "descriptors": 29,
+      "clientRssKiB": 235728,
+      "clientHeapUsedKiB": 45187
+    },
+    {
+      "elapsedSeconds": 700,
+      "rssKiB": 168964,
+      "descriptors": 23,
+      "clientRssKiB": 235728,
+      "clientHeapUsedKiB": 67676
+    },
+    {
+      "elapsedSeconds": 710,
+      "rssKiB": 168984,
+      "descriptors": 23,
+      "clientRssKiB": 235728,
+      "clientHeapUsedKiB": 50953
+    },
+    {
+      "elapsedSeconds": 720,
+      "rssKiB": 169020,
+      "descriptors": 27,
+      "clientRssKiB": 235728,
+      "clientHeapUsedKiB": 73636
+    },
+    {
+      "elapsedSeconds": 730,
+      "rssKiB": 169020,
+      "descriptors": 23,
+      "clientRssKiB": 235728,
+      "clientHeapUsedKiB": 38926
+    },
+    {
+      "elapsedSeconds": 740,
+      "rssKiB": 169020,
+      "descriptors": 25,
+      "clientRssKiB": 235728,
+      "clientHeapUsedKiB": 61426
+    },
+    {
+      "elapsedSeconds": 750,
+      "rssKiB": 169020,
+      "descriptors": 23,
+      "clientRssKiB": 235728,
+      "clientHeapUsedKiB": 45216
+    },
+    {
+      "elapsedSeconds": 760,
+      "rssKiB": 169028,
+      "descriptors": 23,
+      "clientRssKiB": 235728,
+      "clientHeapUsedKiB": 67497
+    },
+    {
+      "elapsedSeconds": 770,
+      "rssKiB": 169028,
+      "descriptors": 23,
+      "clientRssKiB": 235408,
+      "clientHeapUsedKiB": 33179
+    },
+    {
+      "elapsedSeconds": 780,
+      "rssKiB": 169044,
+      "descriptors": 23,
+      "clientRssKiB": 235408,
+      "clientHeapUsedKiB": 55482
+    },
+    {
+      "elapsedSeconds": 790,
+      "rssKiB": 169044,
+      "descriptors": 27,
+      "clientRssKiB": 235568,
+      "clientHeapUsedKiB": 39203
+    },
+    {
+      "elapsedSeconds": 800,
+      "rssKiB": 169080,
+      "descriptors": 23,
+      "clientRssKiB": 235568,
+      "clientHeapUsedKiB": 61961
+    },
+    {
+      "elapsedSeconds": 810,
+      "rssKiB": 169080,
+      "descriptors": 23,
+      "clientRssKiB": 235568,
+      "clientHeapUsedKiB": 27217
+    },
+    {
+      "elapsedSeconds": 820,
+      "rssKiB": 169080,
+      "descriptors": 27,
+      "clientRssKiB": 235568,
+      "clientHeapUsedKiB": 49653
+    },
+    {
+      "elapsedSeconds": 830,
+      "rssKiB": 169112,
+      "descriptors": 23,
+      "clientRssKiB": 235568,
+      "clientHeapUsedKiB": 72159
+    },
+    {
+      "elapsedSeconds": 840,
+      "rssKiB": 169112,
+      "descriptors": 23,
+      "clientRssKiB": 235568,
+      "clientHeapUsedKiB": 55398
+    },
+    {
+      "elapsedSeconds": 850,
+      "rssKiB": 169112,
+      "descriptors": 29,
+      "clientRssKiB": 235568,
+      "clientHeapUsedKiB": 77816
+    },
+    {
+      "elapsedSeconds": 860,
+      "rssKiB": 169112,
+      "descriptors": 23,
+      "clientRssKiB": 235568,
+      "clientHeapUsedKiB": 43303
+    },
+    {
+      "elapsedSeconds": 870,
+      "rssKiB": 169132,
+      "descriptors": 23,
+      "clientRssKiB": 235568,
+      "clientHeapUsedKiB": 65446
+    },
+    {
+      "elapsedSeconds": 880,
+      "rssKiB": 169132,
+      "descriptors": 29,
+      "clientRssKiB": 235568,
+      "clientHeapUsedKiB": 49151
+    },
+    {
+      "elapsedSeconds": 890,
+      "rssKiB": 169132,
+      "descriptors": 23,
+      "clientRssKiB": 235568,
+      "clientHeapUsedKiB": 71321
+    },
+    {
+      "elapsedSeconds": 900,
+      "rssKiB": 169132,
+      "descriptors": 23,
+      "clientRssKiB": 235888,
+      "clientHeapUsedKiB": 36307
+    },
+    {
+      "elapsedSeconds": 910,
+      "rssKiB": 170300,
+      "descriptors": 23,
+      "clientRssKiB": 235888,
+      "clientHeapUsedKiB": 59298
+    },
+    {
+      "elapsedSeconds": 920,
+      "rssKiB": 170424,
+      "descriptors": 23,
+      "clientRssKiB": 235888,
+      "clientHeapUsedKiB": 42760
+    },
+    {
+      "elapsedSeconds": 930,
+      "rssKiB": 170032,
+      "descriptors": 26,
+      "clientRssKiB": 235888,
+      "clientHeapUsedKiB": 65269
+    },
+    {
+      "elapsedSeconds": 940,
+      "rssKiB": 170680,
+      "descriptors": 23,
+      "clientRssKiB": 236208,
+      "clientHeapUsedKiB": 30887
+    },
+    {
+      "elapsedSeconds": 950,
+      "rssKiB": 170692,
+      "descriptors": 23,
+      "clientRssKiB": 236208,
+      "clientHeapUsedKiB": 53113
+    },
+    {
+      "elapsedSeconds": 960,
+      "rssKiB": 170692,
+      "descriptors": 23,
+      "clientRssKiB": 236208,
+      "clientHeapUsedKiB": 75844
+    },
+    {
+      "elapsedSeconds": 970,
+      "rssKiB": 170704,
+      "descriptors": 23,
+      "clientRssKiB": 236208,
+      "clientHeapUsedKiB": 59113
+    },
+    {
+      "elapsedSeconds": 980,
+      "rssKiB": 170704,
+      "descriptors": 28,
+      "clientRssKiB": 236528,
+      "clientHeapUsedKiB": 24740
+    },
+    {
+      "elapsedSeconds": 990,
+      "rssKiB": 170772,
+      "descriptors": 23,
+      "clientRssKiB": 236528,
+      "clientHeapUsedKiB": 46866
+    },
+    {
+      "elapsedSeconds": 1000,
+      "rssKiB": 175440,
+      "descriptors": 26,
+      "clientRssKiB": 236528,
+      "clientHeapUsedKiB": 69535
+    },
+    {
+      "elapsedSeconds": 1010,
+      "rssKiB": 177552,
+      "descriptors": 23,
+      "clientRssKiB": 236528,
+      "clientHeapUsedKiB": 53124
+    },
+    {
+      "elapsedSeconds": 1020,
+      "rssKiB": 177536,
+      "descriptors": 23,
+      "clientRssKiB": 236528,
+      "clientHeapUsedKiB": 75250
+    },
+    {
+      "elapsedSeconds": 1030,
+      "rssKiB": 177568,
+      "descriptors": 27,
+      "clientRssKiB": 236528,
+      "clientHeapUsedKiB": 40714
+    },
+    {
+      "elapsedSeconds": 1040,
+      "rssKiB": 177568,
+      "descriptors": 23,
+      "clientRssKiB": 236528,
+      "clientHeapUsedKiB": 62902
+    },
+    {
+      "elapsedSeconds": 1050,
+      "rssKiB": 177584,
+      "descriptors": 27,
+      "clientRssKiB": 236528,
+      "clientHeapUsedKiB": 46250
+    },
+    {
+      "elapsedSeconds": 1060,
+      "rssKiB": 177588,
+      "descriptors": 23,
+      "clientRssKiB": 236528,
+      "clientHeapUsedKiB": 68729
+    },
+    {
+      "elapsedSeconds": 1070,
+      "rssKiB": 177588,
+      "descriptors": 23,
+      "clientRssKiB": 236528,
+      "clientHeapUsedKiB": 34130
+    },
+    {
+      "elapsedSeconds": 1080,
+      "rssKiB": 177588,
+      "descriptors": 23,
+      "clientRssKiB": 236528,
+      "clientHeapUsedKiB": 56318
+    },
+    {
+      "elapsedSeconds": 1090,
+      "rssKiB": 177588,
+      "descriptors": 26,
+      "clientRssKiB": 236528,
+      "clientHeapUsedKiB": 40138
+    },
+    {
+      "elapsedSeconds": 1100,
+      "rssKiB": 177588,
+      "descriptors": 23,
+      "clientRssKiB": 236528,
+      "clientHeapUsedKiB": 62434
+    },
+    {
+      "elapsedSeconds": 1110,
+      "rssKiB": 177628,
+      "descriptors": 27,
+      "clientRssKiB": 236528,
+      "clientHeapUsedKiB": 27837
+    },
+    {
+      "elapsedSeconds": 1120,
+      "rssKiB": 177628,
+      "descriptors": 24,
+      "clientRssKiB": 236688,
+      "clientHeapUsedKiB": 50635
+    },
+    {
+      "elapsedSeconds": 1130,
+      "rssKiB": 177628,
+      "descriptors": 23,
+      "clientRssKiB": 236688,
+      "clientHeapUsedKiB": 72960
+    },
+    {
+      "elapsedSeconds": 1140,
+      "rssKiB": 177636,
+      "descriptors": 27,
+      "clientRssKiB": 236688,
+      "clientHeapUsedKiB": 56631
+    },
+    {
+      "elapsedSeconds": 1150,
+      "rssKiB": 177636,
+      "descriptors": 23,
+      "clientRssKiB": 236688,
+      "clientHeapUsedKiB": 79287
+    },
+    {
+      "elapsedSeconds": 1160,
+      "rssKiB": 177664,
+      "descriptors": 23,
+      "clientRssKiB": 237008,
+      "clientHeapUsedKiB": 44233
+    },
+    {
+      "elapsedSeconds": 1170,
+      "rssKiB": 177684,
+      "descriptors": 26,
+      "clientRssKiB": 237008,
+      "clientHeapUsedKiB": 66847
+    },
+    {
+      "elapsedSeconds": 1180,
+      "rssKiB": 177712,
+      "descriptors": 23,
+      "clientRssKiB": 237008,
+      "clientHeapUsedKiB": 50763
+    },
+    {
+      "elapsedSeconds": 1190,
+      "rssKiB": 177712,
+      "descriptors": 23,
+      "clientRssKiB": 237008,
+      "clientHeapUsedKiB": 73144
+    },
+    {
+      "elapsedSeconds": 1200,
+      "rssKiB": 177772,
+      "descriptors": 27,
+      "clientRssKiB": 237008,
+      "clientHeapUsedKiB": 39085
+    },
+    {
+      "elapsedSeconds": 1210,
+      "rssKiB": 177864,
+      "descriptors": 23,
+      "clientRssKiB": 237008,
+      "clientHeapUsedKiB": 61636
+    },
+    {
+      "elapsedSeconds": 1220,
+      "rssKiB": 177892,
+      "descriptors": 23,
+      "clientRssKiB": 237008,
+      "clientHeapUsedKiB": 45171
+    },
+    {
+      "elapsedSeconds": 1230,
+      "rssKiB": 177916,
+      "descriptors": 23,
+      "clientRssKiB": 237008,
+      "clientHeapUsedKiB": 68361
+    },
+    {
+      "elapsedSeconds": 1240,
+      "rssKiB": 177940,
+      "descriptors": 23,
+      "clientRssKiB": 237008,
+      "clientHeapUsedKiB": 33737
+    },
+    {
+      "elapsedSeconds": 1250,
+      "rssKiB": 177940,
+      "descriptors": 27,
+      "clientRssKiB": 237008,
+      "clientHeapUsedKiB": 56770
+    },
+    {
+      "elapsedSeconds": 1260,
+      "rssKiB": 177924,
+      "descriptors": 23,
+      "clientRssKiB": 237008,
+      "clientHeapUsedKiB": 40583
+    },
+    {
+      "elapsedSeconds": 1270,
+      "rssKiB": 177924,
+      "descriptors": 27,
+      "clientRssKiB": 237008,
+      "clientHeapUsedKiB": 63340
+    },
+    {
+      "elapsedSeconds": 1280,
+      "rssKiB": 177924,
+      "descriptors": 23,
+      "clientRssKiB": 237008,
+      "clientHeapUsedKiB": 29126
+    },
+    {
+      "elapsedSeconds": 1290,
+      "rssKiB": 177924,
+      "descriptors": 23,
+      "clientRssKiB": 237008,
+      "clientHeapUsedKiB": 51574
+    },
+    {
+      "elapsedSeconds": 1300,
+      "rssKiB": 177924,
+      "descriptors": 28,
+      "clientRssKiB": 237008,
+      "clientHeapUsedKiB": 74531
+    },
+    {
+      "elapsedSeconds": 1310,
+      "rssKiB": 177924,
+      "descriptors": 23,
+      "clientRssKiB": 237168,
+      "clientHeapUsedKiB": 57798
+    },
+    {
+      "elapsedSeconds": 1320,
+      "rssKiB": 178016,
+      "descriptors": 23,
+      "clientRssKiB": 237168,
+      "clientHeapUsedKiB": 80324
+    },
+    {
+      "elapsedSeconds": 1330,
+      "rssKiB": 178320,
+      "descriptors": 27,
+      "clientRssKiB": 237328,
+      "clientHeapUsedKiB": 46577
+    },
+    {
+      "elapsedSeconds": 1340,
+      "rssKiB": 178320,
+      "descriptors": 29,
+      "clientRssKiB": 237328,
+      "clientHeapUsedKiB": 69057
+    },
+    {
+      "elapsedSeconds": 1350,
+      "rssKiB": 178320,
+      "descriptors": 27,
+      "clientRssKiB": 237328,
+      "clientHeapUsedKiB": 52535
+    },
+    {
+      "elapsedSeconds": 1360,
+      "rssKiB": 178684,
+      "descriptors": 23,
+      "clientRssKiB": 237328,
+      "clientHeapUsedKiB": 74678
+    },
+    {
+      "elapsedSeconds": 1370,
+      "rssKiB": 178776,
+      "descriptors": 23,
+      "clientRssKiB": 237328,
+      "clientHeapUsedKiB": 39808
+    },
+    {
+      "elapsedSeconds": 1380,
+      "rssKiB": 179852,
+      "descriptors": 23,
+      "clientRssKiB": 237328,
+      "clientHeapUsedKiB": 62129
+    },
+    {
+      "elapsedSeconds": 1390,
+      "rssKiB": 179860,
+      "descriptors": 23,
+      "clientRssKiB": 237328,
+      "clientHeapUsedKiB": 44994
+    },
+    {
+      "elapsedSeconds": 1400,
+      "rssKiB": 179900,
+      "descriptors": 23,
+      "clientRssKiB": 237328,
+      "clientHeapUsedKiB": 67310
+    },
+    {
+      "elapsedSeconds": 1410,
+      "rssKiB": 179900,
+      "descriptors": 23,
+      "clientRssKiB": 237328,
+      "clientHeapUsedKiB": 32344
+    },
+    {
+      "elapsedSeconds": 1420,
+      "rssKiB": 179908,
+      "descriptors": 27,
+      "clientRssKiB": 237328,
+      "clientHeapUsedKiB": 54653
+    },
+    {
+      "elapsedSeconds": 1430,
+      "rssKiB": 179908,
+      "descriptors": 27,
+      "clientRssKiB": 237328,
+      "clientHeapUsedKiB": 77164
+    },
+    {
+      "elapsedSeconds": 1440,
+      "rssKiB": 179932,
+      "descriptors": 23,
+      "clientRssKiB": 237328,
+      "clientHeapUsedKiB": 59766
+    },
+    {
+      "elapsedSeconds": 1450,
+      "rssKiB": 179932,
+      "descriptors": 23,
+      "clientRssKiB": 237328,
+      "clientHeapUsedKiB": 24859
+    },
+    {
+      "elapsedSeconds": 1460,
+      "rssKiB": 179952,
+      "descriptors": 23,
+      "clientRssKiB": 237328,
+      "clientHeapUsedKiB": 47032
+    },
+    {
+      "elapsedSeconds": 1470,
+      "rssKiB": 180400,
+      "descriptors": 23,
+      "clientRssKiB": 237328,
+      "clientHeapUsedKiB": 69422
+    },
+    {
+      "elapsedSeconds": 1480,
+      "rssKiB": 180400,
+      "descriptors": 23,
+      "clientRssKiB": 237328,
+      "clientHeapUsedKiB": 52214
+    },
+    {
+      "elapsedSeconds": 1490,
+      "rssKiB": 180456,
+      "descriptors": 23,
+      "clientRssKiB": 237328,
+      "clientHeapUsedKiB": 74502
+    },
+    {
+      "elapsedSeconds": 1500,
+      "rssKiB": 180412,
+      "descriptors": 23,
+      "clientRssKiB": 237328,
+      "clientHeapUsedKiB": 39366
+    },
+    {
+      "elapsedSeconds": 1510,
+      "rssKiB": 180448,
+      "descriptors": 26,
+      "clientRssKiB": 237328,
+      "clientHeapUsedKiB": 61517
+    },
+    {
+      "elapsedSeconds": 1520,
+      "rssKiB": 180456,
+      "descriptors": 27,
+      "clientRssKiB": 237328,
+      "clientHeapUsedKiB": 44333
+    },
+    {
+      "elapsedSeconds": 1530,
+      "rssKiB": 180468,
+      "descriptors": 29,
+      "clientRssKiB": 237328,
+      "clientHeapUsedKiB": 66780
+    },
+    {
+      "elapsedSeconds": 1540,
+      "rssKiB": 180484,
+      "descriptors": 23,
+      "clientRssKiB": 237328,
+      "clientHeapUsedKiB": 31503
+    },
+    {
+      "elapsedSeconds": 1550,
+      "rssKiB": 180524,
+      "descriptors": 23,
+      "clientRssKiB": 237328,
+      "clientHeapUsedKiB": 53543
+    },
+    {
+      "elapsedSeconds": 1560,
+      "rssKiB": 180540,
+      "descriptors": 23,
+      "clientRssKiB": 237328,
+      "clientHeapUsedKiB": 75848
+    },
+    {
+      "elapsedSeconds": 1570,
+      "rssKiB": 180544,
+      "descriptors": 23,
+      "clientRssKiB": 237328,
+      "clientHeapUsedKiB": 58766
+    },
+    {
+      "elapsedSeconds": 1580,
+      "rssKiB": 180544,
+      "descriptors": 23,
+      "clientRssKiB": 237328,
+      "clientHeapUsedKiB": 23818
+    },
+    {
+      "elapsedSeconds": 1590,
+      "rssKiB": 180552,
+      "descriptors": 23,
+      "clientRssKiB": 237328,
+      "clientHeapUsedKiB": 46064
+    },
+    {
+      "elapsedSeconds": 1600,
+      "rssKiB": 180552,
+      "descriptors": 23,
+      "clientRssKiB": 237328,
+      "clientHeapUsedKiB": 68474
+    },
+    {
+      "elapsedSeconds": 1610,
+      "rssKiB": 180592,
+      "descriptors": 23,
+      "clientRssKiB": 237328,
+      "clientHeapUsedKiB": 51252
+    },
+    {
+      "elapsedSeconds": 1620,
+      "rssKiB": 180592,
+      "descriptors": 23,
+      "clientRssKiB": 237328,
+      "clientHeapUsedKiB": 73205
+    },
+    {
+      "elapsedSeconds": 1630,
+      "rssKiB": 180604,
+      "descriptors": 26,
+      "clientRssKiB": 237328,
+      "clientHeapUsedKiB": 38270
+    },
+    {
+      "elapsedSeconds": 1640,
+      "rssKiB": 180608,
+      "descriptors": 27,
+      "clientRssKiB": 237328,
+      "clientHeapUsedKiB": 60210
+    },
+    {
+      "elapsedSeconds": 1650,
+      "rssKiB": 179940,
+      "descriptors": 27,
+      "clientRssKiB": 237328,
+      "clientHeapUsedKiB": 43229
+    },
+    {
+      "elapsedSeconds": 1660,
+      "rssKiB": 179960,
+      "descriptors": 29,
+      "clientRssKiB": 237328,
+      "clientHeapUsedKiB": 65640
+    },
+    {
+      "elapsedSeconds": 1670,
+      "rssKiB": 179960,
+      "descriptors": 27,
+      "clientRssKiB": 237328,
+      "clientHeapUsedKiB": 30369
+    },
+    {
+      "elapsedSeconds": 1680,
+      "rssKiB": 179960,
+      "descriptors": 27,
+      "clientRssKiB": 237328,
+      "clientHeapUsedKiB": 52561
+    },
+    {
+      "elapsedSeconds": 1690,
+      "rssKiB": 179960,
+      "descriptors": 27,
+      "clientRssKiB": 237328,
+      "clientHeapUsedKiB": 74866
+    },
+    {
+      "elapsedSeconds": 1700,
+      "rssKiB": 179984,
+      "descriptors": 27,
+      "clientRssKiB": 237328,
+      "clientHeapUsedKiB": 57629
+    },
+    {
+      "elapsedSeconds": 1710,
+      "rssKiB": 179984,
+      "descriptors": 23,
+      "clientRssKiB": 237328,
+      "clientHeapUsedKiB": 79566
+    },
+    {
+      "elapsedSeconds": 1720,
+      "rssKiB": 180044,
+      "descriptors": 23,
+      "clientRssKiB": 237328,
+      "clientHeapUsedKiB": 44649
+    },
+    {
+      "elapsedSeconds": 1730,
+      "rssKiB": 180060,
+      "descriptors": 23,
+      "clientRssKiB": 237328,
+      "clientHeapUsedKiB": 66715
+    },
+    {
+      "elapsedSeconds": 1740,
+      "rssKiB": 180072,
+      "descriptors": 23,
+      "clientRssKiB": 237328,
+      "clientHeapUsedKiB": 49457
+    },
+    {
+      "elapsedSeconds": 1750,
+      "rssKiB": 180108,
+      "descriptors": 23,
+      "clientRssKiB": 237328,
+      "clientHeapUsedKiB": 71513
+    },
+    {
+      "elapsedSeconds": 1760,
+      "rssKiB": 180120,
+      "descriptors": 23,
+      "clientRssKiB": 237328,
+      "clientHeapUsedKiB": 36513
+    },
+    {
+      "elapsedSeconds": 1770,
+      "rssKiB": 180172,
+      "descriptors": 23,
+      "clientRssKiB": 237328,
+      "clientHeapUsedKiB": 58500
+    },
+    {
+      "elapsedSeconds": 1780,
+      "rssKiB": 180168,
+      "descriptors": 23,
+      "clientRssKiB": 237328,
+      "clientHeapUsedKiB": 41395
+    },
+    {
+      "elapsedSeconds": 1790,
+      "rssKiB": 180168,
+      "descriptors": 23,
+      "clientRssKiB": 237488,
+      "clientHeapUsedKiB": 63344
+    },
+    {
+      "elapsedSeconds": 1800,
+      "rssKiB": 180176,
+      "descriptors": 23,
+      "clientRssKiB": 237648,
+      "clientHeapUsedKiB": 28383
+    },
+    {
+      "elapsedSeconds": 1810,
+      "rssKiB": 180268,
+      "descriptors": 23,
+      "clientRssKiB": 237808,
+      "clientHeapUsedKiB": 50634
+    },
+    {
+      "elapsedSeconds": 1820,
+      "rssKiB": 180276,
+      "descriptors": 23,
+      "clientRssKiB": 237808,
+      "clientHeapUsedKiB": 72594
+    },
+    {
+      "elapsedSeconds": 1830,
+      "rssKiB": 180376,
+      "descriptors": 23,
+      "clientRssKiB": 237808,
+      "clientHeapUsedKiB": 55491
+    },
+    {
+      "elapsedSeconds": 1840,
+      "rssKiB": 180464,
+      "descriptors": 23,
+      "clientRssKiB": 237808,
+      "clientHeapUsedKiB": 77430
+    },
+    {
+      "elapsedSeconds": 1850,
+      "rssKiB": 180488,
+      "descriptors": 26,
+      "clientRssKiB": 237968,
+      "clientHeapUsedKiB": 41892
+    },
+    {
+      "elapsedSeconds": 1860,
+      "rssKiB": 180508,
+      "descriptors": 23,
+      "clientRssKiB": 237968,
+      "clientHeapUsedKiB": 63811
+    },
+    {
+      "elapsedSeconds": 1870,
+      "rssKiB": 180460,
+      "descriptors": 23,
+      "clientRssKiB": 237968,
+      "clientHeapUsedKiB": 46557
+    },
+    {
+      "elapsedSeconds": 1880,
+      "rssKiB": 180416,
+      "descriptors": 23,
+      "clientRssKiB": 237968,
+      "clientHeapUsedKiB": 68722
+    },
+    {
+      "elapsedSeconds": 1890,
+      "rssKiB": 180528,
+      "descriptors": 23,
+      "clientRssKiB": 237968,
+      "clientHeapUsedKiB": 33510
+    },
+    {
+      "elapsedSeconds": 1900,
+      "rssKiB": 180660,
+      "descriptors": 23,
+      "clientRssKiB": 237968,
+      "clientHeapUsedKiB": 55706
+    },
+    {
+      "elapsedSeconds": 1910,
+      "rssKiB": 180688,
+      "descriptors": 23,
+      "clientRssKiB": 237968,
+      "clientHeapUsedKiB": 77790
+    },
+    {
+      "elapsedSeconds": 1920,
+      "rssKiB": 180708,
+      "descriptors": 23,
+      "clientRssKiB": 237968,
+      "clientHeapUsedKiB": 60277
+    },
+    {
+      "elapsedSeconds": 1930,
+      "rssKiB": 180728,
+      "descriptors": 23,
+      "clientRssKiB": 237968,
+      "clientHeapUsedKiB": 25125
+    },
+    {
+      "elapsedSeconds": 1940,
+      "rssKiB": 180744,
+      "descriptors": 23,
+      "clientRssKiB": 237968,
+      "clientHeapUsedKiB": 47048
+    },
+    {
+      "elapsedSeconds": 1950,
+      "rssKiB": 180760,
+      "descriptors": 23,
+      "clientRssKiB": 237968,
+      "clientHeapUsedKiB": 69152
+    },
+    {
+      "elapsedSeconds": 1960,
+      "rssKiB": 180784,
+      "descriptors": 23,
+      "clientRssKiB": 237968,
+      "clientHeapUsedKiB": 52106
+    },
+    {
+      "elapsedSeconds": 1970,
+      "rssKiB": 180784,
+      "descriptors": 25,
+      "clientRssKiB": 237968,
+      "clientHeapUsedKiB": 73985
+    },
+    {
+      "elapsedSeconds": 1980,
+      "rssKiB": 180784,
+      "descriptors": 23,
+      "clientRssKiB": 237968,
+      "clientHeapUsedKiB": 38875
+    },
+    {
+      "elapsedSeconds": 1990,
+      "rssKiB": 180784,
+      "descriptors": 23,
+      "clientRssKiB": 237968,
+      "clientHeapUsedKiB": 60886
+    },
+    {
+      "elapsedSeconds": 2000,
+      "rssKiB": 180824,
+      "descriptors": 26,
+      "clientRssKiB": 237968,
+      "clientHeapUsedKiB": 43694
+    },
+    {
+      "elapsedSeconds": 2010,
+      "rssKiB": 180824,
+      "descriptors": 25,
+      "clientRssKiB": 237968,
+      "clientHeapUsedKiB": 65706
+    },
+    {
+      "elapsedSeconds": 2020,
+      "rssKiB": 180840,
+      "descriptors": 27,
+      "clientRssKiB": 237968,
+      "clientHeapUsedKiB": 30327
+    },
+    {
+      "elapsedSeconds": 2030,
+      "rssKiB": 180840,
+      "descriptors": 27,
+      "clientRssKiB": 237968,
+      "clientHeapUsedKiB": 52036
+    },
+    {
+      "elapsedSeconds": 2040,
+      "rssKiB": 180860,
+      "descriptors": 25,
+      "clientRssKiB": 237968,
+      "clientHeapUsedKiB": 74343
+    },
+    {
+      "elapsedSeconds": 2050,
+      "rssKiB": 180868,
+      "descriptors": 27,
+      "clientRssKiB": 237968,
+      "clientHeapUsedKiB": 57077
+    },
+    {
+      "elapsedSeconds": 2060,
+      "rssKiB": 180868,
+      "descriptors": 25,
+      "clientRssKiB": 237968,
+      "clientHeapUsedKiB": 78895
+    },
+    {
+      "elapsedSeconds": 2070,
+      "rssKiB": 180868,
+      "descriptors": 23,
+      "clientRssKiB": 237968,
+      "clientHeapUsedKiB": 43720
+    },
+    {
+      "elapsedSeconds": 2080,
+      "rssKiB": 180868,
+      "descriptors": 23,
+      "clientRssKiB": 237968,
+      "clientHeapUsedKiB": 65630
+    },
+    {
+      "elapsedSeconds": 2090,
+      "rssKiB": 180868,
+      "descriptors": 23,
+      "clientRssKiB": 237968,
+      "clientHeapUsedKiB": 48744
+    },
+    {
+      "elapsedSeconds": 2100,
+      "rssKiB": 180696,
+      "descriptors": 23,
+      "clientRssKiB": 237968,
+      "clientHeapUsedKiB": 70543
+    },
+    {
+      "elapsedSeconds": 2110,
+      "rssKiB": 180696,
+      "descriptors": 23,
+      "clientRssKiB": 237968,
+      "clientHeapUsedKiB": 36284
+    },
+    {
+      "elapsedSeconds": 2120,
+      "rssKiB": 180704,
+      "descriptors": 23,
+      "clientRssKiB": 237968,
+      "clientHeapUsedKiB": 63153
+    },
+    {
+      "elapsedSeconds": 2130,
+      "rssKiB": 180704,
+      "descriptors": 23,
+      "clientRssKiB": 237968,
+      "clientHeapUsedKiB": 54393
+    },
+    {
+      "elapsedSeconds": 2140,
+      "rssKiB": 180704,
+      "descriptors": 23,
+      "clientRssKiB": 240048,
+      "clientHeapUsedKiB": 23839
+    },
+    {
+      "elapsedSeconds": 2150,
+      "rssKiB": 180716,
+      "descriptors": 23,
+      "clientRssKiB": 240048,
+      "clientHeapUsedKiB": 46791
+    },
+    {
+      "elapsedSeconds": 2160,
+      "rssKiB": 180716,
+      "descriptors": 25,
+      "clientRssKiB": 240048,
+      "clientHeapUsedKiB": 68956
+    },
+    {
+      "elapsedSeconds": 2170,
+      "rssKiB": 180728,
+      "descriptors": 23,
+      "clientRssKiB": 240048,
+      "clientHeapUsedKiB": 52796
+    },
+    {
+      "elapsedSeconds": 2180,
+      "rssKiB": 180728,
+      "descriptors": 27,
+      "clientRssKiB": 240048,
+      "clientHeapUsedKiB": 74866
+    },
+    {
+      "elapsedSeconds": 2190,
+      "rssKiB": 180728,
+      "descriptors": 23,
+      "clientRssKiB": 240048,
+      "clientHeapUsedKiB": 40297
+    },
+    {
+      "elapsedSeconds": 2200,
+      "rssKiB": 180728,
+      "descriptors": 23,
+      "clientRssKiB": 240048,
+      "clientHeapUsedKiB": 62307
+    },
+    {
+      "elapsedSeconds": 2210,
+      "rssKiB": 180408,
+      "descriptors": 27,
+      "clientRssKiB": 240048,
+      "clientHeapUsedKiB": 45779
+    },
+    {
+      "elapsedSeconds": 2220,
+      "rssKiB": 180408,
+      "descriptors": 23,
+      "clientRssKiB": 240048,
+      "clientHeapUsedKiB": 68286
+    },
+    {
+      "elapsedSeconds": 2230,
+      "rssKiB": 180428,
+      "descriptors": 23,
+      "clientRssKiB": 240048,
+      "clientHeapUsedKiB": 33441
+    },
+    {
+      "elapsedSeconds": 2240,
+      "rssKiB": 180432,
+      "descriptors": 24,
+      "clientRssKiB": 240048,
+      "clientHeapUsedKiB": 56041
+    },
+    {
+      "elapsedSeconds": 2250,
+      "rssKiB": 180432,
+      "descriptors": 23,
+      "clientRssKiB": 240048,
+      "clientHeapUsedKiB": 78174
+    },
+    {
+      "elapsedSeconds": 2260,
+      "rssKiB": 180436,
+      "descriptors": 26,
+      "clientRssKiB": 240048,
+      "clientHeapUsedKiB": 61564
+    },
+    {
+      "elapsedSeconds": 2270,
+      "rssKiB": 180448,
+      "descriptors": 26,
+      "clientRssKiB": 240048,
+      "clientHeapUsedKiB": 26935
+    },
+    {
+      "elapsedSeconds": 2280,
+      "rssKiB": 180456,
+      "descriptors": 23,
+      "clientRssKiB": 240048,
+      "clientHeapUsedKiB": 48970
+    },
+    {
+      "elapsedSeconds": 2290,
+      "rssKiB": 180492,
+      "descriptors": 27,
+      "clientRssKiB": 240048,
+      "clientHeapUsedKiB": 71468
+    },
+    {
+      "elapsedSeconds": 2300,
+      "rssKiB": 180456,
+      "descriptors": 23,
+      "clientRssKiB": 240048,
+      "clientHeapUsedKiB": 54699
+    },
+    {
+      "elapsedSeconds": 2310,
+      "rssKiB": 180480,
+      "descriptors": 29,
+      "clientRssKiB": 240048,
+      "clientHeapUsedKiB": 77182
+    },
+    {
+      "elapsedSeconds": 2320,
+      "rssKiB": 180776,
+      "descriptors": 23,
+      "clientRssKiB": 240048,
+      "clientHeapUsedKiB": 42369
+    },
+    {
+      "elapsedSeconds": 2330,
+      "rssKiB": 180784,
+      "descriptors": 23,
+      "clientRssKiB": 240048,
+      "clientHeapUsedKiB": 64364
+    },
+    {
+      "elapsedSeconds": 2340,
+      "rssKiB": 180808,
+      "descriptors": 27,
+      "clientRssKiB": 240048,
+      "clientHeapUsedKiB": 48250
+    },
+    {
+      "elapsedSeconds": 2350,
+      "rssKiB": 180820,
+      "descriptors": 23,
+      "clientRssKiB": 240048,
+      "clientHeapUsedKiB": 70336
+    },
+    {
+      "elapsedSeconds": 2360,
+      "rssKiB": 180820,
+      "descriptors": 23,
+      "clientRssKiB": 240048,
+      "clientHeapUsedKiB": 35521
+    },
+    {
+      "elapsedSeconds": 2370,
+      "rssKiB": 180820,
+      "descriptors": 27,
+      "clientRssKiB": 240048,
+      "clientHeapUsedKiB": 58058
+    },
+    {
+      "elapsedSeconds": 2380,
+      "rssKiB": 180836,
+      "descriptors": 23,
+      "clientRssKiB": 240048,
+      "clientHeapUsedKiB": 41514
+    },
+    {
+      "elapsedSeconds": 2390,
+      "rssKiB": 180836,
+      "descriptors": 27,
+      "clientRssKiB": 240048,
+      "clientHeapUsedKiB": 63723
+    },
+    {
+      "elapsedSeconds": 2400,
+      "rssKiB": 180836,
+      "descriptors": 23,
+      "clientRssKiB": 240048,
+      "clientHeapUsedKiB": 29330
+    },
+    {
+      "elapsedSeconds": 2410,
+      "rssKiB": 180876,
+      "descriptors": 23,
+      "clientRssKiB": 240048,
+      "clientHeapUsedKiB": 51615
+    },
+    {
+      "elapsedSeconds": 2420,
+      "rssKiB": 180912,
+      "descriptors": 23,
+      "clientRssKiB": 240048,
+      "clientHeapUsedKiB": 74512
+    },
+    {
+      "elapsedSeconds": 2430,
+      "rssKiB": 180948,
+      "descriptors": 23,
+      "clientRssKiB": 240048,
+      "clientHeapUsedKiB": 58077
+    },
+    {
+      "elapsedSeconds": 2440,
+      "rssKiB": 180996,
+      "descriptors": 26,
+      "clientRssKiB": 240208,
+      "clientHeapUsedKiB": 23456
+    },
+    {
+      "elapsedSeconds": 2450,
+      "rssKiB": 180996,
+      "descriptors": 23,
+      "clientRssKiB": 240208,
+      "clientHeapUsedKiB": 45612
+    },
+    {
+      "elapsedSeconds": 2460,
+      "rssKiB": 181024,
+      "descriptors": 28,
+      "clientRssKiB": 240208,
+      "clientHeapUsedKiB": 68245
+    },
+    {
+      "elapsedSeconds": 2470,
+      "rssKiB": 181044,
+      "descriptors": 23,
+      "clientRssKiB": 240208,
+      "clientHeapUsedKiB": 51458
+    },
+    {
+      "elapsedSeconds": 2480,
+      "rssKiB": 181044,
+      "descriptors": 27,
+      "clientRssKiB": 240208,
+      "clientHeapUsedKiB": 73666
+    },
+    {
+      "elapsedSeconds": 2490,
+      "rssKiB": 181072,
+      "descriptors": 23,
+      "clientRssKiB": 240208,
+      "clientHeapUsedKiB": 38922
+    },
+    {
+      "elapsedSeconds": 2500,
+      "rssKiB": 181076,
+      "descriptors": 23,
+      "clientRssKiB": 240208,
+      "clientHeapUsedKiB": 60996
+    },
+    {
+      "elapsedSeconds": 2510,
+      "rssKiB": 181104,
+      "descriptors": 23,
+      "clientRssKiB": 240208,
+      "clientHeapUsedKiB": 44685
+    },
+    {
+      "elapsedSeconds": 2520,
+      "rssKiB": 181104,
+      "descriptors": 23,
+      "clientRssKiB": 240208,
+      "clientHeapUsedKiB": 66980
+    },
+    {
+      "elapsedSeconds": 2530,
+      "rssKiB": 181116,
+      "descriptors": 27,
+      "clientRssKiB": 240208,
+      "clientHeapUsedKiB": 32302
+    },
+    {
+      "elapsedSeconds": 2540,
+      "rssKiB": 181144,
+      "descriptors": 23,
+      "clientRssKiB": 240208,
+      "clientHeapUsedKiB": 54544
+    },
+    {
+      "elapsedSeconds": 2550,
+      "rssKiB": 181164,
+      "descriptors": 27,
+      "clientRssKiB": 240208,
+      "clientHeapUsedKiB": 77097
+    },
+    {
+      "elapsedSeconds": 2560,
+      "rssKiB": 181164,
+      "descriptors": 23,
+      "clientRssKiB": 240208,
+      "clientHeapUsedKiB": 60705
+    },
+    {
+      "elapsedSeconds": 2570,
+      "rssKiB": 181164,
+      "descriptors": 23,
+      "clientRssKiB": 240208,
+      "clientHeapUsedKiB": 25631
+    },
+    {
+      "elapsedSeconds": 2580,
+      "rssKiB": 181192,
+      "descriptors": 25,
+      "clientRssKiB": 240208,
+      "clientHeapUsedKiB": 47863
+    },
+    {
+      "elapsedSeconds": 2590,
+      "rssKiB": 181220,
+      "descriptors": 23,
+      "clientRssKiB": 240208,
+      "clientHeapUsedKiB": 70462
+    },
+    {
+      "elapsedSeconds": 2600,
+      "rssKiB": 181232,
+      "descriptors": 23,
+      "clientRssKiB": 240208,
+      "clientHeapUsedKiB": 53931
+    },
+    {
+      "elapsedSeconds": 2610,
+      "rssKiB": 181252,
+      "descriptors": 27,
+      "clientRssKiB": 240208,
+      "clientHeapUsedKiB": 76400
+    },
+    {
+      "elapsedSeconds": 2620,
+      "rssKiB": 181264,
+      "descriptors": 23,
+      "clientRssKiB": 240368,
+      "clientHeapUsedKiB": 41833
+    },
+    {
+      "elapsedSeconds": 2630,
+      "rssKiB": 181340,
+      "descriptors": 25,
+      "clientRssKiB": 240368,
+      "clientHeapUsedKiB": 64554
+    },
+    {
+      "elapsedSeconds": 2640,
+      "rssKiB": 181340,
+      "descriptors": 27,
+      "clientRssKiB": 240368,
+      "clientHeapUsedKiB": 48352
+    },
+    {
+      "elapsedSeconds": 2650,
+      "rssKiB": 181340,
+      "descriptors": 23,
+      "clientRssKiB": 240368,
+      "clientHeapUsedKiB": 70822
+    },
+    {
+      "elapsedSeconds": 2660,
+      "rssKiB": 181340,
+      "descriptors": 25,
+      "clientRssKiB": 241008,
+      "clientHeapUsedKiB": 35837
+    },
+    {
+      "elapsedSeconds": 2670,
+      "rssKiB": 181340,
+      "descriptors": 23,
+      "clientRssKiB": 241008,
+      "clientHeapUsedKiB": 58722
+    },
+    {
+      "elapsedSeconds": 2680,
+      "rssKiB": 181340,
+      "descriptors": 23,
+      "clientRssKiB": 241008,
+      "clientHeapUsedKiB": 42188
+    },
+    {
+      "elapsedSeconds": 2690,
+      "rssKiB": 181340,
+      "descriptors": 27,
+      "clientRssKiB": 241008,
+      "clientHeapUsedKiB": 64629
+    },
+    {
+      "elapsedSeconds": 2700,
+      "rssKiB": 181344,
+      "descriptors": 23,
+      "clientRssKiB": 241008,
+      "clientHeapUsedKiB": 30337
+    },
+    {
+      "elapsedSeconds": 2710,
+      "rssKiB": 181180,
+      "descriptors": 23,
+      "clientRssKiB": 241008,
+      "clientHeapUsedKiB": 52859
+    },
+    {
+      "elapsedSeconds": 2720,
+      "rssKiB": 181204,
+      "descriptors": 27,
+      "clientRssKiB": 241008,
+      "clientHeapUsedKiB": 75868
+    },
+    {
+      "elapsedSeconds": 2730,
+      "rssKiB": 181204,
+      "descriptors": 23,
+      "clientRssKiB": 241008,
+      "clientHeapUsedKiB": 59163
+    },
+    {
+      "elapsedSeconds": 2740,
+      "rssKiB": 180776,
+      "descriptors": 27,
+      "clientRssKiB": 241008,
+      "clientHeapUsedKiB": 24855
+    },
+    {
+      "elapsedSeconds": 2750,
+      "rssKiB": 180808,
+      "descriptors": 23,
+      "clientRssKiB": 241008,
+      "clientHeapUsedKiB": 47585
+    },
+    {
+      "elapsedSeconds": 2760,
+      "rssKiB": 180812,
+      "descriptors": 23,
+      "clientRssKiB": 241008,
+      "clientHeapUsedKiB": 70116
+    },
+    {
+      "elapsedSeconds": 2770,
+      "rssKiB": 180860,
+      "descriptors": 27,
+      "clientRssKiB": 241008,
+      "clientHeapUsedKiB": 53879
+    },
+    {
+      "elapsedSeconds": 2780,
+      "rssKiB": 180796,
+      "descriptors": 23,
+      "clientRssKiB": 241008,
+      "clientHeapUsedKiB": 76404
+    },
+    {
+      "elapsedSeconds": 2790,
+      "rssKiB": 180800,
+      "descriptors": 23,
+      "clientRssKiB": 241008,
+      "clientHeapUsedKiB": 41826
+    },
+    {
+      "elapsedSeconds": 2800,
+      "rssKiB": 180800,
+      "descriptors": 26,
+      "clientRssKiB": 241008,
+      "clientHeapUsedKiB": 64868
+    },
+    {
+      "elapsedSeconds": 2810,
+      "rssKiB": 180860,
+      "descriptors": 23,
+      "clientRssKiB": 241008,
+      "clientHeapUsedKiB": 48369
+    },
+    {
+      "elapsedSeconds": 2820,
+      "rssKiB": 180860,
+      "descriptors": 23,
+      "clientRssKiB": 241008,
+      "clientHeapUsedKiB": 70592
+    },
+    {
+      "elapsedSeconds": 2830,
+      "rssKiB": 180884,
+      "descriptors": 23,
+      "clientRssKiB": 241008,
+      "clientHeapUsedKiB": 36586
+    },
+    {
+      "elapsedSeconds": 2840,
+      "rssKiB": 180924,
+      "descriptors": 23,
+      "clientRssKiB": 241008,
+      "clientHeapUsedKiB": 59011
+    },
+    {
+      "elapsedSeconds": 2850,
+      "rssKiB": 180940,
+      "descriptors": 27,
+      "clientRssKiB": 241008,
+      "clientHeapUsedKiB": 42895
+    },
+    {
+      "elapsedSeconds": 2860,
+      "rssKiB": 180940,
+      "descriptors": 23,
+      "clientRssKiB": 241008,
+      "clientHeapUsedKiB": 65135
+    },
+    {
+      "elapsedSeconds": 2870,
+      "rssKiB": 180968,
+      "descriptors": 27,
+      "clientRssKiB": 241008,
+      "clientHeapUsedKiB": 30643
+    },
+    {
+      "elapsedSeconds": 2880,
+      "rssKiB": 180968,
+      "descriptors": 23,
+      "clientRssKiB": 241008,
+      "clientHeapUsedKiB": 53384
+    },
+    {
+      "elapsedSeconds": 2890,
+      "rssKiB": 180968,
+      "descriptors": 23,
+      "clientRssKiB": 241008,
+      "clientHeapUsedKiB": 76096
+    },
+    {
+      "elapsedSeconds": 2900,
+      "rssKiB": 181300,
+      "descriptors": 27,
+      "clientRssKiB": 241008,
+      "clientHeapUsedKiB": 60104
+    },
+    {
+      "elapsedSeconds": 2910,
+      "rssKiB": 181300,
+      "descriptors": 23,
+      "clientRssKiB": 241008,
+      "clientHeapUsedKiB": 25759
+    },
+    {
+      "elapsedSeconds": 2920,
+      "rssKiB": 181300,
+      "descriptors": 23,
+      "clientRssKiB": 241008,
+      "clientHeapUsedKiB": 47951
+    },
+    {
+      "elapsedSeconds": 2930,
+      "rssKiB": 181316,
+      "descriptors": 26,
+      "clientRssKiB": 241008,
+      "clientHeapUsedKiB": 70645
+    },
+    {
+      "elapsedSeconds": 2940,
+      "rssKiB": 181344,
+      "descriptors": 23,
+      "clientRssKiB": 241008,
+      "clientHeapUsedKiB": 54113
+    },
+    {
+      "elapsedSeconds": 2950,
+      "rssKiB": 181344,
+      "descriptors": 29,
+      "clientRssKiB": 241008,
+      "clientHeapUsedKiB": 76846
+    },
+    {
+      "elapsedSeconds": 2960,
+      "rssKiB": 181344,
+      "descriptors": 23,
+      "clientRssKiB": 241008,
+      "clientHeapUsedKiB": 42352
+    },
+    {
+      "elapsedSeconds": 2970,
+      "rssKiB": 181344,
+      "descriptors": 23,
+      "clientRssKiB": 241008,
+      "clientHeapUsedKiB": 64921
+    },
+    {
+      "elapsedSeconds": 2980,
+      "rssKiB": 181344,
+      "descriptors": 27,
+      "clientRssKiB": 241008,
+      "clientHeapUsedKiB": 48632
+    },
+    {
+      "elapsedSeconds": 2990,
+      "rssKiB": 181344,
+      "descriptors": 23,
+      "clientRssKiB": 241008,
+      "clientHeapUsedKiB": 70877
+    },
+    {
+      "elapsedSeconds": 3000,
+      "rssKiB": 181344,
+      "descriptors": 23,
+      "clientRssKiB": 241008,
+      "clientHeapUsedKiB": 36202
+    },
+    {
+      "elapsedSeconds": 3010,
+      "rssKiB": 181408,
+      "descriptors": 23,
+      "clientRssKiB": 241008,
+      "clientHeapUsedKiB": 59019
+    },
+    {
+      "elapsedSeconds": 3020,
+      "rssKiB": 181440,
+      "descriptors": 23,
+      "clientRssKiB": 241008,
+      "clientHeapUsedKiB": 42159
+    },
+    {
+      "elapsedSeconds": 3030,
+      "rssKiB": 181500,
+      "descriptors": 27,
+      "clientRssKiB": 241008,
+      "clientHeapUsedKiB": 64888
+    },
+    {
+      "elapsedSeconds": 3040,
+      "rssKiB": 181576,
+      "descriptors": 23,
+      "clientRssKiB": 241008,
+      "clientHeapUsedKiB": 30221
+    },
+    {
+      "elapsedSeconds": 3050,
+      "rssKiB": 181600,
+      "descriptors": 23,
+      "clientRssKiB": 241008,
+      "clientHeapUsedKiB": 52698
+    },
+    {
+      "elapsedSeconds": 3060,
+      "rssKiB": 182396,
+      "descriptors": 26,
+      "clientRssKiB": 241008,
+      "clientHeapUsedKiB": 75528
+    },
+    {
+      "elapsedSeconds": 3070,
+      "rssKiB": 182396,
+      "descriptors": 23,
+      "clientRssKiB": 241008,
+      "clientHeapUsedKiB": 58923
+    },
+    {
+      "elapsedSeconds": 3080,
+      "rssKiB": 181884,
+      "descriptors": 27,
+      "clientRssKiB": 241008,
+      "clientHeapUsedKiB": 24516
+    },
+    {
+      "elapsedSeconds": 3090,
+      "rssKiB": 181884,
+      "descriptors": 23,
+      "clientRssKiB": 241008,
+      "clientHeapUsedKiB": 47097
+    },
+    {
+      "elapsedSeconds": 3100,
+      "rssKiB": 181896,
+      "descriptors": 23,
+      "clientRssKiB": 241008,
+      "clientHeapUsedKiB": 69469
+    },
+    {
+      "elapsedSeconds": 3110,
+      "rssKiB": 181896,
+      "descriptors": 27,
+      "clientRssKiB": 241008,
+      "clientHeapUsedKiB": 52956
+    },
+    {
+      "elapsedSeconds": 3120,
+      "rssKiB": 181896,
+      "descriptors": 26,
+      "clientRssKiB": 241008,
+      "clientHeapUsedKiB": 75829
+    },
+    {
+      "elapsedSeconds": 3130,
+      "rssKiB": 181896,
+      "descriptors": 23,
+      "clientRssKiB": 241008,
+      "clientHeapUsedKiB": 40945
+    },
+    {
+      "elapsedSeconds": 3140,
+      "rssKiB": 181900,
+      "descriptors": 27,
+      "clientRssKiB": 241008,
+      "clientHeapUsedKiB": 63387
+    },
+    {
+      "elapsedSeconds": 3150,
+      "rssKiB": 181920,
+      "descriptors": 23,
+      "clientRssKiB": 241008,
+      "clientHeapUsedKiB": 47389
+    },
+    {
+      "elapsedSeconds": 3160,
+      "rssKiB": 181920,
+      "descriptors": 23,
+      "clientRssKiB": 241008,
+      "clientHeapUsedKiB": 69709
+    },
+    {
+      "elapsedSeconds": 3170,
+      "rssKiB": 181948,
+      "descriptors": 26,
+      "clientRssKiB": 241008,
+      "clientHeapUsedKiB": 35250
+    },
+    {
+      "elapsedSeconds": 3180,
+      "rssKiB": 181956,
+      "descriptors": 23,
+      "clientRssKiB": 241008,
+      "clientHeapUsedKiB": 57493
+    },
+    {
+      "elapsedSeconds": 3190,
+      "rssKiB": 181956,
+      "descriptors": 26,
+      "clientRssKiB": 241008,
+      "clientHeapUsedKiB": 41381
+    },
+    {
+      "elapsedSeconds": 3200,
+      "rssKiB": 182040,
+      "descriptors": 23,
+      "clientRssKiB": 241008,
+      "clientHeapUsedKiB": 63758
+    },
+    {
+      "elapsedSeconds": 3210,
+      "rssKiB": 182056,
+      "descriptors": 27,
+      "clientRssKiB": 241008,
+      "clientHeapUsedKiB": 29410
+    },
+    {
+      "elapsedSeconds": 3220,
+      "rssKiB": 182056,
+      "descriptors": 23,
+      "clientRssKiB": 241008,
+      "clientHeapUsedKiB": 51608
+    },
+    {
+      "elapsedSeconds": 3230,
+      "rssKiB": 182056,
+      "descriptors": 23,
+      "clientRssKiB": 241008,
+      "clientHeapUsedKiB": 74003
+    },
+    {
+      "elapsedSeconds": 3240,
+      "rssKiB": 182056,
+      "descriptors": 27,
+      "clientRssKiB": 241008,
+      "clientHeapUsedKiB": 57778
+    },
+    {
+      "elapsedSeconds": 3250,
+      "rssKiB": 182056,
+      "descriptors": 23,
+      "clientRssKiB": 241008,
+      "clientHeapUsedKiB": 80201
+    },
+    {
+      "elapsedSeconds": 3260,
+      "rssKiB": 184484,
+      "descriptors": 23,
+      "clientRssKiB": 241008,
+      "clientHeapUsedKiB": 45138
+    },
+    {
+      "elapsedSeconds": 3270,
+      "rssKiB": 184488,
+      "descriptors": 23,
+      "clientRssKiB": 241008,
+      "clientHeapUsedKiB": 67839
+    },
+    {
+      "elapsedSeconds": 3280,
+      "rssKiB": 184488,
+      "descriptors": 23,
+      "clientRssKiB": 241008,
+      "clientHeapUsedKiB": 50763
+    },
+    {
+      "elapsedSeconds": 3290,
+      "rssKiB": 184492,
+      "descriptors": 27,
+      "clientRssKiB": 241008,
+      "clientHeapUsedKiB": 73343
+    },
+    {
+      "elapsedSeconds": 3300,
+      "rssKiB": 184504,
+      "descriptors": 23,
+      "clientRssKiB": 241008,
+      "clientHeapUsedKiB": 38226
+    },
+    {
+      "elapsedSeconds": 3310,
+      "rssKiB": 184560,
+      "descriptors": 23,
+      "clientRssKiB": 241008,
+      "clientHeapUsedKiB": 60436
+    },
+    {
+      "elapsedSeconds": 3320,
+      "rssKiB": 184576,
+      "descriptors": 23,
+      "clientRssKiB": 241008,
+      "clientHeapUsedKiB": 44277
+    },
+    {
+      "elapsedSeconds": 3330,
+      "rssKiB": 184576,
+      "descriptors": 23,
+      "clientRssKiB": 241008,
+      "clientHeapUsedKiB": 66387
+    },
+    {
+      "elapsedSeconds": 3340,
+      "rssKiB": 184580,
+      "descriptors": 27,
+      "clientRssKiB": 241008,
+      "clientHeapUsedKiB": 31729
+    },
+    {
+      "elapsedSeconds": 3350,
+      "rssKiB": 184592,
+      "descriptors": 23,
+      "clientRssKiB": 241008,
+      "clientHeapUsedKiB": 54045
+    },
+    {
+      "elapsedSeconds": 3360,
+      "rssKiB": 184604,
+      "descriptors": 23,
+      "clientRssKiB": 241008,
+      "clientHeapUsedKiB": 76253
+    },
+    {
+      "elapsedSeconds": 3370,
+      "rssKiB": 184636,
+      "descriptors": 27,
+      "clientRssKiB": 241008,
+      "clientHeapUsedKiB": 59490
+    },
+    {
+      "elapsedSeconds": 3380,
+      "rssKiB": 184636,
+      "descriptors": 23,
+      "clientRssKiB": 241008,
+      "clientHeapUsedKiB": 24832
+    },
+    {
+      "elapsedSeconds": 3390,
+      "rssKiB": 184636,
+      "descriptors": 27,
+      "clientRssKiB": 241008,
+      "clientHeapUsedKiB": 47118
+    },
+    {
+      "elapsedSeconds": 3400,
+      "rssKiB": 184636,
+      "descriptors": 23,
+      "clientRssKiB": 241008,
+      "clientHeapUsedKiB": 69858
+    },
+    {
+      "elapsedSeconds": 3410,
+      "rssKiB": 184648,
+      "descriptors": 23,
+      "clientRssKiB": 241008,
+      "clientHeapUsedKiB": 53099
+    },
+    {
+      "elapsedSeconds": 3420,
+      "rssKiB": 184656,
+      "descriptors": 27,
+      "clientRssKiB": 241008,
+      "clientHeapUsedKiB": 75741
+    },
+    {
+      "elapsedSeconds": 3430,
+      "rssKiB": 184684,
+      "descriptors": 23,
+      "clientRssKiB": 241008,
+      "clientHeapUsedKiB": 41221
+    },
+    {
+      "elapsedSeconds": 3440,
+      "rssKiB": 184688,
+      "descriptors": 25,
+      "clientRssKiB": 241008,
+      "clientHeapUsedKiB": 63678
+    },
+    {
+      "elapsedSeconds": 3450,
+      "rssKiB": 184688,
+      "descriptors": 23,
+      "clientRssKiB": 241008,
+      "clientHeapUsedKiB": 47980
+    },
+    {
+      "elapsedSeconds": 3460,
+      "rssKiB": 184692,
+      "descriptors": 23,
+      "clientRssKiB": 241008,
+      "clientHeapUsedKiB": 70464
+    },
+    {
+      "elapsedSeconds": 3470,
+      "rssKiB": 184696,
+      "descriptors": 27,
+      "clientRssKiB": 241008,
+      "clientHeapUsedKiB": 36017
+    },
+    {
+      "elapsedSeconds": 3480,
+      "rssKiB": 184732,
+      "descriptors": 23,
+      "clientRssKiB": 241008,
+      "clientHeapUsedKiB": 58510
+    },
+    {
+      "elapsedSeconds": 3490,
+      "rssKiB": 184732,
+      "descriptors": 27,
+      "clientRssKiB": 241008,
+      "clientHeapUsedKiB": 42250
+    },
+    {
+      "elapsedSeconds": 3500,
+      "rssKiB": 184732,
+      "descriptors": 23,
+      "clientRssKiB": 241008,
+      "clientHeapUsedKiB": 65290
+    },
+    {
+      "elapsedSeconds": 3510,
+      "rssKiB": 184752,
+      "descriptors": 23,
+      "clientRssKiB": 241008,
+      "clientHeapUsedKiB": 30911
+    },
+    {
+      "elapsedSeconds": 3520,
+      "rssKiB": 184764,
+      "descriptors": 27,
+      "clientRssKiB": 241008,
+      "clientHeapUsedKiB": 53642
+    },
+    {
+      "elapsedSeconds": 3530,
+      "rssKiB": 184580,
+      "descriptors": 23,
+      "clientRssKiB": 241008,
+      "clientHeapUsedKiB": 76554
+    },
+    {
+      "elapsedSeconds": 3540,
+      "rssKiB": 184596,
+      "descriptors": 23,
+      "clientRssKiB": 241008,
+      "clientHeapUsedKiB": 59884
+    },
+    {
+      "elapsedSeconds": 3550,
+      "rssKiB": 184600,
+      "descriptors": 26,
+      "clientRssKiB": 241008,
+      "clientHeapUsedKiB": 25727
+    },
+    {
+      "elapsedSeconds": 3560,
+      "rssKiB": 184620,
+      "descriptors": 23,
+      "clientRssKiB": 241008,
+      "clientHeapUsedKiB": 48506
+    },
+    {
+      "elapsedSeconds": 3570,
+      "rssKiB": 184620,
+      "descriptors": 23,
+      "clientRssKiB": 241008,
+      "clientHeapUsedKiB": 71155
+    },
+    {
+      "elapsedSeconds": 3580,
+      "rssKiB": 184632,
+      "descriptors": 27,
+      "clientRssKiB": 241008,
+      "clientHeapUsedKiB": 54509
+    },
+    {
+      "elapsedSeconds": 3590,
+      "rssKiB": 184652,
+      "descriptors": 23,
+      "clientRssKiB": 241008,
+      "clientHeapUsedKiB": 77808
+    },
+    {
+      "elapsedSeconds": 3600,
+      "rssKiB": 184684,
+      "descriptors": 23,
+      "clientRssKiB": 241008,
+      "clientHeapUsedKiB": 43563
+    },
+    {
+      "elapsedSeconds": 3600,
+      "rssKiB": 184684,
+      "descriptors": 24,
+      "clientRssKiB": 241008,
+      "clientHeapUsedKiB": 44147
+    }
+  ],
+  "sha256": {
+    "dist/audit.js": "015d77e75984c6d9186c7949183cfe3b429ba84420d449354c415ba549de2afe",
+    "dist/cli.js": "1a024822fdf503a3e3fe73f36884b4fac18d7d614ac51f46644c8778eb1163c5",
+    "dist/collector.js": "eb670406a884128078917ce56ef2ff453d246eba993ae6897f9bdb2826b62084",
+    "dist/config.js": "47d46af3a51471dddd23d5441f7821fe3c9a69ebc603f919150378205a219cc7",
+    "dist/errors.js": "af76f4cb2b27c84c7cfebae19dfcde21c524531072a5be4b5f941bd0a981cd50",
+    "dist/execution.js": "c6688ffbb180105872ee6a9885d399c6fbb276a0bec32886b0b0a7d496be75cc",
+    "dist/http.js": "8920e54a28df0cb1b91dbe0656fa3cbc5c85a97f064df8b7d3233565c81e45f8",
+    "dist/identity.js": "1b7f724d787f3062909fe2b70414a476a182fcef619281b54a5a4dacb76c044e",
+    "dist/index.js": "bae7e46b26c1ab36cb1a753ae0be72573ca198a6927d323c1abf22e5fa1069b2",
+    "dist/input.js": "16dff1327ce3fdf25870735fa642b4d18eb0dcb010c2e034dd1713a5714f362d",
+    "dist/policy.js": "23b3f3c42894e8849e5bda94a21db709906eac69b049d426c52b53889b326ac3",
+    "dist/runtime.js": "ba8a07ee280935e97788e6149d4a0a3f9278b1f8f3b098abd7cd82ebcf004e94",
+    "dist/tools.js": "1abd5ebaa49e033605e465b64c70dc0912be780191f82c2bee63f1cc0cf2ea86"
+  },
+  "serverExit": 0
+}

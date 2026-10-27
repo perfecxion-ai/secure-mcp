@@ -2,9 +2,15 @@
 
 Reports identify a workload and a particular runtime. The [run identity record](2026-10-27-endurance-run-identities.json) ties completed guarded runs to source/build hashes and separately records their process exit status. Passing results are not transferable to arbitrary tools, clients, deployment settings, or later source changes.
 
+## Current candidate
+
+Use the [candidate record](CANDIDATE.md) for the current runtime and the [fresh-install guide](REAL_USER_VALIDATION.md) for the trial. It contains the 44-test, actual browser/issuer, durable collector, storage failure, real-host, container, and immutable artifact evidence. Its final endurance status is recorded explicitly rather than inferred from older results.
+
+The guarded-runtime and initial-alpha reports below are historical. Their runtime module hashes differ from the current candidate.
+
 ## Guarded runtime
 
-Runtime source: `c0a5f95b48253f69451be0cc8d7447f5eb970917`. Later lab and documentation changes do not change its compiled runtime modules. Each current host/proxy report contains SHA-256 hashes of all 12 built JavaScript modules.
+Runtime source: `c0a5f95b48253f69451be0cc8d7447f5eb970917`. Later lab and documentation changes do not change its compiled runtime modules. Each host/proxy report in this historical section contains SHA-256 hashes of its 12 built JavaScript modules.
 
 | Evidence                                           | Result and boundary                                                                                 |
 | -------------------------------------------------- | --------------------------------------------------------------------------------------------------- |
@@ -42,6 +48,6 @@ The HTTP driver used a 256 MiB heap limit and its maximum measured event-loop de
 | [Initial alpha record](2026-10-27-alpha.json)                          | Earlier local candidate and its file hashes; historical 30-test, package, container, and issuer checks                   |
 | Initial `codex-host.json` and `claude-host.json` reports               | Earlier host acceptance before the element guard; superseded for current runtime identification by guarded reports above |
 
-All load measurements ran on the same ARM64 DGX Spark host. Background validation and overlapping load runs occurred; these were not isolated capacity benchmarks. The reports use a small local document, four callers, and JSON audit to `/dev/null`. Stdio `startupMs` measures transport connection rather than first-call readiness. Latency percentiles cover the last 10,000 calls, not all calls. See [benchmark instructions](../BENCHMARKS.md).
+All load measurements ran on the same ARM64 DGX Spark host. Background validation and overlapping load runs occurred; these were not isolated capacity benchmarks. These historical reports use a small local document, four callers, and JSON audit to `/dev/null`; the current candidate separately measures acknowledged durable audit. Stdio `startupMs` measures transport connection rather than first-call readiness. Latency percentiles cover the last 10,000 calls, not all calls. See [benchmark instructions](../BENCHMARKS.md).
 
 Only synthetic fixtures and filtered reports belong here. Do not add raw assistant transcripts, credentials, issuer keys, real document contents, or local Git configuration.

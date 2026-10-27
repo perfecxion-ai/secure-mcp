@@ -1,0 +1,29 @@
+{
+  "node": "v24.22.1",
+  "uid": 1000,
+  "sha256": {
+    "dist/audit.js": "015d77e75984c6d9186c7949183cfe3b429ba84420d449354c415ba549de2afe",
+    "dist/cli.js": "1a024822fdf503a3e3fe73f36884b4fac18d7d614ac51f46644c8778eb1163c5",
+    "dist/collector.js": "eb670406a884128078917ce56ef2ff453d246eba993ae6897f9bdb2826b62084",
+    "dist/config.js": "47d46af3a51471dddd23d5441f7821fe3c9a69ebc603f919150378205a219cc7",
+    "dist/errors.js": "af76f4cb2b27c84c7cfebae19dfcde21c524531072a5be4b5f941bd0a981cd50",
+    "dist/execution.js": "c6688ffbb180105872ee6a9885d399c6fbb276a0bec32886b0b0a7d496be75cc",
+    "dist/http.js": "8920e54a28df0cb1b91dbe0656fa3cbc5c85a97f064df8b7d3233565c81e45f8",
+    "dist/identity.js": "1b7f724d787f3062909fe2b70414a476a182fcef619281b54a5a4dacb76c044e",
+    "dist/index.js": "bae7e46b26c1ab36cb1a753ae0be72573ca198a6927d323c1abf22e5fa1069b2",
+    "dist/input.js": "16dff1327ce3fdf25870735fa642b4d18eb0dcb010c2e034dd1713a5714f362d",
+    "dist/policy.js": "23b3f3c42894e8849e5bda94a21db709906eac69b049d426c52b53889b326ac3",
+    "dist/runtime.js": "ba8a07ee280935e97788e6149d4a0a3f9278b1f8f3b098abd7cd82ebcf004e94",
+    "dist/tools.js": "1abd5ebaa49e033605e465b64c70dc0912be780191f82c2bee63f1cc0cf2ea86"
+  },
+  "result": "pass",
+  "localImageId": "sha256:062c1a4bce7234b3b4545149c563ea23030079483899b429c90fe0ca2277c1be",
+  "checks": [
+    "allowed document and denied absolute path through official MCP client",
+    "nonroot uid 1000",
+    "read-only root and document mount",
+    "network none, dropped capabilities, no new privileges",
+    "512 MiB memory, two CPUs, 64 process limit"
+  ],
+  "limitation": "Local ARM64 image smoke; container publication/signing is not established"
+}

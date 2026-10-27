@@ -1,0 +1,79 @@
+
+> @perfecxion/secure-mcp-server@2.0.0-alpha.1 test:coverage
+> node --import tsx --test --experimental-test-coverage --test-coverage-include=src/*.ts tests/*.test.ts
+
+✔ fixed-destination API tool refuses redirects, arbitrary URL arguments, and oversized output (39.598657ms)
+✔ stdio collector failure returns a bounded safe protocol error (2026-07-28) (743.608194ms)
+✔ stdio collector failure returns a bounded safe protocol error (legacy) (347.723193ms)
+✔ audit backpressure has no queue and latches readiness after loss (52.942567ms)
+✔ a stalled sink bounds tool latency and prevents invocation (57.089502ms)
+✔ HTTP cancellation, deadlines, capacity, and shutdown reach the handler (312.652032ms)
+▶ HTTP resource server and official SDK integration
+  ✔ metadata and authentication challenge use configured canonical resource (28.473102ms)
+  ✔ SDK round trip with modern protocol (51.799669ms)
+  ✔ SDK round trip with legacy protocol (28.839151ms)
+  ✔ principal isolation: token scopes control both listing and direct calls (13.944375ms)
+  ✔ reject wrong issuer, audience, expiry, token type, future issuance and excessive lifetime (17.402172ms)
+  ✔ DNS rebinding and cross-origin requests are rejected before authentication (4.506056ms)
+  ✔ malformed and oversized bodies fail safely (3.050549ms)
+  ✔ request ID zero and identical requests from separate calls remain valid (3.878198ms)
+  ✔ unknown routes and protocol errors produce content-free correlated audit (3.026629ms)
+  ✔ metrics require a verified token with metrics scope (3.295574ms)
+✔ HTTP resource server and official SDK integration (179.024245ms)
+✔ JWKS rotation, cache expiry, and issuer outages preserve the trust boundary (40.934563ms)
+✔ token key-location headers cannot override the configured JWKS endpoint (6.381018ms)
+✔ direct calls validate asynchronous transforms, defaults, and coercion once (6.259115ms)
+✔ stdio schema ownership: modern (609.710887ms)
+✔ HTTP schema ownership: modern (61.804342ms)
+✔ stdio schema ownership: legacy (287.208678ms)
+✔ HTTP schema ownership: legacy (33.989847ms)
+✔ asynchronous validation holds capacity until settled and cannot execute after timeout (36.106859ms)
+✔ schema rejects unknown options and unauthenticated HTTP configuration (4.030374ms)
+✔ document read preserves text and emits safe structured evidence (22.254436ms)
+✔ traversal, hidden paths, and symlink escape cannot read outside the workspace (4.718008ms)
+✔ input schema denies missing fields and identity injection (3.180101ms)
+✔ tool discovery and invocation agree on scopes, allowlist, and expiry (1.914243ms)
+✔ all scopes are required and read-only mode prevents mutation (1.821219ms)
+✔ large files and binary files return bounded safe errors (2.273268ms)
+✔ exceptions do not disclose secrets or create arbitrary metric labels (1.202226ms)
+✔ audit failure prevents execution (1.166658ms)
+✔ a failed writable audit stream denies work without an unhandled error event (4.288391ms)
+✔ timeout retains capacity for noncooperative work and shutdown rejects new work (33.019478ms)
+✔ caller cancellation reaches a cooperative handler (8.915791ms)
+✔ unknown allowlist entries and tools without policy fail startup (0.718257ms)
+✔ collection budgets stop validation and cyclic inputs before execution (1.997571ms)
+✔ official SDK over stdio: modern (713.321522ms)
+✔ official SDK over stdio: legacy (319.248315ms)
+✔ package source import is silent and does not start listeners (354.747494ms)
+✔ CLI requires an explicit document workspace (304.748355ms)
+✔ oversized stdio frame exits even while the caller keeps stdin open (311.829663ms)
+ℹ tests 44
+ℹ suites 0
+ℹ pass 44
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 2505.827035
+ℹ start of coverage report
+ℹ -----------------------------------------------------------------------------
+ℹ file          | line % | branch % | funcs % | uncovered lines
+ℹ -----------------------------------------------------------------------------
+ℹ src           |        |          |         | 
+ℹ  audit.ts     | 100.00 |   100.00 |  100.00 | 
+ℹ  cli.ts       |  80.34 |    62.50 |   61.54 | 18-20 22-24 42-50 55-57 90-94
+ℹ  collector.ts | 100.00 |    87.50 |   66.67 | 
+ℹ  config.ts    |  97.80 |    92.31 |  100.00 | 63-64
+ℹ  errors.ts    | 100.00 |   100.00 |  100.00 | 
+ℹ  execution.ts | 100.00 |    92.59 |   94.12 | 
+ℹ  http.ts      |  96.27 |    81.69 |   84.21 | 12 115-116 132-133 144 158-161
+ℹ  identity.ts  | 100.00 |   100.00 |  100.00 | 
+ℹ  index.ts     | 100.00 |   100.00 |  100.00 | 
+ℹ  input.ts     |  93.62 |    90.48 |  100.00 | 23-25
+ℹ  policy.ts    | 100.00 |   100.00 |  100.00 | 
+ℹ  runtime.ts   |  99.61 |    92.96 |  100.00 | 81
+ℹ  tools.ts     |  98.72 |    92.00 |  100.00 | 80-81
+ℹ -----------------------------------------------------------------------------
+ℹ all files     |  96.81 |    90.31 |   91.55 | 
+ℹ -----------------------------------------------------------------------------
+ℹ end of coverage report

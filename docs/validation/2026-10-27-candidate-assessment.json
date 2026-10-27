@@ -1,0 +1,45 @@
+{
+  "journal": {
+    "sha256": "036f5e950e973408820385a54d2edaf5837a3a1ba39d0838b009c8d7f344655e",
+    "bytes": 79027977,
+    "records": 307609,
+    "correlatedRequests": 60917,
+    "matchedCalls": 60906,
+    "actorCount": 6,
+    "peakOpenRequests": 4,
+    "counts": {
+      "http:received": 60917,
+      "http:response": 60917,
+      "http:completed": 60917,
+      "tool:allowed": 59383,
+      "protocol:invalid_params": 1523,
+      "tool:denied": 4569,
+      "protocol:tool_rejected": 4569,
+      "tool:success": 54814
+    },
+    "contentSentinelsAbsent": true
+  },
+  "stdio": {
+    "result": "pass",
+    "calls": 13317342,
+    "durationSeconds": 3600.00592474,
+    "p95Ms": 1.9526619999669492,
+    "peakRssMiB": 251.1953125,
+    "peakDescriptors": 26,
+    "medianGrowthMiB": 0.10546875,
+    "serverExit": {
+      "code": 0,
+      "signal": null
+    }
+  },
+  "http": {
+    "result": "pass",
+    "calls": 60906,
+    "durationSeconds": 3600.18687872,
+    "p95Ms": 46.64641300030053,
+    "peakRssMiB": 180.43359375,
+    "peakDescriptors": 29,
+    "medianGrowthMiB": 15.06640625,
+    "serverExit": 0
+  }
+}

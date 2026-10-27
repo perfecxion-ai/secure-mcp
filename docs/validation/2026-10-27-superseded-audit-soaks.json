@@ -1,0 +1,19 @@
+{
+  "time": "2026-10-27T16:11:38Z",
+  "runtimeCommit": "78475f72a5b1ffb8f363162adeb191e7ebbab9af",
+  "reason": "Intentionally stopped to retest corrected audit failure response; incomplete runs are not acceptance evidence",
+  "lastHttpProgress": {
+    "progress": 780,
+    "calls": 13195,
+    "failures": 0,
+    "memory": {
+      "elapsedSeconds": 780,
+      "rssKiB": 176924,
+      "descriptors": 25,
+      "clientRssKiB": 233900,
+      "clientHeapUsedKiB": 46276
+    }
+  },
+  "stdioExit": 143,
+  "httpExit": 143
+}

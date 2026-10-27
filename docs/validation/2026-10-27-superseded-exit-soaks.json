@@ -1,0 +1,19 @@
+{
+  "time": "2026-10-27T16:38:48Z",
+  "runtimeCommit": "b757360854f67e819fb7cc2e6373419bd363a436",
+  "reason": "Stopped deliberately to repeat with explicit server exit and final audit health evidence; incomplete runs are not acceptance evidence",
+  "lastHttpProgress": {
+    "progress": 1440,
+    "calls": 24468,
+    "failures": 0,
+    "memory": {
+      "elapsedSeconds": 1440,
+      "rssKiB": 187568,
+      "descriptors": 23,
+      "clientRssKiB": 235952,
+      "clientHeapUsedKiB": 50067
+    }
+  },
+  "stdioExit": 143,
+  "httpExit": 143
+}

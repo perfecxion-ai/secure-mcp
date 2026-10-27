@@ -9,7 +9,7 @@ BENCH_SECONDS=60 npm run benchmark
 BENCH_SECONDS=60 npm run benchmark:http
 ```
 
-`benchmark` launches a separate stdio CLI and reads a 29-byte document with periodic denied traversal attempts. Its historical `startupMs` field measures SDK transport connection, not completion of a first tool call. Memory and file-descriptor samples come from the server process.
+`benchmark` launches a separate stdio CLI and reads a 30-byte document (29 printable bytes plus a newline) with periodic denied traversal attempts. Its historical `startupMs` field measures SDK transport connection, not completion of a first tool call. Memory and file-descriptor samples come from the server process.
 
 `benchmark:http` launches a separate HTTP CLI on loopback. Three clients can read the document; a fourth has only policy scope. Each worker attempts an expected denial every tenth call. Assertions check returned content and the restricted subject's policy visibility. `readyMs` includes listener startup, token setup, and successful tool discovery for all four clients. Server memory and descriptors are sampled every ten seconds.
 
@@ -28,3 +28,5 @@ BENCH_SECONDS=1800 BENCH_PROGRESS=1 node --max-old-space-size=256 scripts/http-b
 Progress reports appear once per minute. Memory samples distinguish server RSS from driver RSS and heap usage. The final report includes driver event-loop delay, bounded failure categories, and at most 20 failure samples with numeric error codes. It never includes raw exception messages or response bodies. A failed run exits nonzero and remains failed evidence even if a later run passes. Use these diagnostics to investigate load-generator stalls before attributing every timeout or memory trend to the server.
 
 Both harnesses require server exit status 0. The stdio harness inspects the child-process handle of the pinned SDK as a benchmark-only diagnostic and fails if that hook is absent. This avoids treating a forced SDK transport close as a clean exit. The HTTP harness checks final `/health` readiness and authenticated audit failure/drop counters, and writes its report only after server shutdown. CI runs a short smoke of each harness so SDK changes cannot silently remove exit verification. Driver exit status must still be captured by the runner.
+
+Historical stdio report labels and the original performance contract say 29 bytes because they omitted the trailing newline. The candidate record corrects that description; the fixture and numerical acceptance gates were unchanged.
