@@ -29,6 +29,7 @@ jobs:
       - run: npm --prefix labs/oauth audit --audit-level=high
       - run: npm run test:package
       - run: npm run test:container
+      - run: npm run test:proxy
       - run: npm sbom --omit=dev --sbom-format=cyclonedx > sbom.cdx.json
       - run: npm pack --ignore-scripts
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
