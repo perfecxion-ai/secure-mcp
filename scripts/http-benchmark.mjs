@@ -5,6 +5,7 @@ import { mkdtemp, mkdir, writeFile, readFile, readdir, rm } from 'node:fs/promis
 import { createServer } from 'node:http';
 import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
+import { monitorEventLoopDelay } from 'node:perf_hooks';
 import { setTimeout as delay } from 'node:timers/promises';
 import { generateKeyPair, exportJWK, SignJWT } from 'jose';
 import { Client, StreamableHTTPClientTransport } from '@modelcontextprotocol/client';
@@ -15,6 +16,22 @@ const directory = await mkdtemp(join(tmpdir(), 'secure-mcp-http-load-'));
 const clients = [];
 const memory = [];
 const latencies = [];
+const failureCounts = {};
+const failureSamples = [];
+const eventLoop = monitorEventLoopDelay({ resolution: 20 });
+eventLoop.enable();
+function failed(reason, index, started, error) {
+  failures++;
+  failureCounts[reason] = (failureCounts[reason] ?? 0) + 1;
+  if (failureSamples.length < 20)
+    failureSamples.push({
+      elapsedSeconds: Math.round((performance.now() - started) / 1000),
+      worker: index,
+      reason,
+      code: Number.isSafeInteger(error?.code) ? error.code : null,
+      eventLoopMaxMs: eventLoop.max / 1e6,
+    });
+}
 let processHandle, processExit, sampler;
 let lastProgress = 0;
 let calls = 0,
@@ -157,17 +174,20 @@ try {
                   arguments: { path: denied && !restricted ? '../outside' : 'document.txt' },
                 },
           );
-          if (restricted && denied) failures++;
+          if (restricted && denied) failed('hidden_tool_returned', index, started);
           else if (denied) {
-            if (!result.isError || result.content[0]?.text !== 'denied') failures++;
+            if (!result.isError || result.content[0]?.text !== 'denied')
+              failed('traversal_result_mismatch', index, started);
           } else if (restricted) {
             const policy = JSON.parse(result.content[0].text);
             if (result.isError || policy.tools.length !== 1 || policy.tools[0] !== 'policy_status')
-              failures++;
-          } else if (result.isError || result.content[0]?.text !== document) failures++;
+              failed('policy_result_mismatch', index, started);
+          } else if (result.isError || result.content[0]?.text !== document)
+            failed('document_result_mismatch', index, started);
         } catch (error) {
           // A scope-hidden tool must be rejected by the SDK's unknown-tool dispatch.
-          if (!(restricted && denied && error.code === -32602)) failures++;
+          if (!(restricted && denied && error.code === -32602))
+            failed('request_error', index, started, error);
         }
         calls++;
         latencies[calls % 10_000] = performance.now() - start;
@@ -191,6 +211,16 @@ try {
     durationSeconds: (performance.now() - started) / 1000,
     calls,
     failures,
+    failureCounts,
+    failureSamples,
+    driverHeapLimitMiB:
+      process.execArgv.find((arg) => arg.startsWith('--max-old-space-size='))?.split('=')[1] ??
+      null,
+    driverEventLoopDelayMs: {
+      p50: eventLoop.percentile(50) / 1e6,
+      p99: eventLoop.percentile(99) / 1e6,
+      max: eventLoop.max / 1e6,
+    },
     deniedCalls,
     tokenIssues,
     keyRequests,
@@ -203,6 +233,7 @@ try {
   process.stdout.write(JSON.stringify(report, null, 2) + '\n');
   if (failures) process.exitCode = 1;
 } finally {
+  eventLoop.disable();
   clearInterval(sampler);
   await Promise.all(clients.map((client) => client.close()));
   if (processHandle && processHandle.exitCode === null) processHandle.kill('SIGTERM');

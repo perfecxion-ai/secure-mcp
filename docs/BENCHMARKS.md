@@ -18,3 +18,11 @@ The HTTP lab mints short-lived ES256 fixture tokens locally and renews them ever
 Both workloads execute authorization and generate JSON audit events, but send stderr to `/dev/null`. They do not measure a durable log collector. The HTTP report includes built-runtime hashes, token issuance count, JWKS request count, expected denial count, and unexpected failures. No access tokens, private keys, or document paths are written to the report. Fixtures are removed on normal completion.
 
 Use a named source revision, an unchanged build, explicit duration, and a recorded host/runtime configuration when publishing results. Disclose overlapping workloads and background activity. A small-document run does not establish production capacity, performance for arbitrary handlers, or the roadmap's separate no-op overhead target.
+
+For longer HTTP runs, set a driver heap limit and enable progress reporting:
+
+```bash
+BENCH_SECONDS=1800 BENCH_PROGRESS=1 node --max-old-space-size=256 scripts/http-benchmark.mjs > http-report.json 2> http-progress.jsonl
+```
+
+Progress reports appear once per minute. Memory samples distinguish server RSS from driver RSS and heap usage. The final report includes driver event-loop delay, bounded failure categories, and at most 20 failure samples with numeric error codes. It never includes raw exception messages or response bodies. A failed run exits nonzero and remains failed evidence even if a later run passes. Use these diagnostics to investigate load-generator stalls before attributing every timeout or memory trend to the server.
