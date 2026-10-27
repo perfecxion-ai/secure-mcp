@@ -1,0 +1,174 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "transport": {
+      "default": "stdio",
+      "type": "string",
+      "enum": [
+        "stdio",
+        "http"
+      ]
+    },
+    "workspace": {
+      "default": ".",
+      "type": "string",
+      "minLength": 1
+    },
+    "allowedTools": {
+      "default": [
+        "documents_read",
+        "policy_status"
+      ],
+      "maxItems": 128,
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "^[a-z][a-z0-9_]{0,63}$"
+      }
+    },
+    "readOnly": {
+      "default": true,
+      "type": "boolean"
+    },
+    "localScopes": {
+      "default": [
+        "documents:read",
+        "policy:read"
+      ],
+      "maxItems": 128,
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "^[a-zA-Z0-9:._/-]{1,128}$"
+      }
+    },
+    "limits": {
+      "default": {},
+      "type": "object",
+      "properties": {
+        "maxConcurrent": {
+          "default": 16,
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 256
+        },
+        "timeoutMs": {
+          "default": 10000,
+          "type": "integer",
+          "minimum": 10,
+          "maximum": 300000
+        },
+        "maxInputBytes": {
+          "default": 65536,
+          "type": "integer",
+          "minimum": 1024,
+          "maximum": 4194304
+        },
+        "maxOutputBytes": {
+          "default": 262144,
+          "type": "integer",
+          "minimum": 1024,
+          "maximum": 4194304
+        },
+        "shutdownMs": {
+          "default": 5000,
+          "type": "integer",
+          "minimum": 10,
+          "maximum": 30000
+        }
+      },
+      "additionalProperties": false
+    },
+    "http": {
+      "type": "object",
+      "properties": {
+        "host": {
+          "default": "127.0.0.1",
+          "type": "string",
+          "enum": [
+            "127.0.0.1",
+            "::1",
+            "0.0.0.0",
+            "::"
+          ]
+        },
+        "port": {
+          "default": 3000,
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 65535
+        },
+        "resource": {
+          "type": "string",
+          "format": "uri"
+        },
+        "issuer": {
+          "type": "string",
+          "format": "uri"
+        },
+        "jwksUrl": {
+          "type": "string",
+          "format": "uri"
+        },
+        "allowedOrigins": {
+          "default": [],
+          "maxItems": 32,
+          "type": "array",
+          "items": {
+            "type": "string",
+            "format": "uri"
+          }
+        },
+        "algorithms": {
+          "default": [
+            "RS256"
+          ],
+          "minItems": 1,
+          "maxItems": 3,
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "RS256",
+              "ES256",
+              "EdDSA"
+            ]
+          }
+        },
+        "maxTokenAgeSeconds": {
+          "default": 900,
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 3600
+        }
+      },
+      "required": [
+        "resource",
+        "issuer",
+        "jwksUrl"
+      ],
+      "additionalProperties": false
+    },
+    "api": {
+      "type": "object",
+      "properties": {
+        "url": {
+          "type": "string",
+          "format": "uri"
+        },
+        "maxBytes": {
+          "default": 65536,
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 262144
+        }
+      },
+      "required": [
+        "url"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

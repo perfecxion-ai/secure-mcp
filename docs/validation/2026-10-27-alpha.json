@@ -1,0 +1,114 @@
+{
+  "recordedAt": "2026-10-27T04:05:17.908592+00:00",
+  "baselineCommit": "1df0af55bd2cebde48d643e3d3c852e64d37ce18",
+  "candidate": "Uncommitted feat/secure-runtime-v2 working tree, identified by file hashes below",
+  "node": "v24.13.0",
+  "architecture": "aarch64",
+  "os": "Linux",
+  "checks": {
+    "npm run check": {
+      "exitCode": 0,
+      "tests": 30,
+      "failed": 0
+    },
+    "npm run test:coverage": {
+      "tests": 30,
+      "failed": 0,
+      "linePercent": 96.2,
+      "branchPercent": 90.23,
+      "functionPercent": 92.16
+    },
+    "npm run test:package": {
+      "exitCode": 0,
+      "files": 43,
+      "installation": "normal npm install in fresh directory",
+      "import": "silent",
+      "stdio": "pass",
+      "stdinEof": "pass"
+    },
+    "npm run test:container": {
+      "exitCode": 0,
+      "imageId": "sha256:ab58896b12810365e2ac0fe787807bafbaa9557fd9ea70bdd2bc5d527f19fddc",
+      "architecture": "arm64",
+      "node": "v24.22.1",
+      "nonRoot": true,
+      "readOnlyRoot": true,
+      "network": "none",
+      "allowedRead": "pass",
+      "deniedAbsolutePath": "pass"
+    },
+    "npm run test:oauth": {
+      "exitCode": 0,
+      "provider": "oidc-provider 9.13.0",
+      "flow": "client_credentials",
+      "discovery": [
+        "protected resource",
+        "OIDC"
+      ],
+      "protocol": "2026-07-28",
+      "credentialsPersisted": false
+    },
+    "npm audit": {
+      "info": 0,
+      "low": 0,
+      "moderate": 0,
+      "high": 0,
+      "critical": 0,
+      "total": 0
+    },
+    "npm --prefix labs/oauth audit": {
+      "info": 0,
+      "low": 0,
+      "moderate": 0,
+      "high": 0,
+      "critical": 0,
+      "total": 0
+    }
+  },
+  "limitations": [
+    "Local checks only; no GitHub checks, PRs, merges, or publication yet.",
+    "Coverage measures exercised paths, not application security.",
+    "The one-hour soak uses an earlier runtime and is not included in these results.",
+    "Browser OAuth, key rotation, real assistant hosts, and independent security review remain unvalidated."
+  ],
+  "sha256": {
+    ".dockerignore": "2f04753909c6e302cff72a2b3ff38c32cf33c9d8f683a734ad5d53d612ee0d5e",
+    ".github/workflows/ci.yml": "f96bea79142b4bcca76a9996245d1e78c2fcf6bbecf963705645a2b176b59fa4",
+    ".github/workflows/publish.yml": "20adde96db65ccdd600b14d70c61df64bf3bfa6261a6a5a91f3e91333aa78291",
+    ".github/workflows/security-gates.yml": "c8bf9860115836be063cc48aaf80c58414c27ebf0fc6caf26253f19b48284418",
+    "Dockerfile": "c1e4a67a1fa7244b18be68926e88852ab8ea1c690a149e6cd5bdf75d5b422467",
+    "config.schema.json": "a559c47404a6637595367975d9c6c480fa1b929323694d60d3b09950cd2fe481",
+    "labs/oauth/package-lock.json": "b7eb968065f6f7e5b106c5d400a3e662dd35dc9beea19069f60811d45ff0d18f",
+    "labs/oauth/package.json": "d62ae606ae0dcc8c27113545221706d7eb446c9ca2ebb6e9c09462b8c9f134d1",
+    "labs/oauth/verify.mjs": "7591f02c48fb4034dfa8f51f3bf57c8c49fa0cd1ff9bd67b3f2d1dfc8efd9d6c",
+    "package-lock.json": "db0e2f355c0f2c05060e2958d5173ee3e47cc9c50fff2ddff31f98d4e4db8064",
+    "package.json": "5c12c8746570a735c4344fdf7bb2383880343461b17aaf582a5af1f4b98cdb65",
+    "scripts/benchmark.ts": "66c5245403eb3af28bece2bf2fab266b4fd672133680ae4df4e3b1d49b8859ad",
+    "scripts/clean.mjs": "df435c1ee40a1f32fcbf7a1bf9d90faba15824ad5cf255f04625157f9ae9a821",
+    "scripts/config-schema.ts": "cbc9c7605552ea65f9c156e74bc83e70ca9969b1ab0953f94943bb854c082361",
+    "scripts/container-smoke.mjs": "ef405a06217c7431c23be4274b7b12fb0281aeb4ba5cdfb7b7256d2f2a361dcb",
+    "scripts/mutation-check.mjs": "966e0529fb75f8efb6a13940b9b4b14cce7394ebd7a367e866ed7ca89a2e546b",
+    "scripts/package-smoke.mjs": "0322a9544488ed561714c9b199ab30456c7b7255fe03795032b083e3eee51723",
+    "scripts/release-metadata.mjs": "ffcf9174a7c5f2ae37fdb6bf9f9506ac38f2915db83415d4a16818943afa9470",
+    "server.json": "67f495f098d2f50556e0c572f4c30e158c6cfc510647d0c3044356956cd83c11",
+    "src/audit.ts": "0cb796ad8cdfd10a6ab81648ebacc45a75b418cc30e00319db30a11ba78fc961",
+    "src/cli.ts": "ffe8465ef233f341644db0fb589eb0395b7a0b856480e08c253de01f0c914f36",
+    "src/config.ts": "a8fc7d30e1b872d1abe49c44cd0b11940ff6eb7bae37cdab0a97ecd1166799ae",
+    "src/errors.ts": "0ef3f9c4f77acbb445d127ec64e6f4994dd2194d677e0c2ac10f135dfde3d511",
+    "src/execution.ts": "04817ac12fb1f48d4e4ed90385b4d8493ba0993a895f77e2ed56a21d0c20df7d",
+    "src/http.ts": "462a400adf9b253c407327fe30971a4dbb8e36c6953986be9a957e7614923c2f",
+    "src/identity.ts": "8e05bb6fe5fd53e966809d0d5dd60d50af750832ded305e070c034a16ff99819",
+    "src/index.ts": "cf4ab57880c155b10a82535f56834cff8b7ff92528bd29302332461ef959ce5d",
+    "src/policy.ts": "10239a8d0acb6168ea2df07b19d4961b77e8770f9c3e906c3122d5ef179b028a",
+    "src/runtime.ts": "f4c91bdda195b8f1c0c18f4dce2c3870badbc451c196041f726d44307d253554",
+    "src/tools.ts": "ee0e0240c641b747becf967d5ae4319718abb5c016baf3ba6a7c2725833e94b9",
+    "tests/api.test.ts": "356d2d8ad6e2b782e326cdcc9982387d0cb823bede2966fda35b3a8faa56fdf9",
+    "tests/helpers.ts": "ccaa4556dfd839e2406feb194a95a8432636b1dae128f46a5f59116b9601d4f6",
+    "tests/http-limits.test.ts": "ba8763926d0d1e6aefeee34078690431717705d83744098e8b2ee90eb2539857",
+    "tests/http.test.ts": "2705bb25d4a179d3c98c2250ce5e6aef3432faec9566ef6486b80dfa5460ea56",
+    "tests/security.test.ts": "7246726a9790ccfa7fb567ce18b64faa621ab65069984d9eeb99cce330177e2e",
+    "tests/stdio.test.ts": "2e1ae84950bb06a581d2a592bfe3eafc5cc7bef100867aa38d8eb152eb03c703",
+    "tsconfig.check.json": "c62b377ed9917850947ba83c2a64ff6b6c7f2e042079766a8469ce36f954ab00",
+    "tsconfig.json": "9920663910897b55937639bd5a6580ef9526581e8c5c653656330adefe8e78b2"
+  }
+}

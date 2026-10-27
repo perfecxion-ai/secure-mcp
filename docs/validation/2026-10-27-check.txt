@@ -1,0 +1,66 @@
+
+> @perfecxion/secure-mcp-server@2.0.0-alpha.1 check
+> npm run typecheck && npm run lint && npm run format:check && npm test && npm run build && node scripts/release-metadata.mjs && node --import tsx scripts/config-schema.ts --check
+
+
+> @perfecxion/secure-mcp-server@2.0.0-alpha.1 typecheck
+> tsc -p tsconfig.check.json --noEmit
+
+
+> @perfecxion/secure-mcp-server@2.0.0-alpha.1 lint
+> eslint src tests scripts --max-warnings=0
+
+
+> @perfecxion/secure-mcp-server@2.0.0-alpha.1 format:check
+> prettier --check src tests scripts package.json tsconfig*.json eslint.config.js .github examples
+
+Checking formatting...
+All matched files use Prettier code style!
+
+> @perfecxion/secure-mcp-server@2.0.0-alpha.1 test
+> node --import tsx --test --test-concurrency=4 tests/*.test.ts
+
+✔ fixed-destination API tool refuses redirects, arbitrary URL arguments, and oversized output (24.939511ms)
+✔ HTTP cancellation, deadlines, capacity, and shutdown reach the handler (281.38278ms)
+▶ HTTP resource server and official SDK integration
+  ✔ metadata and authentication challenge use configured canonical resource (17.023963ms)
+  ✔ SDK round trip with modern protocol (36.765354ms)
+  ✔ SDK round trip with legacy protocol (31.386658ms)
+  ✔ principal isolation: token scopes control both listing and direct calls (9.510287ms)
+  ✔ reject wrong issuer, audience, expiry, token type, future issuance and excessive lifetime (10.695505ms)
+  ✔ DNS rebinding and cross-origin requests are rejected before authentication (3.768326ms)
+  ✔ malformed and oversized bodies fail safely (2.674708ms)
+  ✔ request ID zero and identical requests from separate calls remain valid (3.430486ms)
+  ✔ metrics require a verified token with metrics scope (2.782324ms)
+✔ HTTP resource server and official SDK integration (138.299963ms)
+✔ schema rejects unknown options and unauthenticated HTTP configuration (2.800517ms)
+✔ document read preserves text and emits safe structured evidence (7.570732ms)
+✔ traversal, hidden paths, and symlink escape cannot read outside the workspace (5.603769ms)
+✔ input schema denies missing fields and identity injection (1.803971ms)
+✔ tool discovery and invocation agree on scopes, allowlist, and expiry (1.475186ms)
+✔ all scopes are required and read-only mode prevents mutation (1.659075ms)
+✔ large files and binary files return bounded safe errors (2.46218ms)
+✔ exceptions do not disclose secrets or create arbitrary metric labels (1.221618ms)
+✔ audit failure prevents execution (0.854593ms)
+✔ a failed writable audit stream denies work without an unhandled error event (3.943095ms)
+✔ timeout retains capacity for noncooperative work and shutdown rejects new work (34.199814ms)
+✔ caller cancellation reaches a cooperative handler (7.514252ms)
+✔ unknown allowlist entries and tools without policy fail startup (0.429808ms)
+✔ official SDK over stdio: modern (417.826211ms)
+✔ official SDK over stdio: legacy (199.521275ms)
+✔ package source import is silent and does not start listeners (168.335002ms)
+✔ CLI requires an explicit document workspace (163.056673ms)
+✔ oversized stdio frame exits even while the caller keeps stdin open (184.837012ms)
+ℹ tests 30
+ℹ suites 0
+ℹ pass 30
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1590.193839
+
+> @perfecxion/secure-mcp-server@2.0.0-alpha.1 build
+> node scripts/clean.mjs && tsc -p tsconfig.json
+
+Package, runtime, registry metadata, and publication hold agree. No artifact published.

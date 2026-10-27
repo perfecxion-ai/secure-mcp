@@ -1,6 +1,6 @@
 # Secure MCP execution roadmap
 
-Status: proposed implementation plan, October 26, 2026. Baseline: `1df0af55bd2cebde48d643e3d3c852e64d37ce18`. Application changes have not started. This plan follows the [repository assessment](reviews/2026-10-26-assessment.md) and its reproducible findings.
+Status: implementation in progress, October 26, 2026. Baseline: `1df0af55bd2cebde48d643e3d3c852e64d37ce18`. The first local alpha is implemented; see [the execution record](EXECUTION.md) for evidence, PR boundaries, and remaining gates. This plan follows the [repository assessment](reviews/2026-10-26-assessment.md) and its reproducible findings.
 
 **Recommended direction: a small, standards-compliant TypeScript MCP server runtime for hosting approved tools with enforceable access policies, bounded work, and reliable audit evidence.** The runtime direction is the working assumption used for this plan. A gateway for upstream servers and an AI security assessment tool server are distinct product directions and should not be silently combined into this release.
 

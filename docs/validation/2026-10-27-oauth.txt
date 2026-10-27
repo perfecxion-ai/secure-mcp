@@ -1,0 +1,7 @@
+
+> @perfecxion/secure-mcp-server@2.0.0-alpha.1 test:oauth
+> node labs/oauth/verify.mjs
+
+oidc-provider WARNING: a quick start development-only in-memory adapter is used, you MUST change it in order to not lose all stateful provider data upon restart and to be able to share these between processes
+oidc-provider NOTICE: default ttl.ClientCredentials function called, you SHOULD change it in order to define the expiration for ClientCredentials artifacts.
+{"issuer":"oidc-provider 9.13.0","flow":"client_credentials","discovery":"protected resource and OIDC metadata","token":"RFC 9068 JWT","mcp":"2026-07-28 HTTP","result":"pass","credentialsPersisted":false}

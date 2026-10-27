@@ -1,0 +1,11 @@
+**
+!package.json
+!package-lock.json
+!.npmrc
+!tsconfig.json
+!src
+!src/**
+!scripts
+!scripts/clean.mjs
+!LICENSE
+!NOTICE
