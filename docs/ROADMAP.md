@@ -1,6 +1,6 @@
 # Secure MCP execution roadmap
 
-Status: implementation in progress, October 26, 2026. Baseline: `1df0af55bd2cebde48d643e3d3c852e64d37ce18`. The first local alpha is implemented; see [the execution record](EXECUTION.md) for evidence, PR boundaries, and remaining gates. This plan follows the [repository assessment](reviews/2026-10-26-assessment.md) and its reproducible findings.
+Status: initial alpha merged, October 27, 2026. Baseline: `1df0af55bd2cebde48d643e3d3c852e64d37ce18`. The first alpha is implemented and merged; see [the execution record](EXECUTION.md) for evidence, PR boundaries, and remaining gates. This plan follows the [repository assessment](reviews/2026-10-26-assessment.md) and its reproducible findings.
 
 **Recommended direction: a small, standards-compliant TypeScript MCP server runtime for hosting approved tools with enforceable access policies, bounded work, and reliable audit evidence.** The runtime direction is the working assumption used for this plan. A gateway for upstream servers and an AI security assessment tool server are distinct product directions and should not be silently combined into this release.
 
@@ -347,4 +347,4 @@ Define benchmark hardware, runtime, transport, payload sizes, authentication mod
 
 ## Immediate execution handoff
 
-Start with PR 01 and PR 02 on an isolated branch. Use the stored diagnostic cases to prove which legacy behavior is being retired or repaired. Do not start by expanding the container executor or adding more AI tools.
+The baseline, replacement runtime, transport, artifact, and initial interoperability work has landed. The numbered PR sections above are original work packages, not a one-to-one map to GitHub PR numbers. Follow the [alpha assessment](reviews/2026-10-27-alpha-assessment.md) for the next sequence: custom-tool validation ownership, remote audit completeness, operator identity-provider validation, a declared performance contract, immutable promotion, and independent adoption evidence. Use the [execution record](EXECUTION.md) for completed PRs and exact evidence.
