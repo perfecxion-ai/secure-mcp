@@ -1,0 +1,65 @@
+{
+  "date": "2026-10-27T14:10:07.744Z",
+  "host": "claude",
+  "version": "2.1.307 (Claude Code)",
+  "transport": "stdio",
+  "runtimeVersion": "2.0.0-alpha.1",
+  "fixture": "Disposable local document and synthetic outside marker",
+  "commandExecutionEnabled": false,
+  "persistentHostConfigurationChanged": false,
+  "authentication": "Existing login; API key omitted for this child process",
+  "result": "pass",
+  "calls": [
+    {
+      "tool": "documents_read",
+      "input": {
+        "path": "note.txt"
+      },
+      "content": [
+        {
+          "type": "text",
+          "text": "MCP host fixture 40f5e3e22fee3198"
+        }
+      ],
+      "isError": false
+    },
+    {
+      "tool": "documents_read",
+      "input": {
+        "path": "../outside.txt"
+      },
+      "content": [
+        {
+          "type": "text",
+          "text": "denied"
+        }
+      ],
+      "isError": true
+    },
+    {
+      "tool": "policy_status",
+      "input": {},
+      "content": [
+        {
+          "type": "text",
+          "text": "{\"tools\":[\"documents_read\",\"policy_status\"],\"readOnly\":true,\"limits\":{\"maxConcurrent\":16,\"timeoutMs\":10000,\"maxInputBytes\":65536,\"maxInputElements\":1024,\"maxOutputBytes\":262144,\"shutdownMs\":5000}}"
+        }
+      ],
+      "isError": false
+    }
+  ],
+  "sha256": {
+    "dist/audit.js": "efba99d8ef374ec66acf903378d11ce8dd154e1359d4d4e561b30ba749fc5baf",
+    "dist/cli.js": "1a024822fdf503a3e3fe73f36884b4fac18d7d614ac51f46644c8778eb1163c5",
+    "dist/config.js": "450e61a38815ab4d77d77933de1e43ee17175350d8b0a1ce1056e4572649bf7e",
+    "dist/errors.js": "af76f4cb2b27c84c7cfebae19dfcde21c524531072a5be4b5f941bd0a981cd50",
+    "dist/execution.js": "c6688ffbb180105872ee6a9885d399c6fbb276a0bec32886b0b0a7d496be75cc",
+    "dist/http.js": "5a5be59d0326049e25a1956448e7cd1ddb8f363d4bed38dad5b81406ed8b0fc5",
+    "dist/identity.js": "1b7f724d787f3062909fe2b70414a476a182fcef619281b54a5a4dacb76c044e",
+    "dist/index.js": "19eba50073372730a97b12533c23b64ec29785c2c871712fb2b05f7528277224",
+    "dist/input.js": "7e67ab45dfc0d310a3965734bf6a175f466d2e6dc1c981c851cf0f8060269f58",
+    "dist/policy.js": "23b3f3c42894e8849e5bda94a21db709906eac69b049d426c52b53889b326ac3",
+    "dist/runtime.js": "0069fc2501c176c16e03f00011294e8ff4d34a14a5cbb639d73db3996c3869e6",
+    "dist/tools.js": "a49c3819063abf12989790b4adeb96dbb8581dc7862564a458665b743f27ce23"
+  }
+}

@@ -33,4 +33,4 @@ This runtime does not issue, refresh, or revoke tokens. It verifies short-lived 
 
 There are no accounts, passwords, MFA secrets, SAML assertions, refresh-token families, Redis sessions, or Vault key lifecycle in the new default runtime. V1 credentials must not be imported automatically.
 
-This is experimental software. Tests establish the cases they exercise, not general resistance to prompt injection, all authorization attacks, or all resource exhaustion. OS isolation for untrusted tools, distributed quotas, immediate revocation, browser OAuth user-journey validation, external security review, and real-host acceptance remain release gates.
+This is experimental software. Tests establish the cases they exercise, not general resistance to prompt injection, all authorization attacks, or all resource exhaustion. OS isolation for untrusted tools, distributed quotas, immediate revocation, browser OAuth user-journey validation, external security review, and broader operator acceptance remain release gates. The versioned Codex and Claude Code lab reports cover the specific local stdio workflow only.

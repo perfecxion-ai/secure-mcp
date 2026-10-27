@@ -1,0 +1,7 @@
+{
+  "node": "v24.13.0",
+  "scenario": "One million discarded AbortSignal.any combinations with a long-lived parent, one per event-loop turn",
+  "driverHeapLimitMiB": 256,
+  "outcome": "Stopped after at least 120 seconds without completing the fixed operation count",
+  "minimumDurationSeconds": 120
+}

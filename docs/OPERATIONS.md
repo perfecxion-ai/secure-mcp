@@ -20,7 +20,7 @@ JWKS keys are cached for up to five minutes, with a 30-second refresh cooldown a
 
 Scopes: `documents:read` for approved documents, `policy:read` for policy diagnostics, `api:read` for the optional fixed API, and `metrics:read` for `/metrics`. Discovery filters tools using the same policy as invocation. A denied tool is absent from the caller's tool list.
 
-OAuth protected resource metadata is available at `/.well-known/oauth-protected-resource/mcp` and its root alias. Missing or invalid tokens return a 401 challenge referring to that metadata. Login, client registration, consent, MFA, issuance, and refresh belong to the identity provider. The disposable `labs/oauth` machine-authentication flow is tested against an external issuer. Interactive browser OAuth flows remain an external integration gate.
+OAuth protected resource metadata is available at `/.well-known/oauth-protected-resource/mcp` and its root alias. Missing or invalid tokens return a 401 challenge referring to that metadata. Login, client registration, consent, MFA, issuance, and refresh belong to the identity provider. The disposable `labs/oauth` flows cover client credentials and authorization code with S256 PKCE against an external issuer. The latter scripts a fixture login and consent; it does not test an actual browser or production account. Interactive browser OAuth flows remain an external integration gate. The [TLS proxy lab](../labs/proxy/README.md) separately verifies both supported MCP protocols through NGINX.
 
 Browser origins are denied unless their exact scheme, hostname, and port appear in `allowedOrigins`. Native clients without Origin are permitted to attempt authentication. There is no wildcard CORS option. The configured Host hostname is checked independently.
 

@@ -1,0 +1,643 @@
+{
+  "date": "2026-10-27T14:25:59.906Z",
+  "node": "v24.13.0",
+  "architecture": "arm64",
+  "protocol": "2026-07-28",
+  "transport": "HTTP on loopback, no TLS",
+  "concurrency": 4,
+  "authentication": "Local ES256 JWT fixtures renewed every 120 seconds; real HTTP JWKS requests",
+  "audit": "JSON events to /dev/null",
+  "workload": "Three document readers, one policy-only subject; 10% expected denials per worker",
+  "latencySample": "Last 10000 calls",
+  "durationSeconds": 904.192857084,
+  "calls": 1386459,
+  "failures": 13,
+  "failureCounts": {
+    "request_error": 13
+  },
+  "failureSamples": [
+    {
+      "elapsedSeconds": 544,
+      "worker": 3,
+      "reason": "request_error",
+      "code": null,
+      "eventLoopMaxMs": 11047.796735
+    },
+    {
+      "elapsedSeconds": 562,
+      "worker": 0,
+      "reason": "request_error",
+      "code": null,
+      "eventLoopMaxMs": 11047.796735
+    },
+    {
+      "elapsedSeconds": 655,
+      "worker": 0,
+      "reason": "request_error",
+      "code": null,
+      "eventLoopMaxMs": 11735.662591
+    },
+    {
+      "elapsedSeconds": 655,
+      "worker": 1,
+      "reason": "request_error",
+      "code": null,
+      "eventLoopMaxMs": 11735.662591
+    },
+    {
+      "elapsedSeconds": 676,
+      "worker": 1,
+      "reason": "request_error",
+      "code": null,
+      "eventLoopMaxMs": 12700.352511
+    },
+    {
+      "elapsedSeconds": 676,
+      "worker": 0,
+      "reason": "request_error",
+      "code": null,
+      "eventLoopMaxMs": 12700.352511
+    },
+    {
+      "elapsedSeconds": 676,
+      "worker": 2,
+      "reason": "request_error",
+      "code": null,
+      "eventLoopMaxMs": 12700.352511
+    },
+    {
+      "elapsedSeconds": 699,
+      "worker": 2,
+      "reason": "request_error",
+      "code": null,
+      "eventLoopMaxMs": 14101.250047
+    },
+    {
+      "elapsedSeconds": 833,
+      "worker": 3,
+      "reason": "request_error",
+      "code": null,
+      "eventLoopMaxMs": 18488.492031
+    },
+    {
+      "elapsedSeconds": 854,
+      "worker": 2,
+      "reason": "request_error",
+      "code": null,
+      "eventLoopMaxMs": 18488.492031
+    },
+    {
+      "elapsedSeconds": 854,
+      "worker": 1,
+      "reason": "request_error",
+      "code": null,
+      "eventLoopMaxMs": 18488.492031
+    },
+    {
+      "elapsedSeconds": 854,
+      "worker": 0,
+      "reason": "request_error",
+      "code": null,
+      "eventLoopMaxMs": 18488.492031
+    },
+    {
+      "elapsedSeconds": 904,
+      "worker": 2,
+      "reason": "request_error",
+      "code": null,
+      "eventLoopMaxMs": 20753.416191
+    }
+  ],
+  "driverHeapLimitMiB": null,
+  "driverEventLoopDelayMs": {
+    "p50": 20.021247,
+    "p99": 78.643199,
+    "max": 20753.416191
+  },
+  "deniedCalls": 138647,
+  "tokenIssues": 32,
+  "keyRequests": 3,
+  "readyMs": 180.88589100000002,
+  "p50Ms": 1.4434089999413118,
+  "p95Ms": 3.54214699997101,
+  "memory": [
+    {
+      "elapsedSeconds": 0,
+      "rssKiB": 92596,
+      "descriptors": 24,
+      "clientRssKiB": 94072,
+      "clientHeapUsedKiB": 23975
+    },
+    {
+      "elapsedSeconds": 10,
+      "rssKiB": 332764,
+      "descriptors": 28,
+      "clientRssKiB": 339516,
+      "clientHeapUsedKiB": 89741
+    },
+    {
+      "elapsedSeconds": 20,
+      "rssKiB": 332844,
+      "descriptors": 29,
+      "clientRssKiB": 374532,
+      "clientHeapUsedKiB": 91426
+    },
+    {
+      "elapsedSeconds": 30,
+      "rssKiB": 332856,
+      "descriptors": 29,
+      "clientRssKiB": 404632,
+      "clientHeapUsedKiB": 174713
+    },
+    {
+      "elapsedSeconds": 40,
+      "rssKiB": 332856,
+      "descriptors": 28,
+      "clientRssKiB": 424100,
+      "clientHeapUsedKiB": 187302
+    },
+    {
+      "elapsedSeconds": 50,
+      "rssKiB": 332864,
+      "descriptors": 30,
+      "clientRssKiB": 445192,
+      "clientHeapUsedKiB": 210100
+    },
+    {
+      "elapsedSeconds": 60,
+      "rssKiB": 332868,
+      "descriptors": 27,
+      "clientRssKiB": 469144,
+      "clientHeapUsedKiB": 140788
+    },
+    {
+      "elapsedSeconds": 70,
+      "rssKiB": 332868,
+      "descriptors": 26,
+      "clientRssKiB": 491700,
+      "clientHeapUsedKiB": 166177
+    },
+    {
+      "elapsedSeconds": 80,
+      "rssKiB": 332868,
+      "descriptors": 28,
+      "clientRssKiB": 510684,
+      "clientHeapUsedKiB": 145851
+    },
+    {
+      "elapsedSeconds": 90,
+      "rssKiB": 334952,
+      "descriptors": 28,
+      "clientRssKiB": 522684,
+      "clientHeapUsedKiB": 259274
+    },
+    {
+      "elapsedSeconds": 100,
+      "rssKiB": 332900,
+      "descriptors": 27,
+      "clientRssKiB": 556584,
+      "clientHeapUsedKiB": 285952
+    },
+    {
+      "elapsedSeconds": 110,
+      "rssKiB": 332900,
+      "descriptors": 29,
+      "clientRssKiB": 562776,
+      "clientHeapUsedKiB": 270996
+    },
+    {
+      "elapsedSeconds": 120,
+      "rssKiB": 332904,
+      "descriptors": 27,
+      "clientRssKiB": 577340,
+      "clientHeapUsedKiB": 157142
+    },
+    {
+      "elapsedSeconds": 130,
+      "rssKiB": 332908,
+      "descriptors": 30,
+      "clientRssKiB": 607680,
+      "clientHeapUsedKiB": 250979
+    },
+    {
+      "elapsedSeconds": 140,
+      "rssKiB": 332908,
+      "descriptors": 28,
+      "clientRssKiB": 623956,
+      "clientHeapUsedKiB": 314419
+    },
+    {
+      "elapsedSeconds": 150,
+      "rssKiB": 336952,
+      "descriptors": 26,
+      "clientRssKiB": 638128,
+      "clientHeapUsedKiB": 373594
+    },
+    {
+      "elapsedSeconds": 160,
+      "rssKiB": 336952,
+      "descriptors": 29,
+      "clientRssKiB": 650616,
+      "clientHeapUsedKiB": 342286
+    },
+    {
+      "elapsedSeconds": 170,
+      "rssKiB": 336960,
+      "descriptors": 27,
+      "clientRssKiB": 678976,
+      "clientHeapUsedKiB": 229308
+    },
+    {
+      "elapsedSeconds": 181,
+      "rssKiB": 336964,
+      "descriptors": 27,
+      "clientRssKiB": 696484,
+      "clientHeapUsedKiB": 117326
+    },
+    {
+      "elapsedSeconds": 191,
+      "rssKiB": 336964,
+      "descriptors": 28,
+      "clientRssKiB": 717072,
+      "clientHeapUsedKiB": 370491
+    },
+    {
+      "elapsedSeconds": 201,
+      "rssKiB": 336776,
+      "descriptors": 27,
+      "clientRssKiB": 733608,
+      "clientHeapUsedKiB": 125547
+    },
+    {
+      "elapsedSeconds": 211,
+      "rssKiB": 336944,
+      "descriptors": 27,
+      "clientRssKiB": 761772,
+      "clientHeapUsedKiB": 273497
+    },
+    {
+      "elapsedSeconds": 221,
+      "rssKiB": 336732,
+      "descriptors": 27,
+      "clientRssKiB": 770028,
+      "clientHeapUsedKiB": 318810
+    },
+    {
+      "elapsedSeconds": 231,
+      "rssKiB": 337048,
+      "descriptors": 29,
+      "clientRssKiB": 782928,
+      "clientHeapUsedKiB": 333517
+    },
+    {
+      "elapsedSeconds": 241,
+      "rssKiB": 337048,
+      "descriptors": 28,
+      "clientRssKiB": 806388,
+      "clientHeapUsedKiB": 331098
+    },
+    {
+      "elapsedSeconds": 251,
+      "rssKiB": 334888,
+      "descriptors": 29,
+      "clientRssKiB": 846956,
+      "clientHeapUsedKiB": 298443
+    },
+    {
+      "elapsedSeconds": 261,
+      "rssKiB": 336840,
+      "descriptors": 29,
+      "clientRssKiB": 848904,
+      "clientHeapUsedKiB": 184482
+    },
+    {
+      "elapsedSeconds": 272,
+      "rssKiB": 335044,
+      "descriptors": 27,
+      "clientRssKiB": 854820,
+      "clientHeapUsedKiB": 158626
+    },
+    {
+      "elapsedSeconds": 284,
+      "rssKiB": 335092,
+      "descriptors": 27,
+      "clientRssKiB": 910588,
+      "clientHeapUsedKiB": 160472
+    },
+    {
+      "elapsedSeconds": 292,
+      "rssKiB": 335092,
+      "descriptors": 28,
+      "clientRssKiB": 910692,
+      "clientHeapUsedKiB": 257436
+    },
+    {
+      "elapsedSeconds": 302,
+      "rssKiB": 345368,
+      "descriptors": 30,
+      "clientRssKiB": 911812,
+      "clientHeapUsedKiB": 214393
+    },
+    {
+      "elapsedSeconds": 312,
+      "rssKiB": 347124,
+      "descriptors": 27,
+      "clientRssKiB": 912924,
+      "clientHeapUsedKiB": 612475
+    },
+    {
+      "elapsedSeconds": 322,
+      "rssKiB": 348508,
+      "descriptors": 30,
+      "clientRssKiB": 911316,
+      "clientHeapUsedKiB": 293924
+    },
+    {
+      "elapsedSeconds": 335,
+      "rssKiB": 348848,
+      "descriptors": 27,
+      "clientRssKiB": 937804,
+      "clientHeapUsedKiB": 181795
+    },
+    {
+      "elapsedSeconds": 342,
+      "rssKiB": 348716,
+      "descriptors": 29,
+      "clientRssKiB": 936672,
+      "clientHeapUsedKiB": 263342
+    },
+    {
+      "elapsedSeconds": 352,
+      "rssKiB": 348716,
+      "descriptors": 27,
+      "clientRssKiB": 950832,
+      "clientHeapUsedKiB": 363034
+    },
+    {
+      "elapsedSeconds": 364,
+      "rssKiB": 348716,
+      "descriptors": 27,
+      "clientRssKiB": 956344,
+      "clientHeapUsedKiB": 192512
+    },
+    {
+      "elapsedSeconds": 374,
+      "rssKiB": 348720,
+      "descriptors": 29,
+      "clientRssKiB": 956544,
+      "clientHeapUsedKiB": 534267
+    },
+    {
+      "elapsedSeconds": 386,
+      "rssKiB": 348724,
+      "descriptors": 27,
+      "clientRssKiB": 1037036,
+      "clientHeapUsedKiB": 196022
+    },
+    {
+      "elapsedSeconds": 396,
+      "rssKiB": 349024,
+      "descriptors": 27,
+      "clientRssKiB": 1050532,
+      "clientHeapUsedKiB": 201130
+    },
+    {
+      "elapsedSeconds": 406,
+      "rssKiB": 349024,
+      "descriptors": 27,
+      "clientRssKiB": 1065320,
+      "clientHeapUsedKiB": 205934
+    },
+    {
+      "elapsedSeconds": 416,
+      "rssKiB": 348932,
+      "descriptors": 27,
+      "clientRssKiB": 1072900,
+      "clientHeapUsedKiB": 331673
+    },
+    {
+      "elapsedSeconds": 426,
+      "rssKiB": 349064,
+      "descriptors": 27,
+      "clientRssKiB": 1089008,
+      "clientHeapUsedKiB": 409209
+    },
+    {
+      "elapsedSeconds": 436,
+      "rssKiB": 348932,
+      "descriptors": 29,
+      "clientRssKiB": 1102616,
+      "clientHeapUsedKiB": 252378
+    },
+    {
+      "elapsedSeconds": 447,
+      "rssKiB": 349064,
+      "descriptors": 27,
+      "clientRssKiB": 1120280,
+      "clientHeapUsedKiB": 219860
+    },
+    {
+      "elapsedSeconds": 462,
+      "rssKiB": 349196,
+      "descriptors": 26,
+      "clientRssKiB": 1132688,
+      "clientHeapUsedKiB": 221344
+    },
+    {
+      "elapsedSeconds": 476,
+      "rssKiB": 349196,
+      "descriptors": 27,
+      "clientRssKiB": 1163416,
+      "clientHeapUsedKiB": 226606
+    },
+    {
+      "elapsedSeconds": 494,
+      "rssKiB": 349064,
+      "descriptors": 27,
+      "clientRssKiB": 1179772,
+      "clientHeapUsedKiB": 222116
+    },
+    {
+      "elapsedSeconds": 509,
+      "rssKiB": 349064,
+      "descriptors": 26,
+      "clientRssKiB": 1200780,
+      "clientHeapUsedKiB": 228104
+    },
+    {
+      "elapsedSeconds": 526,
+      "rssKiB": 349064,
+      "descriptors": 27,
+      "clientRssKiB": 1207576,
+      "clientHeapUsedKiB": 230765
+    },
+    {
+      "elapsedSeconds": 544,
+      "rssKiB": 364468,
+      "descriptors": 27,
+      "clientRssKiB": 1234196,
+      "clientHeapUsedKiB": 234216
+    },
+    {
+      "elapsedSeconds": 562,
+      "rssKiB": 364496,
+      "descriptors": 27,
+      "clientRssKiB": 1254840,
+      "clientHeapUsedKiB": 238740
+    },
+    {
+      "elapsedSeconds": 574,
+      "rssKiB": 364364,
+      "descriptors": 26,
+      "clientRssKiB": 1279048,
+      "clientHeapUsedKiB": 243615
+    },
+    {
+      "elapsedSeconds": 587,
+      "rssKiB": 364372,
+      "descriptors": 26,
+      "clientRssKiB": 1297644,
+      "clientHeapUsedKiB": 242700
+    },
+    {
+      "elapsedSeconds": 597,
+      "rssKiB": 364416,
+      "descriptors": 29,
+      "clientRssKiB": 1294448,
+      "clientHeapUsedKiB": 339442
+    },
+    {
+      "elapsedSeconds": 610,
+      "rssKiB": 364696,
+      "descriptors": 27,
+      "clientRssKiB": 1328148,
+      "clientHeapUsedKiB": 247454
+    },
+    {
+      "elapsedSeconds": 623,
+      "rssKiB": 364696,
+      "descriptors": 27,
+      "clientRssKiB": 1329968,
+      "clientHeapUsedKiB": 256033
+    },
+    {
+      "elapsedSeconds": 634,
+      "rssKiB": 364696,
+      "descriptors": 27,
+      "clientRssKiB": 1326108,
+      "clientHeapUsedKiB": 246722
+    },
+    {
+      "elapsedSeconds": 655,
+      "rssKiB": 364696,
+      "descriptors": 27,
+      "clientRssKiB": 1334240,
+      "clientHeapUsedKiB": 260088
+    },
+    {
+      "elapsedSeconds": 676,
+      "rssKiB": 364696,
+      "descriptors": 26,
+      "clientRssKiB": 1359028,
+      "clientHeapUsedKiB": 263366
+    },
+    {
+      "elapsedSeconds": 699,
+      "rssKiB": 364736,
+      "descriptors": 28,
+      "clientRssKiB": 1361364,
+      "clientHeapUsedKiB": 267333
+    },
+    {
+      "elapsedSeconds": 714,
+      "rssKiB": 364736,
+      "descriptors": 27,
+      "clientRssKiB": 1380356,
+      "clientHeapUsedKiB": 272791
+    },
+    {
+      "elapsedSeconds": 724,
+      "rssKiB": 364736,
+      "descriptors": 28,
+      "clientRssKiB": 1376500,
+      "clientHeapUsedKiB": 355012
+    },
+    {
+      "elapsedSeconds": 738,
+      "rssKiB": 364736,
+      "descriptors": 26,
+      "clientRssKiB": 1397712,
+      "clientHeapUsedKiB": 276900
+    },
+    {
+      "elapsedSeconds": 761,
+      "rssKiB": 364868,
+      "descriptors": 27,
+      "clientRssKiB": 1418332,
+      "clientHeapUsedKiB": 284817
+    },
+    {
+      "elapsedSeconds": 778,
+      "rssKiB": 364736,
+      "descriptors": 26,
+      "clientRssKiB": 1443796,
+      "clientHeapUsedKiB": 286036
+    },
+    {
+      "elapsedSeconds": 805,
+      "rssKiB": 364736,
+      "descriptors": 27,
+      "clientRssKiB": 1451980,
+      "clientHeapUsedKiB": 290110
+    },
+    {
+      "elapsedSeconds": 833,
+      "rssKiB": 364736,
+      "descriptors": 27,
+      "clientRssKiB": 1462608,
+      "clientHeapUsedKiB": 292989
+    },
+    {
+      "elapsedSeconds": 854,
+      "rssKiB": 364736,
+      "descriptors": 27,
+      "clientRssKiB": 1464388,
+      "clientHeapUsedKiB": 298810
+    },
+    {
+      "elapsedSeconds": 874,
+      "rssKiB": 364736,
+      "descriptors": 27,
+      "clientRssKiB": 1485972,
+      "clientHeapUsedKiB": 302774
+    },
+    {
+      "elapsedSeconds": 904,
+      "rssKiB": 364736,
+      "descriptors": 23,
+      "clientRssKiB": 1542488,
+      "clientHeapUsedKiB": 306147
+    },
+    {
+      "elapsedSeconds": 904,
+      "rssKiB": 364736,
+      "descriptors": 23,
+      "clientRssKiB": 1542488,
+      "clientHeapUsedKiB": 306149
+    }
+  ],
+  "sha256": {
+    "dist/audit.js": "efba99d8ef374ec66acf903378d11ce8dd154e1359d4d4e561b30ba749fc5baf",
+    "dist/cli.js": "1a024822fdf503a3e3fe73f36884b4fac18d7d614ac51f46644c8778eb1163c5",
+    "dist/config.js": "450e61a38815ab4d77d77933de1e43ee17175350d8b0a1ce1056e4572649bf7e",
+    "dist/errors.js": "af76f4cb2b27c84c7cfebae19dfcde21c524531072a5be4b5f941bd0a981cd50",
+    "dist/execution.js": "c6688ffbb180105872ee6a9885d399c6fbb276a0bec32886b0b0a7d496be75cc",
+    "dist/http.js": "5a5be59d0326049e25a1956448e7cd1ddb8f363d4bed38dad5b81406ed8b0fc5",
+    "dist/identity.js": "1b7f724d787f3062909fe2b70414a476a182fcef619281b54a5a4dacb76c044e",
+    "dist/index.js": "19eba50073372730a97b12533c23b64ec29785c2c871712fb2b05f7528277224",
+    "dist/input.js": "7e67ab45dfc0d310a3965734bf6a175f466d2e6dc1c981c851cf0f8060269f58",
+    "dist/policy.js": "23b3f3c42894e8849e5bda94a21db709906eac69b049d426c52b53889b326ac3",
+    "dist/runtime.js": "0069fc2501c176c16e03f00011294e8ff4d34a14a5cbb639d73db3996c3869e6",
+    "dist/tools.js": "a49c3819063abf12989790b4adeb96dbb8581dc7862564a458665b743f27ce23"
+  }
+}

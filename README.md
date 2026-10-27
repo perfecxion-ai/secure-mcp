@@ -69,6 +69,8 @@ const transport = serveStdio(() => runtime.createServer(runtime.localPrincipal()
 // await runtime.close(); await transport.close();
 ```
 
+Custom schemas should currently preserve input types and use pure refinements. Type-changing transforms are a [known alpha limitation](docs/reviews/2026-10-27-alpha-assessment.md#a03-p2-custom-schema-transforms-are-applied-repeatedly); perform conversion inside the handler.
+
 Handlers are trusted process code. Policy checks do not sandbox malicious implementations. Production embeddings must own transport closure, audit failures, and cancellation.
 
 ## Development

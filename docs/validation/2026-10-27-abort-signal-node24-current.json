@@ -1,0 +1,96 @@
+{
+  "node": "v24.22.1",
+  "scenario": "One million discarded AbortSignal.any combinations with a long-lived parent, one per event-loop turn",
+  "samples": [
+    {
+      "count": 100000,
+      "elapsedMs": 195.14079500000003,
+      "rss": 113508352,
+      "heapTotal": 85614592,
+      "heapUsed": 34885592,
+      "external": 1704745,
+      "arrayBuffers": 137487
+    },
+    {
+      "count": 200000,
+      "elapsedMs": 398.097244,
+      "rss": 129191936,
+      "heapTotal": 153178112,
+      "heapUsed": 19617688,
+      "external": 1702216,
+      "arrayBuffers": 137487
+    },
+    {
+      "count": 300000,
+      "elapsedMs": 561.8890759999999,
+      "rss": 131497984,
+      "heapTotal": 153907200,
+      "heapUsed": 38430088,
+      "external": 1702216,
+      "arrayBuffers": 137487
+    },
+    {
+      "count": 400000,
+      "elapsedMs": 738.762981,
+      "rss": 130584576,
+      "heapTotal": 152915968,
+      "heapUsed": 22989952,
+      "external": 1702216,
+      "arrayBuffers": 137487
+    },
+    {
+      "count": 500000,
+      "elapsedMs": 902.447804,
+      "rss": 131571712,
+      "heapTotal": 153907200,
+      "heapUsed": 41829824,
+      "external": 1702216,
+      "arrayBuffers": 137487
+    },
+    {
+      "count": 600000,
+      "elapsedMs": 1076.702107,
+      "rss": 131837952,
+      "heapTotal": 152653824,
+      "heapUsed": 23032984,
+      "external": 1702216,
+      "arrayBuffers": 137487
+    },
+    {
+      "count": 700000,
+      "elapsedMs": 1237.114161,
+      "rss": 132702208,
+      "heapTotal": 153907200,
+      "heapUsed": 38232576,
+      "external": 1702216,
+      "arrayBuffers": 137487
+    },
+    {
+      "count": 800000,
+      "elapsedMs": 1417.502195,
+      "rss": 131428352,
+      "heapTotal": 152485888,
+      "heapUsed": 18056664,
+      "external": 1702216,
+      "arrayBuffers": 137487
+    },
+    {
+      "count": 900000,
+      "elapsedMs": 1575.926424,
+      "rss": 131919872,
+      "heapTotal": 153247744,
+      "heapUsed": 34743584,
+      "external": 1702216,
+      "arrayBuffers": 137487
+    },
+    {
+      "count": 1000000,
+      "elapsedMs": 1746.1033,
+      "rss": 131428352,
+      "heapTotal": 152748032,
+      "heapUsed": 17351896,
+      "external": 1702216,
+      "arrayBuffers": 137487
+    }
+  ]
+}

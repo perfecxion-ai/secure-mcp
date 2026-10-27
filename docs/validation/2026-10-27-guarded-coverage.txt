@@ -1,0 +1,67 @@
+
+> @perfecxion/secure-mcp-server@2.0.0-alpha.1 test:coverage
+> node --import tsx --test --experimental-test-coverage --test-coverage-include=src/*.ts tests/*.test.ts
+
+✔ fixed-destination API tool refuses redirects, arbitrary URL arguments, and oversized output (47.705343ms)
+✔ HTTP cancellation, deadlines, capacity, and shutdown reach the handler (312.18991ms)
+▶ HTTP resource server and official SDK integration
+  ✔ metadata and authentication challenge use configured canonical resource (23.596207ms)
+  ✔ SDK round trip with modern protocol (66.217274ms)
+  ✔ SDK round trip with legacy protocol (36.917832ms)
+  ✔ principal isolation: token scopes control both listing and direct calls (15.595034ms)
+  ✔ reject wrong issuer, audience, expiry, token type, future issuance and excessive lifetime (15.831226ms)
+  ✔ DNS rebinding and cross-origin requests are rejected before authentication (4.444675ms)
+  ✔ malformed and oversized bodies fail safely (3.121634ms)
+  ✔ request ID zero and identical requests from separate calls remain valid (4.407363ms)
+  ✔ metrics require a verified token with metrics scope (3.087842ms)
+✔ HTTP resource server and official SDK integration (198.144925ms)
+✔ JWKS rotation, cache expiry, and issuer outages preserve the trust boundary (57.786757ms)
+✔ token key-location headers cannot override the configured JWKS endpoint (6.990677ms)
+✔ schema rejects unknown options and unauthenticated HTTP configuration (3.785939ms)
+✔ document read preserves text and emits safe structured evidence (14.933865ms)
+✔ traversal, hidden paths, and symlink escape cannot read outside the workspace (21.026126ms)
+✔ input schema denies missing fields and identity injection (5.717075ms)
+✔ tool discovery and invocation agree on scopes, allowlist, and expiry (4.231922ms)
+✔ all scopes are required and read-only mode prevents mutation (11.677432ms)
+✔ large files and binary files return bounded safe errors (6.502292ms)
+✔ exceptions do not disclose secrets or create arbitrary metric labels (3.673106ms)
+✔ audit failure prevents execution (1.737649ms)
+✔ a failed writable audit stream denies work without an unhandled error event (10.108855ms)
+✔ timeout retains capacity for noncooperative work and shutdown rejects new work (36.312663ms)
+✔ caller cancellation reaches a cooperative handler (10.036278ms)
+✔ unknown allowlist entries and tools without policy fail startup (1.079457ms)
+✔ collection budgets stop validation and cyclic inputs before execution (4.022787ms)
+✔ official SDK over stdio: modern (794.55716ms)
+✔ official SDK over stdio: legacy (377.994496ms)
+✔ package source import is silent and does not start listeners (373.568189ms)
+✔ CLI requires an explicit document workspace (349.403997ms)
+✔ oversized stdio frame exits even while the caller keeps stdin open (347.206365ms)
+ℹ tests 33
+ℹ suites 0
+ℹ pass 33
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 2873.533744
+ℹ start of coverage report
+ℹ ----------------------------------------------------------------------------------
+ℹ file          | line % | branch % | funcs % | uncovered lines
+ℹ ----------------------------------------------------------------------------------
+ℹ src           |        |          |         | 
+ℹ  audit.ts     | 100.00 |   100.00 |  100.00 | 
+ℹ  cli.ts       |  75.21 |    66.67 |   61.54 | 18-20 22-24 27-32 42-50 55-57 90-94
+ℹ  config.ts    |  97.62 |    92.31 |  100.00 | 59-60
+ℹ  errors.ts    | 100.00 |   100.00 |  100.00 | 
+ℹ  execution.ts | 100.00 |    92.59 |   94.12 | 
+ℹ  http.ts      |  98.39 |    83.64 |   86.67 | 11 44 83
+ℹ  identity.ts  | 100.00 |   100.00 |  100.00 | 
+ℹ  index.ts     | 100.00 |   100.00 |  100.00 | 
+ℹ  input.ts     | 100.00 |    88.89 |  100.00 | 
+ℹ  policy.ts    | 100.00 |   100.00 |  100.00 | 
+ℹ  runtime.ts   |  99.51 |    93.75 |  100.00 | 116
+ℹ  tools.ts     |  98.70 |    92.00 |  100.00 | 57 94
+ℹ ----------------------------------------------------------------------------------
+ℹ all files     |  96.31 |    90.31 |   92.31 | 
+ℹ ----------------------------------------------------------------------------------
+ℹ end of coverage report
