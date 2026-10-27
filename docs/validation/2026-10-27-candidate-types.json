@@ -1,0 +1,12 @@
+{
+  "node": "v24.22.1",
+  "typescript": "5.9.3",
+  "artifactSha256": "5c205f99e3011330fcab11dd981b89f00a735c0992151b7c9d58c32bb71ba5f0",
+  "result": "pass",
+  "checks": [
+    "fresh consumer installation",
+    "strict NodeNext compilation without skipLibCheck",
+    "transformed input inferred as number",
+    "public runtime, collector, and SDK transport types"
+  ]
+}

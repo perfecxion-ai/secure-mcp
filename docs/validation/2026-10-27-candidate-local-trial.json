@@ -1,0 +1,27 @@
+{
+  "result": "pass",
+  "node": "v24.22.1",
+  "sourceCommit": "1f9f7860696c4fae1bab650ab7f8c77513350657",
+  "checks": [
+    {
+      "protocol": "2026-07-28",
+      "discovery": "pass",
+      "approvedRead": "pass",
+      "traversal": "denied",
+      "hidden": "denied",
+      "symlink": "denied",
+      "policy": "pass"
+    },
+    {
+      "protocol": "2025-11-25",
+      "discovery": "pass",
+      "approvedRead": "pass",
+      "traversal": "denied",
+      "hidden": "denied",
+      "symlink": "denied",
+      "policy": "pass"
+    }
+  ],
+  "artifactSha256": "5c205f99e3011330fcab11dd981b89f00a735c0992151b7c9d58c32bb71ba5f0",
+  "scope": "Installed local launcher; SDK protocol smoke, not an independent user observation"
+}

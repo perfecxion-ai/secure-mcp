@@ -1,6 +1,6 @@
 # Fresh-install validation
 
-This alpha is for isolated Linux installations with approved, disposable documents. Existing v1 deployments and credential migration are outside this trial until their inventory and migration requirements are confirmed. Do not replace an existing server installation. The package is not published to npm.
+This alpha is for isolated Linux installations with approved, disposable documents. This round tests the next version through fresh installations; legacy deployments and credential migration are outside its scope. Do not replace an existing server installation. The package is not published to npm.
 
 ## Obtain the candidate
 

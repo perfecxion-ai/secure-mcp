@@ -6,7 +6,7 @@ An experimental TypeScript MCP runtime for hosting approved tools with explicit 
 
 ## Try it locally
 
-Requires Node 24 and Linux. No database, Redis, Vault, paid service, or API key is needed.
+Validated on Node 24.22.1 and Linux. No database, Redis, Vault, paid service, or API key is needed.
 
 ```bash
 npm ci
@@ -29,7 +29,7 @@ Configure a local MCP host to launch the built CLI:
 
 Ask the client to call `documents_read` with `{"path":"welcome.md"}` using `examples/documents` as its workspace. Then call it with `{"path":"../README.md"}` and verify the denial. Audit events go to stderr; stdout carries only protocol messages.
 
-The local package name is `@perfecxion/secure-mcp-server`, with a `secure-mcp` CLI. The successor alpha has not been published; the existing npm 1.0.0 package is the reviewed v1 implementation. Build this branch or install its verified local tarball until a new release is explicitly announced.
+The local package name is `@perfecxion/secure-mcp-server`, with a `secure-mcp` CLI. The successor alpha has not been published; the existing npm 1.0.0 package is the reviewed v1 implementation. For an isolated trial, use the [verified candidate and evidence](docs/validation/CANDIDATE.md) and the [fresh-install guide](docs/validation/REAL_USER_VALIDATION.md).
 
 ## Implemented scope
 
@@ -41,7 +41,7 @@ The local package name is `@perfecxion/secure-mcp-server`, with a `secure-mcp` C
 | Execution bounds | Input/output limits, concurrency, deadlines, cancellation, shutdown |
 | Documents | Linux workspace confinement, no symlinks/hidden paths, bounded UTF-8 reads |
 | API example | Optional single fixed URL, GET only, redirects denied |
-| Audit and metrics | Structured content-free events; authenticated, bounded-label metrics |
+| Audit and metrics | Correlated content-free events, bounded delivery, optional fsync-acknowledged collector, authenticated metrics |
 | Package and container | CLI and side-effect-free library; local consumer smoke checks |
 | Untrusted plugin sandbox, content screening, gateway | Not implemented |
 | Certification, production readiness, universal prompt-injection prevention | Not claimed |
@@ -68,6 +68,8 @@ const transport = serveStdio(() => runtime.createServer(runtime.localPrincipal()
 // The embedding application owns signal handling and shutdown:
 // await runtime.close(); await transport.close();
 ```
+
+For a separate TypeScript application using this example, declare compatible `zod` and `@modelcontextprotocol/server` dependencies and Node types in that application.
 
 Custom schemas run once inside the runtime, including transforms, defaults, coercion, and asynchronous refinements. Validation shares the execution deadline and capacity limit. Invoke tools through the runtime; `ToolDefinition.invoke` is the handler callback for already validated values. Keep refinements free of side effects.
 
