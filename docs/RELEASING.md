@@ -1,6 +1,6 @@
 # Preparing a prerelease
 
-The current proposal is a GitHub prerelease for `2.0.0-alpha.1`, using the already-tested tarball. It is a limited experimental distribution, not a stable production release. npm publication and MCP registry submission remain separate decisions. The publication workflow stays disabled until the maintainer approves a concrete release.
+The first [GitHub prerelease, `2.0.0-alpha.1`](https://github.com/perfecxion-ai/secure-mcp/releases/tag/v2.0.0-alpha.1), was published after maintainer approval using the already-tested tarball. This procedure governs subsequent prerelease preparation. It is a limited experimental distribution, not a stable production release. npm publication and MCP registry submission remain separate decisions. The automatic publication workflow remains disabled; each publication needs an approved concrete release.
 
 ## Pin the artifact and evidence
 

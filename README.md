@@ -29,7 +29,7 @@ Configure a local MCP host to launch the built CLI:
 
 Ask the client to call `documents_read` with `{"path":"welcome.md"}` using `examples/documents` as its workspace. Then call it with `{"path":"../README.md"}` and verify the denial. Audit events go to stderr; stdout carries only protocol messages.
 
-The local package name is `@perfecxion/secure-mcp-server`, with a `secure-mcp` CLI. The successor alpha has not been published; the existing npm 1.0.0 package is the reviewed v1 implementation. For an isolated trial, use the [verified candidate and evidence](docs/validation/CANDIDATE.md) and the [fresh-install guide](docs/validation/REAL_USER_VALIDATION.md).
+The local package name is `@perfecxion/secure-mcp-server`, with a `secure-mcp` CLI. The alpha is available as a [GitHub prerelease](https://github.com/perfecxion-ai/secure-mcp/releases/tag/v2.0.0-alpha.1). It is not published to npm; the existing npm 1.0.0 package is the reviewed v1 implementation. For an isolated trial, use the [verified candidate and evidence](docs/validation/CANDIDATE.md) and the [fresh-install guide](docs/validation/REAL_USER_VALIDATION.md).
 
 ## Implemented scope
 

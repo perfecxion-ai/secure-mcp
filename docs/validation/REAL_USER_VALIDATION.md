@@ -1,6 +1,6 @@
 # Fresh-install validation
 
-This alpha is for isolated Linux installations with approved, disposable documents. This round tests the next version through fresh installations; legacy deployments and credential migration are outside its scope. Do not replace an existing server installation. The package is not published to npm.
+This alpha is for isolated Linux installations with approved, disposable documents. This round tests the next version through fresh installations; legacy deployments and credential migration are outside its scope. Do not replace an existing server installation. The package is available as a [GitHub prerelease](https://github.com/perfecxion-ai/secure-mcp/releases/tag/v2.0.0-alpha.1) and is not published to npm.
 
 ## Select Node before running npm
 
@@ -38,6 +38,10 @@ Set the bundle location once. Change this path to the directory you received, or
 MCP_BUNDLE="$HOME/secure-mcp-candidate"
 MCP_TARBALL="$MCP_BUNDLE/perfecxion-secure-mcp-server-2.0.0-alpha.1.tgz"
 ```
+
+### Download the published prerelease
+
+The [public release page](https://github.com/perfecxion-ai/secure-mcp/releases/tag/v2.0.0-alpha.1) provides the verified bundle files without GitHub CLI or Actions access. Download `perfecxion-secure-mcp-server-2.0.0-alpha.1.tgz`, `sbom.cdx.json`, `SHA256SUMS`, `validation-manifest.json`, `provenance-verification.json`, and `sbom-verification.json` into your chosen bundle directory. Use the npm tarball asset, not GitHub's automatically generated source archive. Continue with the digest check below, using the known project repository as the trusted source for the expected commit and checksum.
 
 ### You were handed a verified bundle
 

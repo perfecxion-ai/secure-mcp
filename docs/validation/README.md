@@ -4,7 +4,7 @@ Reports identify a workload and a particular runtime. The [run identity record](
 
 ## Current candidate
 
-[Human reviews passed according to the maintainer](2026-10-28-human-review.md). Prerelease preparation is next; exact review metadata remains distinct from the technical acceptance reports.
+[Human reviews passed according to the maintainer](2026-10-28-human-review.md). The [GitHub prerelease is published and verified](2026-10-29-published-alpha.json); exact review metadata remains distinct from the technical acceptance reports.
 
 The [reported attack review](2026-10-27-reported-attack-review.md) records maintainer-supplied findings against the same runtime source. Its provenance and missing raw-artifact limits are explicit; it is separate from the reproduced acceptance below.
 

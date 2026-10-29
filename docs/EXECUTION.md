@@ -1,6 +1,6 @@
 # Execution record
 
-The replacement runtime is merged as an unpublished `2.0.0-alpha.1`. The [candidate record](validation/CANDIDATE.md) tracks the current fresh-install acceptance gate; human reviews have passed according to the maintainer; prerelease preparation and stable-release work remain. The [v1 assessment](reviews/2026-10-26-assessment.md) remains a historical review of its recorded commit; the [alpha assessment](reviews/2026-10-27-alpha-assessment.md) identifies current gaps and the next execution sequence.
+The replacement runtime is available as [GitHub prerelease `2.0.0-alpha.1`](https://github.com/perfecxion-ai/secure-mcp/releases/tag/v2.0.0-alpha.1). npm publication remains disabled. The [candidate record](validation/CANDIDATE.md) tracks the current fresh-install acceptance gate; human reviews have passed according to the maintainer; stable-release work remains. The [v1 assessment](reviews/2026-10-26-assessment.md) remains a historical review of its recorded commit; the [alpha assessment](reviews/2026-10-27-alpha-assessment.md) identifies current gaps and the next execution sequence.
 
 ## Merged work
 
@@ -54,9 +54,9 @@ Two human reviews passed according to the maintainer on October 28, 2026, using 
 
 ## Remaining gates
 
-- Complete release metadata for the [reported human-review pass](validation/2026-10-28-human-review.md), including host versions and repeat-use/remote coverage. Continue prerelease preparation; do not infer unspecified counts or coverage.
+- Complete release metadata for the [reported human-review pass](validation/2026-10-28-human-review.md), including host versions and repeat-use/remote coverage. Do not infer unspecified counts or coverage.
 - Validate the target operator's identity/MFA policy, TLS routing, and audit capacity/retention.
-- Review the [prerelease procedure](RELEASING.md) and [release proposal](releases/2.0.0-alpha.1.md), then make an explicit publication decision. npm publication remains disabled. Independent security assurance and broader operator acceptance remain stable-release work.
+- The approved GitHub prerelease is published; see the [publication record](validation/2026-10-29-published-alpha.json). npm publication remains disabled. Independent security assurance and broader operator acceptance remain stable-release work.
 
 Legacy remediation and migration are outside this fresh-install workstream.
 
