@@ -50,7 +50,7 @@ Both candidate one-hour runs meet the predeclared performance contract: 13,317,3
 
 The [reported attack review](validation/2026-10-27-reported-attack-review.md) supplies additional feedback tied to the same runtime source. Its raw artifacts have not been reproduced here and are not counted as local acceptance or independent user adoption.
 
-Human reviews passed according to the maintainer on October 28, 2026. The [review record](validation/2026-10-28-human-review.md) separates that outcome from the earlier agent trial and lists the details still needed for release reporting.
+Two human reviews passed according to the maintainer on October 28, 2026, using VS Code MCP support and Cursor. The [review record](validation/2026-10-28-human-review.md) separates that outcome from the earlier agent trial and lists the details still needed for release reporting.
 
 ## Remaining gates
 

@@ -55,6 +55,6 @@ Earlier incomplete attempts remain recorded: [before the error-response repair](
 
 ## Post-review release work
 
-The maintainer reports that human reviews passed. Preserve host/version, reviewer-count, repeat-use, and remote-issuer details as they become available; the brief report does not establish the complete adoption matrix. Prepare an immutable prerelease and record its publication decision. Local acceptance and onboarding success do not establish production approval or independent security certification.
+The maintainer reports two successful human trials: one with VS Code MCP support and one with Cursor, both described as latest versions. Preserve exact version, repeat-use, and remote-issuer details as they become available; the report does not establish the complete original three-user adoption matrix. Prepare an immutable prerelease and record its publication decision. Local acceptance and onboarding success do not establish production approval or independent security certification.
 
 This validation round targets the next version through fresh installations. Legacy deployment inventory, remediation, and migration are outside its scope and do not block this trial. Before a stable public release, validate the target operator's issuer/MFA and audit-retention setup, obtain independent security review, and make an explicit publication decision. The npm publication workflow remains disabled.
