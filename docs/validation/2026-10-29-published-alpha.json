@@ -1,0 +1,172 @@
+{
+  "releaseUrl": "https://github.com/perfecxion-ai/secure-mcp/releases/tag/v2.0.0-alpha.1",
+  "releaseId": 427347311,
+  "publishedAtUTC": "2026-10-29T00:53:01Z",
+  "tag": "v2.0.0-alpha.1",
+  "tagCommit": "1f9f7860696c4fae1bab650ab7f8c77513350657",
+  "prerelease": true,
+  "latest": false,
+  "approval": "Maintainer approved the prepared GitHub-only packet before publication.",
+  "scope": "GitHub prerelease only; npm, container, and MCP registry publication were not performed.",
+  "documentationCommit": "a9623d5b94b569335fa84e6494a21dd8cb16c710",
+  "assets": [
+    {
+      "name": "fresh-verification.json",
+      "bytes": 730,
+      "sha256": "1b146e6283fe797434f7ecdc6e544ec95041cdd0a9211d0f7a87e1a1ff8a23dd",
+      "url": "https://github.com/perfecxion-ai/secure-mcp/releases/download/v2.0.0-alpha.1/fresh-verification.json"
+    },
+    {
+      "name": "INSTALL.md",
+      "bytes": 10365,
+      "sha256": "969d7f8fb770e79a314e442ef4bf63483598fd3a3db9e082924ce917424dffae",
+      "url": "https://github.com/perfecxion-ai/secure-mcp/releases/download/v2.0.0-alpha.1/INSTALL.md"
+    },
+    {
+      "name": "OPERATIONS.md",
+      "bytes": 10564,
+      "sha256": "cff942a4f2524c11b94ff1ef14477ad523b9bbd73f91c63ed334f169301f7ff8",
+      "url": "https://github.com/perfecxion-ai/secure-mcp/releases/download/v2.0.0-alpha.1/OPERATIONS.md"
+    },
+    {
+      "name": "package-check.json",
+      "bytes": 756,
+      "sha256": "a5b34062c9389f21b5bea3c2732ef1c52634a78f8d9120a7a8be072eaadd7b96",
+      "url": "https://github.com/perfecxion-ai/secure-mcp/releases/download/v2.0.0-alpha.1/package-check.json"
+    },
+    {
+      "name": "perfecxion-secure-mcp-server-2.0.0-alpha.1.tgz",
+      "bytes": 47580,
+      "sha256": "5c205f99e3011330fcab11dd981b89f00a735c0992151b7c9d58c32bb71ba5f0",
+      "url": "https://github.com/perfecxion-ai/secure-mcp/releases/download/v2.0.0-alpha.1/perfecxion-secure-mcp-server-2.0.0-alpha.1.tgz"
+    },
+    {
+      "name": "provenance-verification.json",
+      "bytes": 15474,
+      "sha256": "9eb4c1129bdb3b151a3bc1864da2bea75a96a59b9576d115cee63d6f7c09aacf",
+      "url": "https://github.com/perfecxion-ai/secure-mcp/releases/download/v2.0.0-alpha.1/provenance-verification.json"
+    },
+    {
+      "name": "release-proposal.json",
+      "bytes": 1212,
+      "sha256": "c1acbc75fca36baebb5cb3bea69dd8021190024c49dec0a210413d0cb343762e",
+      "url": "https://github.com/perfecxion-ai/secure-mcp/releases/download/v2.0.0-alpha.1/release-proposal.json"
+    },
+    {
+      "name": "RELEASE_ASSETS_SHA256SUMS",
+      "bytes": 1209,
+      "sha256": "c15ae5810f9ec49b52b3d3ed7c7bb52294c73fccb623ae4c112896c6c074501b",
+      "url": "https://github.com/perfecxion-ai/secure-mcp/releases/download/v2.0.0-alpha.1/RELEASE_ASSETS_SHA256SUMS"
+    },
+    {
+      "name": "RELEASE_NOTES.md",
+      "bytes": 4201,
+      "sha256": "9d08532ba7de0bedd212213664a99006dead11e6af07e288e0558f79ef8d8ba3",
+      "url": "https://github.com/perfecxion-ai/secure-mcp/releases/download/v2.0.0-alpha.1/RELEASE_NOTES.md"
+    },
+    {
+      "name": "RELEASING.md",
+      "bytes": 5810,
+      "sha256": "f812e3e2964cabe575a3ec55fd8324311edf437d6372a5d2fd721aa54c56a525",
+      "url": "https://github.com/perfecxion-ai/secure-mcp/releases/download/v2.0.0-alpha.1/RELEASING.md"
+    },
+    {
+      "name": "sbom-verification.json",
+      "bytes": 27453,
+      "sha256": "2153e3221fe4650f1909e419dc3dc9a2610e7d27d7f75edab87aba98261882b9",
+      "url": "https://github.com/perfecxion-ai/secure-mcp/releases/download/v2.0.0-alpha.1/sbom-verification.json"
+    },
+    {
+      "name": "sbom.cdx.json",
+      "bytes": 6391,
+      "sha256": "da288518562a71297e35c3d99c92bf06f90a44ff2897a5c92c955d4724240613",
+      "url": "https://github.com/perfecxion-ai/secure-mcp/releases/download/v2.0.0-alpha.1/sbom.cdx.json"
+    },
+    {
+      "name": "SHA256SUMS",
+      "bytes": 193,
+      "sha256": "53f95f62045f49fd33b16ca3b46f10a257c8538b6d7db7360996c1d77e6c3761",
+      "url": "https://github.com/perfecxion-ai/secure-mcp/releases/download/v2.0.0-alpha.1/SHA256SUMS"
+    },
+    {
+      "name": "THREAT_MODEL.md",
+      "bytes": 7057,
+      "sha256": "48edd12ea85da61d71bd8154bdf8f2ca08df2a521671ccc42eacc6e8859d02d2",
+      "url": "https://github.com/perfecxion-ai/secure-mcp/releases/download/v2.0.0-alpha.1/THREAT_MODEL.md"
+    },
+    {
+      "name": "validation-manifest.json",
+      "bytes": 718,
+      "sha256": "754fa522587e61c856fa286465556e4c88cf060399a736f21256d4e43a6f76ce",
+      "url": "https://github.com/perfecxion-ai/secure-mcp/releases/download/v2.0.0-alpha.1/validation-manifest.json"
+    }
+  ],
+  "postPublicationVerification": {
+    "all15DownloadedAssetsMatchApprovedBytes": true,
+    "bothChecksumFiles": "pass",
+    "freshSignatureVerification": {
+      "result": "verified",
+      "sourceCommit": "1f9f7860696c4fae1bab650ab7f8c77513350657",
+      "workflowRun": 40545241412,
+      "workflowUrl": "https://github.com/perfecxion-ai/secure-mcp/actions/runs/40545241412",
+      "package": "@perfecxion/secure-mcp-server",
+      "version": "2.0.0-alpha.1",
+      "hashes": {
+        "perfecxion-secure-mcp-server-2.0.0-alpha.1.tgz": "5c205f99e3011330fcab11dd981b89f00a735c0992151b7c9d58c32bb71ba5f0",
+        "sbom.cdx.json": "da288518562a71297e35c3d99c92bf06f90a44ff2897a5c92c955d4724240613"
+      },
+      "checks": [
+        "fresh provenance and SBOM signature verification",
+        "exact source/ref/workflow identity",
+        "signed SBOM predicate matches file",
+        "manifest, package metadata, and checksum file agree"
+      ]
+    },
+    "installedPackageCheck": {
+      "node": "v24.22.1",
+      "platform": "linux",
+      "architecture": "arm64",
+      "package": "perfecxion-secure-mcp-server-2.0.0-alpha.1.tgz",
+      "source": "provided immutable artifact",
+      "sha256": "5c205f99e3011330fcab11dd981b89f00a735c0992151b7c9d58c32bb71ba5f0",
+      "files": 50,
+      "installation": "pass",
+      "lifecycleScripts": "disabled",
+      "import": "silent",
+      "stdio": "pass",
+      "protocols": [
+        {
+          "protocol": "2026-07-28",
+          "discovery": "pass",
+          "approvedRead": "pass",
+          "policy": "pass",
+          "rejected": [
+            "traversal",
+            "absolute path",
+            "hidden file",
+            "symlink file",
+            "symlink directory",
+            "directory"
+          ]
+        },
+        {
+          "protocol": "2025-11-25",
+          "discovery": "pass",
+          "approvedRead": "pass",
+          "policy": "pass",
+          "rejected": [
+            "traversal",
+            "absolute path",
+            "hidden file",
+            "symlink file",
+            "symlink directory",
+            "directory"
+          ]
+        }
+      ],
+      "auditPrivacy": "pass",
+      "stdinEof": "pass"
+    }
+  },
+  "historicalSnapshotNote": "release-proposal.json and the staged release procedure retain their prepublication proposal state. This record describes the completed publication; approved assets were not rewritten."
+}

@@ -1,6 +1,6 @@
 # Fresh-install validation candidate
 
-Status: local acceptance passed October 27, 2026; human-review pass reported October 28. The [human-review record](2026-10-28-human-review.md) records the outcome and remaining metadata. The candidate is entering prerelease preparation.
+Status: local acceptance passed October 27, 2026; human-review pass reported October 28. The [human-review record](2026-10-28-human-review.md) records the outcome and remaining metadata. The candidate is now available as an approved [GitHub prerelease](https://github.com/perfecxion-ai/secure-mcp/releases/tag/v2.0.0-alpha.1); see the [publication record](2026-10-29-published-alpha.json).
 
 Package source: `1f9f7860696c4fae1bab650ab7f8c77513350657`. Runtime implementation is unchanged since `b757360854f67e819fb7cc2e6373419bd363a436`. The [artifact record](2026-10-27-candidate-artifact.json) binds the exact tarball to successful protected-main CI, build provenance, the signed production SBOM, and all 13 compiled runtime module hashes. Later documentation does not replace that artifact.
 
@@ -55,6 +55,6 @@ Earlier incomplete attempts remain recorded: [before the error-response repair](
 
 ## Post-review release work
 
-The maintainer reports two successful human trials: one with VS Code MCP support and one with Cursor, both described as latest versions. Preserve exact version, repeat-use, and remote-issuer details as they become available; the report does not establish the complete original three-user adoption matrix. Prepare an immutable prerelease and record its publication decision. Local acceptance and onboarding success do not establish production approval or independent security certification.
+The maintainer reports two successful human trials: one with VS Code MCP support and one with Cursor, both described as latest versions. Preserve exact version, repeat-use, and remote-issuer details as they become available; the report does not establish the complete original three-user adoption matrix. The exact artifact has been published as a GitHub prerelease after maintainer approval. Local acceptance and onboarding success do not establish production approval or independent security certification.
 
 This validation round targets the next version through fresh installations. Legacy deployment inventory, remediation, and migration are outside its scope and do not block this trial. Before a stable public release, validate the target operator's issuer/MFA and audit-retention setup, obtain independent security review, and make an explicit publication decision. The npm publication workflow remains disabled.

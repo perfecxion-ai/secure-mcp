@@ -2,7 +2,7 @@
 
 CI validates a package installation and restricted container before uploading the npm tarball and production CycloneDX dependency inventory. The artifact name contains the exact source commit: `verified-alpha-<commit>`.
 
-For successful pushes to protected `main`, a separate job downloads those artifacts and creates build-provenance and SBOM attestations. That job has signing permissions but never checks out source, installs dependencies, or executes the package. Pull requests have read-only permissions and do not create attestations. Package publication remains disabled.
+For successful pushes to protected `main`, a separate job downloads those artifacts and creates build-provenance and SBOM attestations. That job has signing permissions but never checks out source, installs dependencies, or executes the package. Pull requests have read-only permissions and do not create attestations. npm publication remains disabled.
 
 The [candidate record](validation/CANDIDATE.md) selects the immutable artifact for fresh-install trials. Prepare it without rebuilding:
 
