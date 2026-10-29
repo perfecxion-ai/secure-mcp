@@ -1,6 +1,6 @@
 # Fresh-install validation candidate
 
-Status: ready for independent fresh-install validation of `2.0.0-alpha.1`, October 27, 2026. The local acceptance gates below passed.
+Status: local acceptance passed October 27, 2026; human-review pass reported October 28. The [human-review record](2026-10-28-human-review.md) records the outcome and remaining metadata. The candidate is entering prerelease preparation.
 
 Package source: `1f9f7860696c4fae1bab650ab7f8c77513350657`. Runtime implementation is unchanged since `b757360854f67e819fb7cc2e6373419bd363a436`. The [artifact record](2026-10-27-candidate-artifact.json) binds the exact tarball to successful protected-main CI, build provenance, the signed production SBOM, and all 13 compiled runtime module hashes. Later documentation does not replace that artifact.
 
@@ -53,8 +53,8 @@ The separate [in-process audit comparison](2026-10-27-audit-overhead.json) measu
 
 Earlier incomplete attempts remain recorded: [before the error-response repair](2026-10-27-superseded-audit-soaks.json) and [before explicit server-exit capture](2026-10-27-superseded-exit-soaks.json). Both were deliberately stopped and are excluded from acceptance. Earlier Node 24.13.0 failures remain in the [historical evidence index](README.md).
 
-## What the next users establish
+## Post-review release work
 
-Local readiness permits an isolated trial. It does not establish production approval, independent security review, or actual adoption. Recruit at least three independent fresh installations across two hosts and one remote issuer deployment, then collect repeat-use evidence and setup friction. No external testers have been contacted by this work.
+The maintainer reports that human reviews passed. Preserve host/version, reviewer-count, repeat-use, and remote-issuer details as they become available; the brief report does not establish the complete adoption matrix. Prepare an immutable prerelease and record its publication decision. Local acceptance and onboarding success do not establish production approval or independent security certification.
 
 This validation round targets the next version through fresh installations. Legacy deployment inventory, remediation, and migration are outside its scope and do not block this trial. Before a stable public release, validate the target operator's issuer/MFA and audit-retention setup, obtain independent security review, and make an explicit publication decision. The npm publication workflow remains disabled.

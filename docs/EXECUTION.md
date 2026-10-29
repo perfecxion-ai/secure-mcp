@@ -1,6 +1,6 @@
 # Execution record
 
-The replacement runtime is merged as an unpublished `2.0.0-alpha.1`. The [candidate record](validation/CANDIDATE.md) tracks the current fresh-install acceptance gate; independent user validation and stable-release work remain. The [v1 assessment](reviews/2026-10-26-assessment.md) remains a historical review of its recorded commit; the [alpha assessment](reviews/2026-10-27-alpha-assessment.md) identifies current gaps and the next execution sequence.
+The replacement runtime is merged as an unpublished `2.0.0-alpha.1`. The [candidate record](validation/CANDIDATE.md) tracks the current fresh-install acceptance gate; human reviews have passed according to the maintainer; prerelease preparation and stable-release work remain. The [v1 assessment](reviews/2026-10-26-assessment.md) remains a historical review of its recorded commit; the [alpha assessment](reviews/2026-10-27-alpha-assessment.md) identifies current gaps and the next execution sequence.
 
 ## Merged work
 
@@ -50,9 +50,11 @@ Both candidate one-hour runs meet the predeclared performance contract: 13,317,3
 
 The [reported attack review](validation/2026-10-27-reported-attack-review.md) supplies additional feedback tied to the same runtime source. Its raw artifacts have not been reproduced here and are not counted as local acceptance or independent user adoption.
 
+Human reviews passed according to the maintainer on October 28, 2026. The [review record](validation/2026-10-28-human-review.md) separates that outcome from the earlier agent trial and lists the details still needed for release reporting.
+
 ## Remaining gates
 
-- Collect independent fresh-install onboarding and repeat-use feedback; no external users have been contacted.
+- Complete release metadata for the [reported human-review pass](validation/2026-10-28-human-review.md), including host versions and repeat-use/remote coverage. Continue prerelease preparation; do not infer unspecified counts or coverage.
 - Validate the target operator's identity/MFA policy, TLS routing, and audit capacity/retention.
 - Obtain independent security review and make a deliberate release/publication decision. npm publication remains disabled.
 
