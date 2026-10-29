@@ -30,6 +30,8 @@ gh attestation verify perfecxion-secure-mcp-server-2.0.0-alpha.1.tgz \
 
 Compare the attested source revision with the intended commit, not only the package version. Alpha builds can share an unreleased version number. Attestation binds a digest to its workflow and source; it does not prove that the code is secure, independently reviewed, or approved for release.
 
+To reverify a retained bundle without downloading the Actions artifact again, run `node scripts/verify-validation.mjs EXACT_MAIN_COMMIT /absolute/path/to/bundle`. This performs fresh GitHub signature verification, compares the signed SBOM with the included file, and checks the manifest's package identity, checksums, and signed workflow-run identity. Saved verification reports are not trusted as substitutes for that check. GitHub attestation access is still required. See [prerelease preparation](RELEASING.md) for staging, publication decisions, and recovery.
+
 The dependency inventory describes the installed production dependency graph at build time. It is not a container OS inventory. The npm tarball is promoted unchanged for validation; container signing and public release publication remain separate work. Fresh consumers resolve and lock their own dependency installation, so retain their lockfile and compare dependency changes before later upgrades.
 
 The repository requires an up-to-date PR with the `Validate runtime` check from GitHub Actions, including for administrators. Force pushes and deletion of `main` are disabled. These settings supplement the workflow; contributors cannot change them by editing YAML.

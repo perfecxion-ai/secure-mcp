@@ -1,0 +1,32 @@
+{
+  "candidateVerification": {
+    "result": "verified",
+    "sourceCommit": "1f9f7860696c4fae1bab650ab7f8c77513350657",
+    "workflowRun": 40545241412,
+    "workflowUrl": "https://github.com/perfecxion-ai/secure-mcp/actions/runs/40545241412",
+    "package": "@perfecxion/secure-mcp-server",
+    "version": "2.0.0-alpha.1",
+    "hashes": {
+      "perfecxion-secure-mcp-server-2.0.0-alpha.1.tgz": "5c205f99e3011330fcab11dd981b89f00a735c0992151b7c9d58c32bb71ba5f0",
+      "sbom.cdx.json": "da288518562a71297e35c3d99c92bf06f90a44ff2897a5c92c955d4724240613"
+    },
+    "checks": [
+      "fresh provenance and SBOM signature verification",
+      "exact source/ref/workflow identity",
+      "signed SBOM predicate matches file",
+      "manifest, package metadata, and checksum file agree"
+    ]
+  },
+  "downloadPreparation": "Refactored preparation completed against successful CI after one transient artifact-storage connection failure; identical candidate digest.",
+  "tamperedTarball": {
+    "sha256": "2cab3a34a76998cfbf5e0dc89241465cbf02fbc515d880dd66768fedaf108c0f",
+    "result": "rejected",
+    "reason": "No matching GitHub attestation (HTTP 404); original digest verified in the same environment."
+  },
+  "regressionTests": {
+    "passed": 75,
+    "bundleCases": "10 wrapper/policy cases plus parent test; signature verifier is mocked in these offline tests, with real CLI verification recorded separately."
+  },
+  "runtime": "All 13 compiled module hashes still match the selected candidate.",
+  "publication": "Not performed."
+}

@@ -1,21 +1,17 @@
 import assert from 'node:assert/strict';
-import { execFileSync } from 'node:child_process';
-import { createHash } from 'node:crypto';
-import { mkdir, readdir, readFile, writeFile } from 'node:fs/promises';
+import { mkdir, readdir, writeFile } from 'node:fs/promises';
 import { resolve, join } from 'node:path';
+import {
+  github as run,
+  repository as repo,
+  verifyArtifact,
+  verifyWorkflowRun,
+} from './lib/validation-artifact.mjs';
 
 // Read-only GitHub operations. Promote the exact successful main artifact, never rebuild it.
 const [sha, destination] = process.argv.slice(2);
 assert.match(sha ?? '', /^[a-f0-9]{40}$/, 'Supply an exact main commit SHA');
 assert.ok(destination, 'Supply a new output directory');
-const repo = 'perfecxion-ai/secure-mcp';
-const gh = process.env.GH_BIN ?? 'gh';
-const run = (...args) =>
-  execFileSync(gh, args, {
-    encoding: 'utf8',
-    stdio: ['ignore', 'pipe', 'pipe'],
-    maxBuffer: 16 * 1024 * 1024,
-  });
 const api = (path) => JSON.parse(run('api', `repos/${repo}/${path}`));
 const comparison = api(`compare/${sha}...main`);
 assert.ok(['ahead', 'identical'].includes(comparison.status), 'Commit must be on main');
@@ -54,50 +50,12 @@ const filename = files.find((name) =>
   /^perfecxion-secure-mcp-server-[a-zA-Z0-9.+-]+\.tgz$/.test(name),
 );
 assert.ok(filename && files.includes('sbom.cdx.json'));
-const tarball = join(directory, filename);
-const verify = (predicate) =>
-  JSON.parse(
-    run(
-      'attestation',
-      'verify',
-      tarball,
-      '--repo',
-      repo,
-      '--signer-workflow',
-      `${repo}/.github/workflows/ci.yml`,
-      '--source-ref',
-      'refs/heads/main',
-      '--source-digest',
-      sha,
-      '--format',
-      'json',
-      ...(predicate ? ['--predicate-type', predicate] : []),
-    ),
-  );
-const provenance = verify();
-const sbomVerification = verify('https://cyclonedx.org/bom');
-const sbom = JSON.parse(await readFile(join(directory, 'sbom.cdx.json'), 'utf8'));
-assert.ok(
-  sbomVerification.some((result) => {
-    try {
-      assert.deepEqual(result.verificationResult.statement.predicate, sbom);
-      return true;
-    } catch {
-      return false;
-    }
-  }),
-  'Downloaded SBOM must match the signed predicate',
+const { metadata, hashes, provenance, sbomVerification } = await verifyArtifact(
+  directory,
+  sha,
+  filename,
 );
-const metadata = JSON.parse(
-  execFileSync('tar', ['-xOf', tarball, 'package/package.json'], { encoding: 'utf8' }),
-);
-assert.equal(metadata.name, '@perfecxion/secure-mcp-server');
-assert.match(metadata.version, /^2\.0\.0-alpha\.[0-9]+$/);
-const hashes = {};
-for (const file of files.sort())
-  hashes[file] = createHash('sha256')
-    .update(await readFile(join(directory, file)))
-    .digest('hex');
+assert.equal(selected.html_url, verifyWorkflowRun(provenance, selected.id));
 const manifest = {
   sourceCommit: sha,
   workflowRun: selected.id,
