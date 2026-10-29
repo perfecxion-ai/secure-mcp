@@ -38,7 +38,7 @@ V1 source and tests are preserved in `legacy/v1`, outside the runtime dependency
 
 ## Verification
 
-The current regression suite passes 64 tests, strict TypeScript, lint, formatting, build, configuration/registry metadata checks, and five security mutation probes. The added RS256 cases detect an expanded signing-algorithm allowlist; the selected candidate retains its original 44-test evidence. The [candidate evidence](validation/CANDIDATE.md) binds the package, container, both real MCP hosts, browser IdP lab, and endurance measurements to the same 13 compiled runtime modules. Native coverage is 96.81% lines, 90.31% branches, and 91.55% functions; it is not a security guarantee.
+The current regression suite passes 75 tests, strict TypeScript, lint, formatting, build, configuration/registry metadata checks, and five security mutation probes. The added RS256 cases detect an expanded signing-algorithm allowlist; the selected candidate retains its original 44-test evidence. The [candidate evidence](validation/CANDIDATE.md) binds the package, container, both real MCP hosts, browser IdP lab, and endurance measurements to the same 13 compiled runtime modules. Native coverage is 96.81% lines, 90.31% branches, and 91.55% functions; it is not a security guarantee.
 
 Fresh-consumer checks install the exact attested tarball, verify silent import, invoke the CLI, and require clean EOF shutdown. A separate strict TypeScript consumer compiles the public runtime, transformed tool input, collector, and SDK transport types. Container checks exercise nonroot execution with a read-only root, no network, dropped capabilities, resource bounds, and a read-only document mount.
 
@@ -56,7 +56,7 @@ Two human reviews passed according to the maintainer on October 28, 2026, using 
 
 - Complete release metadata for the [reported human-review pass](validation/2026-10-28-human-review.md), including host versions and repeat-use/remote coverage. Continue prerelease preparation; do not infer unspecified counts or coverage.
 - Validate the target operator's identity/MFA policy, TLS routing, and audit capacity/retention.
-- Obtain independent security review and make a deliberate release/publication decision. npm publication remains disabled.
+- Review the [prerelease procedure](RELEASING.md) and [release proposal](releases/2.0.0-alpha.1.md), then make an explicit publication decision. npm publication remains disabled. Independent security assurance and broader operator acceptance remain stable-release work.
 
 Legacy remediation and migration are outside this fresh-install workstream.
 
