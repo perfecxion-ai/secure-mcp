@@ -14,7 +14,7 @@ import { deferredInputSchema, withinInputElementLimit } from './input.js';
 import { createApiTool, createDocumentTool, defineTool, textResult } from './tools.js';
 import type { ToolDefinition } from './tools.js';
 
-export const VERSION = '2.0.0-alpha.1';
+export const VERSION = '2.0.0-alpha.2';
 export interface RuntimeOptions {
   config?: unknown;
   tools?: readonly ToolDefinition[];

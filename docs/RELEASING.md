@@ -1,17 +1,17 @@
 # Preparing a prerelease
 
-The first [GitHub prerelease, `2.0.0-alpha.1`](https://github.com/perfecxion-ai/secure-mcp/releases/tag/v2.0.0-alpha.1), was published after maintainer approval using the already-tested tarball. This procedure governs subsequent prerelease preparation. It is a limited experimental distribution, not a stable production release. npm publication and MCP registry submission remain separate decisions. The automatic publication workflow remains disabled; each publication needs an approved concrete release.
+The first [GitHub prerelease, `2.0.0-alpha.1`](https://github.com/perfecxion-ai/secure-mcp/releases/tag/v2.0.0-alpha.1), was published after maintainer approval using the already-tested tarball. This procedure governs subsequent prerelease preparation. It is a limited experimental distribution, not a stable production release. npm publication and MCP registry submission remain separate decisions. The publication workflow remains disabled; each publication needs an approved concrete release. Alpha.1 is explicitly rejected for npm promotion. Prepare alpha.2 under [the readiness plan](https://github.com/perfecxion-ai/secure-mcp/issues/57), with [separate npm identity and approval preparation](NPM_PUBLISHING.md).
 
 ## Pin the artifact and evidence
 
-Select the commit and digest from the [candidate record](validation/CANDIDATE.md), not from a version string alone. The selected source is `1f9f7860696c4fae1bab650ab7f8c77513350657`; its tarball SHA-256 is `5c205f99e3011330fcab11dd981b89f00a735c0992151b7c9d58c32bb71ba5f0`. Alpha builds can share a version number while containing different documentation or package metadata.
+Select an exact source commit, version and digest from the reviewed candidate packet. The [existing candidate record](validation/CANDIDATE.md) is historical alpha.1 evidence, not an alpha.2 approval. No final alpha.2 digest has been selected. Version equality does not establish artifact equality. Once a candidate is distributed to reviewers, do not replace its bytes under the same version; use a new prerelease version after package changes.
 
 Download an unexpired CI artifact with `scripts/prepare-validation.mjs`, or use the retained operator-owned bundle. Recheck it with the current verifier:
 
 ```bash
-node scripts/verify-validation.mjs \
-  1f9f7860696c4fae1bab650ab7f8c77513350657 \
-  /absolute/path/to/verified-bundle
+: "${MCP_SOURCE_SHA:?Required from the reviewed candidate packet}"
+: "${MCP_BUNDLE:?Required verified bundle directory}"
+node scripts/verify-validation.mjs "$MCP_SOURCE_SHA" "$MCP_BUNDLE"
 ```
 
 This uses GitHub CLI to verify provenance and SBOM signatures again, pins the source/ref/workflow, binds the manifest's workflow run to signed provenance, compares the SBOM with its signed predicate, and checks package metadata and checksums. It ignores saved success reports as trust inputs. It does not download the Actions artifact, rebuild, install, or publish anything. It still needs access to GitHub's attestation service and a compatible authenticated `gh`. Run it in an operator-owned directory without concurrent writers.
@@ -28,14 +28,14 @@ Add release notes, the current installation guide, and the current operations/th
 
 The proposal must identify:
 
-- Release name/tag `v2.0.0-alpha.1`, with prerelease enabled and latest disabled.
-- Tag target `1f9f7860696c4fae1bab650ab7f8c77513350657`, matching the selected package source rather than the current documentation head. Never move or overwrite an existing tag.
+- Candidate version and matching release tag, with prerelease enabled and latest disabled.
+- Tag target matching the selected package source, including the reviewed workflow, rather than a newer documentation head. Never move or overwrite an existing tag.
 - Exact asset filenames and SHA-256 digests, source/workflow provenance, and the separate documentation revision.
 - Linux and Node 24.22.1 or later supported Node 24 patch requirements, explicit workspace setup, and the verified-bundle onboarding path.
 - Implemented controls and trust boundaries, measured acceptance, reported human-review coverage, known limits, and the private vulnerability-reporting channel.
 - Explicit publication scope and maintainer decision. A successful CI run or a review pass alone does not publish a release.
 
-The [human-review record](validation/2026-10-28-human-review.md) reports two passing testers on VS Code and Cursor. Exact versions, repeat-use details, and remote-issuer coverage are not recorded. Present that evidence as reported; do not claim the original three-user adoption target or production approval.
+The [human-review record](validation/2026-10-28-human-review.md) reports two passing testers on VS Code and Cursor. Exact versions, repeat-use details, and remote-issuer coverage are not recorded. Present that evidence as reported; do not claim the original three-user adoption target or production approval. The alpha.2 npm decision requires fresh exact-digest two-host trials with repeat use, plus independent operator evidence while remote authentication remains a principal launch claim. Keep post-freeze receipts as supplemental evidence with their own revision; do not rebuild the package to include them.
 
 ## Publish only the approved packet
 

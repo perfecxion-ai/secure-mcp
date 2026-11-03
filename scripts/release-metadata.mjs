@@ -15,6 +15,7 @@ assert.equal(server.packages[0].packageArguments[0].name, '--workspace');
 assert.equal(server.packages[0].packageArguments[0].isRequired, true);
 assert.equal(pkg.license, 'AGPL-3.0-or-later');
 assert.equal(pkg.publishConfig.tag, 'alpha');
+assert.equal(pkg.publishConfig.registry, 'https://registry.npmjs.org/');
 assert.deepEqual(pkg.os, ['linux']);
 await access(pkg.bin['secure-mcp']);
 const publication = await readFile('.github/workflows/publish.yml', 'utf8');

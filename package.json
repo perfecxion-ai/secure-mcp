@@ -1,6 +1,6 @@
 {
   "name": "@perfecxion/secure-mcp-server",
-  "version": "2.0.0-alpha.1",
+  "version": "2.0.0-alpha.2",
   "description": "Experimental MCP runtime for approved tools, explicit access policies, bounded execution, and audit events",
   "type": "module",
   "main": "./dist/index.js",
@@ -57,7 +57,8 @@
   "packageManager": "npm@11.6.2",
   "publishConfig": {
     "access": "public",
-    "tag": "alpha"
+    "tag": "alpha",
+    "registry": "https://registry.npmjs.org/"
   },
   "repository": {
     "type": "git",
