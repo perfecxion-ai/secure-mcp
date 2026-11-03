@@ -5,7 +5,7 @@ import { join } from 'node:path';
 import { policy } from './npm-preflight.mjs';
 
 export function registryInstallArguments(version, artifact) {
-  assert.equal(version, policy.version, 'Registry smoke requires the exact alpha.2 version');
+  assert.equal(version, policy.version, 'Registry smoke requires the exact alpha.3 version');
   assert.ok(artifact, 'Registry smoke requires the approved tarball for comparison');
   return [
     'install',

@@ -25,6 +25,8 @@ export function validatePublicationGate(settings, env, source, digest) {
 
 export function validateEnvironment(settings, environment, branches) {
   assert.equal(environment.name, settings.environment, 'Wrong protected environment');
+  if (Object.hasOwn(environment, 'can_admins_bypass'))
+    assert.equal(environment.can_admins_bypass, false, 'Administrator bypass must be disabled');
   assert.ok(Number.isSafeInteger(environment.id) && environment.id > 0);
   assert.equal(environment.id, settings.environmentId, 'Protected environment was replaced');
   const rules = environment.protection_rules.filter((rule) => rule.type === 'required_reviewers');
@@ -42,14 +44,14 @@ export function validateEnvironment(settings, environment, branches) {
   });
   assert.equal(branches.total_count, 1, 'Only the approved tag may deploy');
   assert.equal(branches.branch_policies.length, 1);
-  assert.equal(branches.branch_policies[0].name, 'v2.0.0-alpha.2');
+  assert.equal(branches.branch_policies[0].name, policy.ref.slice('refs/tags/'.length));
   assert.equal(
     branches.branch_policies[0].type,
     'tag',
     'A branch restriction is not a tag restriction',
   );
-  // The REST environment schema does not expose admin bypass consistently.
-  // The reviewed settings receipt records it; publication also requires an actual approval below.
+  // When the API omits admin bypass, the reviewed receipt remains required.
+  // Publication also requires an actual reviewer approval below.
 }
 
 export function validateApproval(reviews, settings, environmentId, actorId) {
@@ -159,6 +161,10 @@ export function validatePublicationWorkflow(workflow) {
   assert.doesNotMatch(preflight + verify, /id-token:|:\s*write\b/);
   assert.match(preflight, /scripts\/check-npm-publication-gate\.mjs/);
   assert.match(preflight, /scripts\/npm-preflight\.mjs[^\n]+--publisher-preflight/);
+  assert.ok(
+    preflight.includes(`[[ "$GITHUB_REF" == ${policy.ref} ]]`),
+    'Workflow must require the exact policy tag before checkout',
+  );
   assert.match(publish, /needs: preflight/);
   assert.match(publish, /environment: npm-alpha/);
   assert.match(publish, /id-token: write/);

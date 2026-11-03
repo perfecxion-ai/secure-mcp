@@ -1,13 +1,15 @@
 import assert from 'node:assert/strict';
 
+const version = '2.0.0-alpha.3';
+
 export const policy = Object.freeze({
   repository: 'perfecxion-ai/secure-mcp',
   package: '@perfecxion/secure-mcp-server',
-  version: '2.0.0-alpha.2',
-  filename: 'perfecxion-secure-mcp-server-2.0.0-alpha.2.tgz',
+  version,
+  filename: `perfecxion-secure-mcp-server-${version}.tgz`,
   registry: 'https://registry.npmjs.org/',
   tag: 'alpha',
-  ref: 'refs/tags/v2.0.0-alpha.2',
+  ref: `refs/tags/v${version}`,
   workflow: 'npm-preflight.yml',
   expectedLatest: '1.0.0',
 });
@@ -65,7 +67,7 @@ export function validateCiRun(run, source, expectedId) {
 
 export function validateMetadata(metadata) {
   assert.equal(metadata.name, policy.package, 'Unexpected package');
-  assert.equal(metadata.version, policy.version, 'Only the reviewed alpha.2 version is eligible');
+  assert.equal(metadata.version, policy.version, 'Only the reviewed alpha.3 version is eligible');
   assert.equal(metadata.publishConfig?.registry, policy.registry, 'Unexpected registry');
   assert.equal(metadata.publishConfig?.tag, policy.tag, 'Unexpected dist-tag');
   assert.equal(metadata.publishConfig?.access, 'public', 'Expected public access');

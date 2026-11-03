@@ -3,7 +3,7 @@ on:
   workflow_dispatch:
     inputs:
       source_sha:
-        description: Exact reviewed source commit, also targeted by v2.0.0-alpha.2
+        description: Exact reviewed source commit, also targeted by v2.0.0-alpha.3
         required: true
         type: string
       tarball_sha256:
@@ -42,7 +42,7 @@ jobs:
           [[ "$MCP_CI_RUN" =~ ^[1-9][0-9]*$ ]]
           [[ "$GITHUB_REPOSITORY" == perfecxion-ai/secure-mcp ]]
           [[ "$GITHUB_EVENT_NAME" == workflow_dispatch ]]
-          [[ "$GITHUB_REF" == refs/tags/v2.0.0-alpha.2 ]]
+          [[ "$GITHUB_REF" == refs/tags/v2.0.0-alpha.3 ]]
           [[ "$GITHUB_SHA" == "$MCP_SOURCE_SHA" ]]
           [[ "$GITHUB_WORKFLOW_SHA" == "$MCP_SOURCE_SHA" ]]
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1

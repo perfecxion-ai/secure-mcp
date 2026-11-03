@@ -46,7 +46,11 @@ for (const flag of ['--source-ref', '--source-digest', '--predicate-type', '--si
 }
 const api = (path) =>
   JSON.parse(github('api', '--hostname', 'github.com', `repos/${policy.repository}/${path}`));
-assert.equal(api('commits/v2.0.0-alpha.2').sha, source, 'Release tag source mismatch');
+assert.equal(
+  api(`commits/${policy.ref.slice('refs/tags/'.length)}`).sha,
+  source,
+  'Release tag source mismatch',
+);
 validateCiRun(api(`actions/runs/${runId}`), source, runId);
 const comparison = api(`compare/${source}...main`);
 assert.ok(['ahead', 'identical'].includes(comparison.status), 'Source must remain on main');

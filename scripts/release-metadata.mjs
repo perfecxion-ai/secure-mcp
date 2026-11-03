@@ -2,9 +2,13 @@ import assert from 'node:assert/strict';
 import { readFile, access } from 'node:fs/promises';
 import { VERSION } from '../dist/index.js';
 import { validatePublicationWorkflow } from './lib/npm-publication.mjs';
+import { policy, validateMetadata } from './lib/npm-preflight.mjs';
 
 const pkg = JSON.parse(await readFile('package.json', 'utf8'));
 const server = JSON.parse(await readFile('server.json', 'utf8'));
+validateMetadata(pkg);
+assert.equal(policy.ref, `refs/tags/v${pkg.version}`);
+assert.equal(policy.filename, `perfecxion-secure-mcp-server-${pkg.version}.tgz`);
 assert.equal(pkg.version, VERSION);
 assert.equal(server.version, pkg.version);
 assert.equal(server.name, pkg.mcpName);

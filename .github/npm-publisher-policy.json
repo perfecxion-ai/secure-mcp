@@ -1,5 +1,5 @@
 {
-  "enabled": false,
+  "enabled": true,
   "environment": "npm-alpha",
   "environmentId": 26083491597,
   "reviewerIds": [38704968],
@@ -14,8 +14,10 @@
     "reviewedAt": "2026-11-03T01:44:15Z",
     "reviewedBy": 38704968,
     "evidence": {
-      "githubEnvironment": "Authenticated API readback: environment ID, required reviewer, self-review prevention and exact tag restriction",
-      "adminBypass": "Maintainer confirmed disabled and saved in GitHub UI",
+      "githubEnvironment": "Authenticated API readback on 2026-11-03: same environment ID, required reviewer scthornton (38704968), self-review prevention and single exact tag v2.0.0-alpha.3",
+      "githubRevalidatedAt": "2026-11-03T18:29:40Z",
+      "adminBypass": "Maintainer previously confirmed disabled in the UI; authenticated API readback also returned can_admins_bypass=false on 2026-11-03",
+      "artifactApproval": "NPM_ALPHA_APPROVED_SOURCE and NPM_ALPHA_APPROVED_SHA256 remain absent; no alpha.3 tag was created and no publication was dispatched",
       "npmPublisher": "Maintainer supplied saved npm UI configuration matching repository, workflow and environment; permissions include npm publish and npm stage publish",
       "npmStatus": "Pending validation",
       "npmValidationDeadline": "2026-11-05T01:43:00Z",
