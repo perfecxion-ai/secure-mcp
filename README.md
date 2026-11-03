@@ -110,9 +110,11 @@ flowchart LR
 
 **Requirements:** Linux, Node `>=24.22.1 <25`, and npm 11. Select Node explicitly in a non-login shell: load nvm and run `nvm use 24.22.1`, or prepend the supported Node installation's `bin` directory to `PATH`. No database, paid service, or API key is needed for local documents.
 
-### 1. Install the alpha.2 candidate
+### 1. Select a reviewed candidate
 
-Alpha.2 is **not available on npm**. A frozen alpha.2 candidate is recorded in [docs/validation/ALPHA2.md](docs/validation/ALPHA2.md) and is distributed for independent trials through an authenticated maintainer handoff. Alpha.1 remains a [GitHub prerelease](https://github.com/perfecxion-ai/secure-mcp/releases/tag/v2.0.0-alpha.1), excluded from npm promotion. A checksum shipped with an untrusted archive does not authenticate it. To verify build provenance and the signed SBOM yourself, follow the [verification and trial guide](docs/validation/REAL_USER_VALIDATION.md).
+Development is now `2.0.0-alpha.3` while the independent review findings are addressed. No alpha.3 candidate is frozen. The original alpha.2 bytes remain available for review, but new acceptance trials and npm promotion are on hold pending the availability fixes. Follow [the remediation plan](https://github.com/perfecxion-ai/secure-mcp/issues/57).
+
+Alpha.2 is **not available on npm**. A frozen alpha.2 candidate is recorded in [the alpha.2 record](https://github.com/perfecxion-ai/secure-mcp/blob/42282c0c304a4a282f0fdb4a19ac241241f488a4/docs/validation/ALPHA2.md) and is distributed for independent trials through an authenticated maintainer handoff. Alpha.1 remains a [GitHub prerelease](https://github.com/perfecxion-ai/secure-mcp/releases/tag/v2.0.0-alpha.1), excluded from npm promotion. A checksum shipped with an untrusted archive does not authenticate it. To verify build provenance and the signed SBOM yourself, follow the [verification and trial guide](docs/validation/REAL_USER_VALIDATION.md).
 
 Run this in Bash after setting `MCP_TARBALL` to the absolute path of the received tarball and `MCP_EXPECTED_SHA256` to its independently trusted digest. No checkout, build, `npm ci`, or GitHub CLI is required for a maintainer-verified handoff:
 
@@ -168,12 +170,7 @@ These examples are engineering demonstrations; independent repeat-use and extern
 
 ### After an npm publication decision
 
-Only after a separate npm publication decision, the intended exact-version install is:
-
-```bash
-# Future command; alpha.2 is not yet published.
-npm install --save-exact --ignore-scripts @perfecxion/secure-mcp-server@2.0.0-alpha.2 --registry=https://registry.npmjs.org/
-```
+No npm version is selected for publication. After a separate approval, the release packet will supply an exact version and an installation command using `--save-exact`. Retain the resulting consumer lockfile with that artifact's evidence.
 
 > [!WARNING]
 > Do not use an unqualified install: `latest` remains v1. The `alpha` tag is mutable, and a range such as `^2.0.0-alpha.2` can admit later releases. Exact pins and the consumer lockfile preserve the reviewed selection.
@@ -298,7 +295,7 @@ Read the [threat model](docs/THREAT_MODEL.md), [operations guide](docs/OPERATION
 | Milestone | State |
 | --- | --- |
 | Alpha.1 | Historical [GitHub prerelease](https://github.com/perfecxion-ai/secure-mcp/releases/tag/v2.0.0-alpha.1); excluded from npm promotion |
-| Alpha.2 candidate | Frozen, built once by protected-main CI, with verified provenance and signed SBOM ([record](docs/validation/ALPHA2.md)) |
+| Alpha.2 candidate | Frozen, built once by protected-main CI, with verified provenance and signed SBOM ([record](https://github.com/perfecxion-ai/secure-mcp/blob/42282c0c304a4a282f0fdb4a19ac241241f488a4/docs/validation/ALPHA2.md)); held for remediation |
 | Independent human trials | Open: VS Code and Cursor receipts with restart and repeat use |
 | Remote operator evidence | Open: an independent issuer and audit deployment |
 | npm publication | Not approved; a separate decision for one exact artifact |
@@ -331,11 +328,11 @@ The Node test suite exercises real SDK transports, signed access tokens, local J
 | `npm run test:audit` | The fsync-acknowledged collector process, kill and restart persistence, journal limits and blocked delivery |
 | `node labs/audit/storage-failure.mjs` | Collector behavior when its storage fails (Docker) |
 | `node labs/hosts/verify.mjs --host claude` (or `codex`) | Optional real assistant hosts; consumes model quota |
-| `npm run benchmark`, `npm run benchmark:http` | Runtime and HTTP benchmarks; see [benchmarks](docs/BENCHMARKS.md) |
+| `npm run benchmark`, `npm run benchmark:http` | Runtime and HTTP benchmarks; see [benchmarks](https://github.com/perfecxion-ai/secure-mcp/blob/089e53efbcc55da9256e706b9acb2e101b79bf83/docs/BENCHMARKS.md) |
 
 </details>
 
-Configuration is defined by `src/config.ts` and rejects unknown keys; `config.schema.json` is generated from it for editor support. See [contributing](CONTRIBUTING.md) for PR expectations.
+Configuration is defined by `src/config.ts` and rejects unknown keys; `config.schema.json` is generated from it for editor support. See [contributing](https://github.com/perfecxion-ai/secure-mcp/blob/089e53efbcc55da9256e706b9acb2e101b79bf83/CONTRIBUTING.md) for PR expectations.
 
 ## Documentation
 
@@ -348,7 +345,7 @@ Configuration is defined by `src/config.ts` and rejects unknown keys; `config.sc
 | [Threat model](docs/THREAT_MODEL.md) | Understand trust boundaries and remaining assurance gaps |
 | [Migration](docs/MIGRATION.md) | Move from v1 and review the license change |
 | [Verification and trial guide](docs/validation/REAL_USER_VALIDATION.md) | Verify a candidate and record a trial |
-| [Releasing](docs/RELEASING.md) and [npm publishing](docs/NPM_PUBLISHING.md) | Follow the maintainer release gates |
+| [Releasing](https://github.com/perfecxion-ai/secure-mcp/blob/089e53efbcc55da9256e706b9acb2e101b79bf83/docs/RELEASING.md) and [npm publishing](https://github.com/perfecxion-ai/secure-mcp/blob/089e53efbcc55da9256e706b9acb2e101b79bf83/docs/NPM_PUBLISHING.md) | Follow the maintainer release gates |
 
 ## License
 

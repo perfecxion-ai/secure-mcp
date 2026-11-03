@@ -1,6 +1,6 @@
 # Alpha.2 frozen validation candidate
 
-Status: ready for independent fresh-install trials. npm publication is not approved. This is supplemental evidence recorded after the package source was frozen; this documentation revision does not replace or rebuild the candidate.
+Status: held after the November 3 independent review. The original bytes and evidence below are preserved. Development fixes target alpha.3; new acceptance trials and npm promotion wait for remediation and a new frozen candidate. See [the follow-up plan](2026-11-03-review-followup.md). This is supplemental evidence recorded after the package source was frozen; this documentation revision does not replace or rebuild the candidate.
 
 | Field | Frozen value |
 | --- | --- |
