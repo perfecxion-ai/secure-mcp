@@ -1,0 +1,141 @@
+{
+  "classification": "Frozen validation candidate; supplemental evidence, not publication approval",
+  "sourceCommit": "7b05016eb832031efd0f2521bb6bef22e321ee28",
+  "workflowRun": 41698956383,
+  "workflowUrl": "https://github.com/perfecxion-ai/secure-mcp/actions/runs/41698956383",
+  "artifactId": 13262273286,
+  "artifactExpiresAt": "2027-02-01T18:59:07Z",
+  "package": "@perfecxion/secure-mcp-server",
+  "version": "2.0.0-alpha.3",
+  "hashes": {
+    "perfecxion-secure-mcp-server-2.0.0-alpha.3.tgz": "9e19181fe772c0bacbeac68cb8a0fb03d85c7f978b6db79480c8d3c0a0953eaa",
+    "sbom.cdx.json": "03aedb429525bade2e9b112b8b18e836520ef2d679a83f87f6ede1f8921a422e"
+  },
+  "provenance": "verified against exact main commit and CI workflow",
+  "sbom": "verified signature and exact predicate match",
+  "publication": "none",
+  "quality": {
+    "tests": 208,
+    "testFailures": 0,
+    "ciValidation": "success",
+    "ciAttestation": "success"
+  },
+  "consumers": [
+    {
+      "platform": "linux",
+      "architecture": "x64",
+      "node": "v24.22.1",
+      "npm": "11.19.1",
+      "result": "pass",
+      "packageSha256": "9e19181fe772c0bacbeac68cb8a0fb03d85c7f978b6db79480c8d3c0a0953eaa",
+      "protocols": [
+        "2026-07-28",
+        "2025-11-25"
+      ],
+      "graph": "match",
+      "productionAuditFindings": 0,
+      "dependencySignatures": "pass",
+      "retainedFileHashes": {
+        "package-smoke.json": "7edc2d89c373ec217f3a12c067626651be0d346b5a32b8513c6bcf1cd43acd4d",
+        "package-lock.json": "1a9eaf3b8abc4fb25e542a6b59411870ba37ace34c737fa9b1f13898377f1623",
+        "dependency-comparison.json": "378069a1f5e43044c5d12a9851535cf3805756da5ae92319d3a005f49b7cf31a",
+        "dependency-audit.json": "f36f91c9ca57c3a70cb58bcb2963ca644b0255176c1914b0253be5b5ed4dbd43",
+        "dependency-signatures.json": "0e2658b6cb827c95612e0d422bf36a044679dfaa60dccee8a6ef68f5ab6457f1"
+      }
+    },
+    {
+      "platform": "linux",
+      "architecture": "arm64",
+      "node": "v24.22.1",
+      "npm": "11.19.1",
+      "result": "pass",
+      "packageSha256": "9e19181fe772c0bacbeac68cb8a0fb03d85c7f978b6db79480c8d3c0a0953eaa",
+      "protocols": [
+        "2026-07-28",
+        "2025-11-25"
+      ],
+      "graph": "match",
+      "productionAuditFindings": 0,
+      "dependencySignatures": "pass",
+      "retainedFileHashes": {
+        "package-smoke.json": "e726cfb572c3cb14bab073c0697f214d9095cdb5c1173c7de9ec835c1cdde80e",
+        "package-lock.json": "1a9eaf3b8abc4fb25e542a6b59411870ba37ace34c737fa9b1f13898377f1623",
+        "dependency-comparison.json": "378069a1f5e43044c5d12a9851535cf3805756da5ae92319d3a005f49b7cf31a",
+        "dependency-audit.json": "f36f91c9ca57c3a70cb58bcb2963ca644b0255176c1914b0253be5b5ed4dbd43",
+        "dependency-signatures.json": "0e2658b6cb827c95612e0d422bf36a044679dfaa60dccee8a6ef68f5ab6457f1"
+      }
+    }
+  ],
+  "runtimeBinding": {
+    "sourceCommit": "7b05016eb832031efd0f2521bb6bef22e321ee28",
+    "tarballSha256": "9e19181fe772c0bacbeac68cb8a0fb03d85c7f978b6db79480c8d3c0a0953eaa",
+    "result": "match",
+    "runtimeModuleCount": 15,
+    "collectorMatch": true,
+    "enduranceSource": "23d8647fe0dee1455f3f0f320f1399ff568198b8",
+    "browserSource": "23d8647fe0dee1455f3f0f320f1399ff568198b8",
+    "runtimeModules": {
+      "dist/audit.js": "ad8bba80114a17d3e6f340557b4e99f041d774fbef6bb850543d45d3455b4b49",
+      "dist/cli.js": "82da7820861e583d4e2d06c4b63f4e062424375bb30348828a823925afba8459",
+      "dist/collector.js": "fec836cf193d597ba3bc045e3e02bb670a530734a19e42f860588a014f513437",
+      "dist/config.js": "bfe347b96c5f572ff6a73ffcc6a959efa6bc07122960c21fe39ab9311a29e975",
+      "dist/errors.js": "af76f4cb2b27c84c7cfebae19dfcde21c524531072a5be4b5f941bd0a981cd50",
+      "dist/execution.js": "83db43ea5d70332738719d7bff891391d507c9f7b6c55953b0345a284dd6f9d1",
+      "dist/http.js": "7321d7e361a0a8dec65f2db547c51c29226c87d81d1b5f8d64e6e6c05fab42e3",
+      "dist/identity.js": "c02afb6b9864f2983a121a796d4dfc4f734737aa54f95382c74c1644c2ffc446",
+      "dist/index.js": "6dea6f8086c1cfce9ea22c7b25c293e80b933c5eaeac039c7a3753c631fdeed9",
+      "dist/input.js": "2c6aa227bdea5815ab7907404d0526173f66cb6d7d8b9f91e09114d78141c7ee",
+      "dist/node-version.js": "865d458c1555b6a95088b870db69a8443f7389de307bf781c26bfafe94588ae4",
+      "dist/policy.js": "23b3f3c42894e8849e5bda94a21db709906eac69b049d426c52b53889b326ac3",
+      "dist/runtime.js": "ec01a5b4d11459c8520f767e926db506122034f069f61df95b0491675c75b55f",
+      "dist/startup-diagnostics.js": "f6d1474e92f4aa6bab8fb3fd27b9e68dce891be7c1c96c6d82885c3e4755f674",
+      "dist/tools.js": "1abd5ebaa49e033605e465b64c70dc0912be780191f82c2bee63f1cc0cf2ea86"
+    },
+    "consumerArchitectures": [
+      "x64",
+      "arm64"
+    ],
+    "consumerGraphs": "both match the signed build inventory",
+    "productionAuditFindings": 0,
+    "dependencySignatures": "both passed",
+    "scope": "The package runtime bytes match the tested browser/endurance build; this does not establish human or independent operator acceptance"
+  },
+  "localDryRun": {
+    "result": "passed",
+    "registryWrite": false,
+    "publishingAuthorizationVerified": false
+  },
+  "registryObservation": {
+    "checkedAt": "2026-11-03T18:59:50.816336+00:00",
+    "status": 200,
+    "registry": "https://registry.npmjs.org/@perfecxion%2fsecure-mcp-server",
+    "package": "@perfecxion/secure-mcp-server",
+    "versions": [
+      "1.0.0"
+    ],
+    "distTags": {
+      "latest": "1.0.0"
+    },
+    "targetVersion": "2.0.0-alpha.3",
+    "targetVersionAbsent": true,
+    "publicationPerformed": false
+  },
+  "kit": {
+    "name": "secure-mcp-alpha3-validation-2026-11-03",
+    "filesChecksummed": 119,
+    "archiveSha256": "e4c108b509697d15d7091247381ca3dffc77ea849546c66654b1f9433c89d436"
+  },
+  "outstanding": [
+    "Independent exact-version VS Code and Cursor restart/return-use receipts",
+    "Independent issuer and audit operator trial for retained remote launch claims",
+    "Authenticated withdrawal authority",
+    "Separate source-tag and exact-artifact npm authorization, hosted preflight and protected approval"
+  ],
+  "publicationState": {
+    "tagCreated": false,
+    "approvalVariablesSet": false,
+    "publisherDispatched": false,
+    "npmPublished": false,
+    "latest": "1.0.0"
+  }
+}

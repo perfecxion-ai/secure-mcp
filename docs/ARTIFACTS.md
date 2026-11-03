@@ -4,7 +4,7 @@ CI validates a package installation and restricted container before uploading th
 
 For successful pushes to protected `main`, a separate job downloads those artifacts and creates build-provenance and SBOM attestations. That job has signing permissions but never checks out source, installs dependencies, or executes the package. Pull requests have read-only permissions and do not create attestations. npm publication has no approved artifact; its separate setup and approval gates are described in [the publisher checklist](NPM_PUBLISHING.md).
 
-Development is alpha.3, with no frozen candidate or selected digest. The [alpha.1 record](validation/CANDIDATE.md) and [held alpha.2 record](validation/ALPHA2.md) describe retained historical artifacts, not acceptance of the current source. Once the successor's exact main commit is selected, prepare its immutable artifact without rebuilding:
+The [alpha.3 candidate record](validation/ALPHA3.md) identifies the frozen source and digest. The [alpha.1 record](validation/CANDIDATE.md) and [held alpha.2 record](validation/ALPHA2.md) describe retained historical artifacts, not acceptance of the current source. Use the selected exact main commit to prepare its immutable artifact without rebuilding:
 
 ```bash
 node scripts/prepare-validation.mjs EXACT_MAIN_COMMIT /tmp/secure-mcp-candidate

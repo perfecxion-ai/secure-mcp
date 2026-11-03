@@ -1,6 +1,6 @@
 # Secure MCP execution roadmap
 
-Current work follows [the alpha.3 review follow-up](validation/2026-11-03-review-followup.md) under [the readiness tracker](https://github.com/perfecxion-ai/secure-mcp/issues/57), including its agent assignments, dependency order and separate publication/adoption gates. Alpha.2 is held for remediation, and no alpha.3 candidate is frozen. The work packages below preserve the original assessment roadmap; they are not completed acceptance receipts.
+Current work follows [the alpha.3 review follow-up](validation/2026-11-03-review-followup.md) under [the readiness tracker](https://github.com/perfecxion-ai/secure-mcp/issues/57), including its agent assignments, dependency order and separate publication/adoption gates. Alpha.2 remains held; the [alpha.3 candidate](validation/ALPHA3.md) is frozen for independent acceptance after remediation. The work packages below preserve the original assessment roadmap; they are not completed acceptance receipts.
 
 Status: alpha implementation and local validation work merged, October 27, 2026. Baseline: `1df0af55bd2cebde48d643e3d3c852e64d37ce18`. The first alpha is implemented and merged; see [the execution record](EXECUTION.md) for evidence, PR boundaries, and remaining gates. This plan follows the [repository assessment](reviews/2026-10-26-assessment.md) and its reproducible findings.
 
