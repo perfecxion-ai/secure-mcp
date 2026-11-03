@@ -1,0 +1,10 @@
+{
+  "id": "edge-worker-07",
+  "owner": "Infrastructure",
+  "environment": "test",
+  "role": "Status polling worker",
+  "approvedDestination": "status.example.test",
+  "schedule": "hourly at minute 00",
+  "changeReference": "CHG-1042",
+  "changeApprovalVerified": false
+}

@@ -1,0 +1,11 @@
+{
+  "id": "ALERT-1042",
+  "asset": "edge-worker-07",
+  "observedAt": "2026-10-30T12:00:00Z",
+  "severity": "high",
+  "signal": "Outbound HTTPS request from curl",
+  "destination": "status.example.test",
+  "parentProcess": "scheduled-healthcheck",
+  "bytesSent": 192,
+  "evidence": "Sanitized synthetic fixture; no live telemetry"
+}
