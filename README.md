@@ -117,7 +117,7 @@ npm audit
 
 The Node test suite exercises real SDK transports, signed access tokens, local JWKS, cross-user policy, filesystem escape attempts, cancellation, and output limits. V1 tests and manifests are preserved in [legacy](https://github.com/perfecxion-ai/secure-mcp/blob/6fec1886ca2e400694007819384105fdba9eb6a6/legacy/README.md), with their original failures recorded rather than treated as passing.
 
-Read [operations](docs/OPERATIONS.md), [migration](docs/MIGRATION.md), [execution status](https://github.com/perfecxion-ai/secure-mcp/blob/6fec1886ca2e400694007819384105fdba9eb6a6/docs/EXECUTION.md), and the [roadmap](https://github.com/perfecxion-ai/secure-mcp/blob/6fec1886ca2e400694007819384105fdba9eb6a6/docs/ROADMAP.md). Configuration is defined by `src/config.ts` and rejects unknown keys. Report vulnerabilities using [SECURITY.md](SECURITY.md).
+Read [operations](docs/OPERATIONS.md), [migration](docs/MIGRATION.md), [active execution plan](https://github.com/perfecxion-ai/secure-mcp/issues/57), and the [original roadmap](https://github.com/perfecxion-ai/secure-mcp/blob/6fec1886ca2e400694007819384105fdba9eb6a6/docs/ROADMAP.md). Configuration is defined by `src/config.ts` and rejects unknown keys. Report vulnerabilities using [SECURITY.md](SECURITY.md).
 
 ## License
 

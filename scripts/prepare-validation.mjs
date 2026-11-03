@@ -8,6 +8,13 @@ import {
   verifyWorkflowRun,
 } from './lib/validation-artifact.mjs';
 
+// Escape display punctuation without changing decoded signed JSON values.
+const evidenceJson = (value) =>
+  JSON.stringify(value, null, 2).replace(
+    /[\u2013\u2014]/g,
+    (character) => `\\u${character.charCodeAt(0).toString(16)}`,
+  ) + '\n';
+
 // Read-only GitHub operations. Promote the exact successful main artifact, never rebuild it.
 const [sha, destination] = process.argv.slice(2);
 assert.match(sha ?? '', /^[a-f0-9]{40}$/, 'Supply an exact main commit SHA');
@@ -69,22 +76,13 @@ const manifest = {
   sbom: 'verified signature and exact predicate match',
   publication: 'none',
 };
-await writeFile(
-  join(directory, 'validation-manifest.json'),
-  JSON.stringify(manifest, null, 2) + '\n',
-);
+await writeFile(join(directory, 'validation-manifest.json'), evidenceJson(manifest));
 await writeFile(
   join(directory, 'SHA256SUMS'),
   Object.entries(hashes)
     .map(([name, hash]) => `${hash}  ${name}`)
     .join('\n') + '\n',
 );
-await writeFile(
-  join(directory, 'provenance-verification.json'),
-  JSON.stringify(provenance, null, 2) + '\n',
-);
-await writeFile(
-  join(directory, 'sbom-verification.json'),
-  JSON.stringify(sbomVerification, null, 2) + '\n',
-);
+await writeFile(join(directory, 'provenance-verification.json'), evidenceJson(provenance));
+await writeFile(join(directory, 'sbom-verification.json'), evidenceJson(sbomVerification));
 console.log(JSON.stringify(manifest, null, 2));

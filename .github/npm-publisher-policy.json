@@ -1,7 +1,25 @@
 {
-  "enabled": false,
+  "enabled": true,
   "environment": "npm-alpha",
   "environmentId": 26083491597,
   "reviewerIds": [38704968],
-  "settingsReceipt": null
+  "settingsReceipt": {
+    "package": "@perfecxion/secure-mcp-server",
+    "repository": "perfecxion-ai/secure-mcp",
+    "workflow": "publish.yml",
+    "environment": "npm-alpha",
+    "environmentId": 26083491597,
+    "directPublish": true,
+    "adminBypassDisabled": true,
+    "reviewedAt": "2026-11-03T01:44:15Z",
+    "reviewedBy": 38704968,
+    "evidence": {
+      "githubEnvironment": "Authenticated API readback: environment ID, required reviewer, self-review prevention and exact tag restriction",
+      "adminBypass": "Maintainer confirmed disabled and saved in GitHub UI",
+      "npmPublisher": "Maintainer supplied saved npm UI configuration matching repository, workflow and environment; permissions include npm publish and npm stage publish",
+      "npmStatus": "Pending validation",
+      "npmValidationDeadline": "2026-11-05T01:43:00Z",
+      "liveOidcPublication": "Not performed; first separately approved publication is required to validate this trust"
+    }
+  }
 }
