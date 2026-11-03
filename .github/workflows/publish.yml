@@ -1,14 +1,156 @@
-name: Release hold
+name: Publish approved npm alpha
 on:
   workflow_dispatch:
+    inputs:
+      source_sha:
+        description: Exact reviewed source commit, also targeted by v2.0.0-alpha.2
+        required: true
+        type: string
+      tarball_sha256:
+        description: Independently selected SHA-256 from the candidate packet
+        required: true
+        type: string
+      ci_run:
+        description: Successful main CI run that built and attested the candidate
+        required: true
+        type: string
 permissions:
   contents: read
+  actions: read
+  attestations: read
+concurrency:
+  group: npm-alpha-publication
+  cancel-in-progress: false
 jobs:
-  release-hold:
+  preflight:
+    name: Verify candidate without publishing authority
     runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    env:
+      MCP_SOURCE_SHA: ${{ inputs.source_sha }}
+      MCP_TARBALL_SHA256: ${{ inputs.tarball_sha256 }}
+      MCP_CI_RUN: ${{ inputs.ci_run }}
+      MCP_APPROVED_SOURCE: ${{ vars.NPM_ALPHA_APPROVED_SOURCE }}
+      MCP_APPROVED_SHA256: ${{ vars.NPM_ALPHA_APPROVED_SHA256 }}
     steps:
-      - name: Block publication until alpha release gates are reviewed
+      - name: Require the reviewed tag and source before checkout
+        shell: bash
         run: |
-          echo "Automatic publication is disabled during the v2 rebuild."
-          echo "CI produces verified artifacts. Release approval and provenance wiring remain separate work."
-          exit 1
+          set -euo pipefail
+          [[ "$MCP_SOURCE_SHA" =~ ^[a-f0-9]{40}$ ]]
+          [[ "$MCP_TARBALL_SHA256" =~ ^[a-f0-9]{64}$ ]]
+          [[ "$MCP_CI_RUN" =~ ^[1-9][0-9]*$ ]]
+          [[ "$GITHUB_REPOSITORY" == perfecxion-ai/secure-mcp ]]
+          [[ "$GITHUB_EVENT_NAME" == workflow_dispatch ]]
+          [[ "$GITHUB_REF" == refs/tags/v2.0.0-alpha.2 ]]
+          [[ "$GITHUB_SHA" == "$MCP_SOURCE_SHA" ]]
+          [[ "$GITHUB_WORKFLOW_SHA" == "$MCP_SOURCE_SHA" ]]
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ inputs.source_sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: '24.22.1'
+          package-manager-cache: false
+      - name: Verify publisher gate and existing environment protections
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: node scripts/check-npm-publication-gate.mjs "$MCP_SOURCE_SHA" "$MCP_TARBALL_SHA256" "$MCP_CI_RUN"
+      - name: Reverify the candidate, record registry state and dry-run
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: node scripts/npm-preflight.mjs "$MCP_SOURCE_SHA" "$MCP_TARBALL_SHA256" "$MCP_CI_RUN" "$RUNNER_TEMP/npm-candidate" --publisher-preflight
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: npm-publication-preflight
+          path: |
+            ${{ runner.temp }}/npm-candidate/npm-preflight.json
+            ${{ runner.temp }}/npm-candidate/npm-dry-run.json
+            ${{ runner.temp }}/npm-candidate/provenance-verification.json
+            ${{ runner.temp }}/npm-candidate/sbom-verification.json
+          if-no-files-found: error
+  publish:
+    name: Publish approved bytes
+    needs: preflight
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    environment: npm-alpha
+    permissions:
+      contents: read
+      actions: read
+      attestations: read
+      id-token: write
+    env:
+      MCP_SOURCE_SHA: ${{ inputs.source_sha }}
+      MCP_TARBALL_SHA256: ${{ inputs.tarball_sha256 }}
+      MCP_CI_RUN: ${{ inputs.ci_run }}
+      MCP_APPROVED_SOURCE: ${{ vars.NPM_ALPHA_APPROVED_SOURCE }}
+      MCP_APPROVED_SHA256: ${{ vars.NPM_ALPHA_APPROVED_SHA256 }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ inputs.source_sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: '24.22.1'
+          package-manager-cache: false
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: npm-publication-preflight
+          path: preflight
+      - name: Recheck approval, protected settings and exact artifact before publishing
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: node scripts/publish-npm.mjs "$MCP_SOURCE_SHA" "$MCP_TARBALL_SHA256" "$MCP_CI_RUN" preflight/npm-preflight.json "$RUNNER_TEMP/npm-publication"
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: npm-publication-receipt
+          path: ${{ runner.temp }}/npm-publication/npm-publication.json
+          if-no-files-found: error
+  verify:
+    name: Verify registry and exact-version consumer
+    needs: publish
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    permissions:
+      contents: read
+      actions: read
+      attestations: read
+    env:
+      MCP_SOURCE_SHA: ${{ inputs.source_sha }}
+      MCP_TARBALL_SHA256: ${{ inputs.tarball_sha256 }}
+      MCP_CI_RUN: ${{ inputs.ci_run }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ inputs.source_sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: '24.22.1'
+          package-manager-cache: false
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: npm-publication-preflight
+          path: preflight
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: npm-publication-receipt
+          path: publication
+      - run: npm ci --ignore-scripts
+      - name: Check registry bytes, tags, exact-version installation and provenance
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: node scripts/verify-npm-publication.mjs "$MCP_SOURCE_SHA" "$MCP_TARBALL_SHA256" "$MCP_CI_RUN" preflight/npm-preflight.json publication/npm-publication.json "$RUNNER_TEMP/npm-registry-check"
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        if: always()
+        with:
+          name: npm-registry-verification
+          path: |
+            ${{ runner.temp }}/npm-registry-check/*.json
+            ${{ runner.temp }}/npm-registry-check/consumer/package.json
+            ${{ runner.temp }}/npm-registry-check/consumer/package-lock.json
+            ${{ runner.temp }}/npm-registry-check/smoke/*.json
+          if-no-files-found: warn

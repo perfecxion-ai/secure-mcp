@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import { readFile, access } from 'node:fs/promises';
 import { VERSION } from '../dist/index.js';
+import { validatePublicationWorkflow } from './lib/npm-publication.mjs';
 
 const pkg = JSON.parse(await readFile('package.json', 'utf8'));
 const server = JSON.parse(await readFile('server.json', 'utf8'));
@@ -19,8 +20,7 @@ assert.equal(pkg.publishConfig.registry, 'https://registry.npmjs.org/');
 assert.deepEqual(pkg.os, ['linux']);
 await access(pkg.bin['secure-mcp']);
 const publication = await readFile('.github/workflows/publish.yml', 'utf8');
-assert.ok(!publication.includes('npm publish'));
-assert.match(publication, /exit 1/);
+validatePublicationWorkflow(publication);
 console.log(
-  'Package, runtime, registry metadata, and publication hold agree. No artifact published.',
+  'Package, runtime, registry metadata, and publication policy agree. No artifact published.',
 );

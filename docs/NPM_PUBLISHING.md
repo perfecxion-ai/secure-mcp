@@ -1,12 +1,12 @@
 # npm publication preparation
 
-This is a settings and evidence checklist for issues [48](https://github.com/perfecxion-ai/secure-mcp/issues/48) and [49](https://github.com/perfecxion-ai/secure-mcp/issues/49). The workflow remains on hold. Nothing here authorizes a registry write or changes the existing GitHub alpha.1 release.
+This is a settings and evidence checklist for issues [48](https://github.com/perfecxion-ai/secure-mcp/issues/48) and [49](https://github.com/perfecxion-ai/secure-mcp/issues/49). Publication remains disabled by the checked-in publisher policy and unset exact-artifact approval variables. Nothing here authorizes a registry write or changes the existing GitHub alpha.1 release.
 
 ## Observed account and repository state
 
 During the alpha.2 preparation, a successful public registry read returned only version `1.0.0`, with `latest=1.0.0`. Public npm owner metadata listed `scthornton`. That identifies a listed owner, not proof that the current session can authenticate as that owner or change publisher settings. An explicit npm authentication check did not establish an authenticated identity in this session; publisher settings remain unverified.
 
-The GitHub repository is `perfecxion-ai/secure-mcp`. Its main branch requires the `Validate runtime` check with strict up-to-date checks and enforces protection for administrators. No GitHub environments were returned by the authenticated environment-list request. These are observations at preparation time; recheck settings before approval.
+The GitHub repository is `perfecxion-ai/secure-mcp`. Its main branch requires the `Validate runtime` check with strict up-to-date checks and enforces protection for administrators. The protected `npm-alpha` environment now exists (ID `26083491597`). Authenticated API reads confirmed required reviewer `scthornton` (User ID `38704968`), self-review prevention and one deployment tag restriction, `v2.0.0-alpha.2`. The maintainer confirmed that administrator bypass was disabled and saved in the GitHub UI. This is a maintainer UI confirmation, not an API-verified field; the documented REST schema does not expose that setting consistently. npm trusted-publisher settings remain unverified. These are observations at preparation time; recheck settings before approval.
 
 ## Proposed settings
 
@@ -33,7 +33,7 @@ The [npm trusted-publisher documentation](https://docs.npmjs.com/trusted-publish
 
 ## Preflight and approval packet
 
-The dedicated `npm-preflight.yml` workflow implements read-only preparation. It has no publishing token, OIDC permission or protected-environment declaration; it cannot silently create an unprotected publishing environment. `publish.yml` remains a hard hold. The actual protected publishing job, verified npm settings and post-publication checks in issue 48 remain unfinished.
+The dedicated `npm-preflight.yml` workflow implements read-only preparation. It has no publishing token, OIDC permission or protected-environment declaration; it cannot silently create an unprotected publishing environment. `publish.yml` now contains separate preflight, protected publication and verification jobs, but remains disabled by `.github/npm-publisher-policy.json` and exact-artifact repository variables. No actual publication or complete end-to-end publisher run has occurred. Verified npm settings, the final candidate and its separate approval remain outstanding.
 
 After the final candidate source and digest are selected, a maintainer must separately authorize creation of the matching `v2.0.0-alpha.2` tag. The workflow must already exist at that commit. Dispatch the preflight from that exact tag with its source SHA, independently selected tarball SHA-256 and successful main CI run ID. It creates no tags and rejects branch dispatches, mismatched workflow/checkout sources, alpha.1 and registry errors. Do not create a provisional tag merely to test this workflow.
 
@@ -46,6 +46,18 @@ Prepare a read-only job that verifies the exact candidate version, source SHA, t
 The approval packet must include the exact artifact, workflow/ref/environment, current registry versions and all dist-tags, expected unchanged `latest`, validation receipts, account settings and withdrawal authority. A failed registry request is not proof that a version is unused. The publishing job must reverify the approved bytes immediately before publishing and must not rebuild or repack them.
 
 After separate approval, publish the same tarball with scripts disabled, provenance enabled, public access, the explicit registry and `--tag alpha`. Verify registry metadata, every dist-tag, downloaded bytes, a fresh exact-version consumer, its retained dependency graph, package smoke results, vulnerability audit and signatures/provenance before announcing availability.
+
+## Activate only after settings and candidate review
+
+The checked-in policy starts with `enabled: false`, the observed environment ID, the proposed reviewer ID and `settingsReceipt: null`. Before freezing the candidate, record a sanitized settings receipt and review the policy change. The receipt identifies the package, repository, `publish.yml`, `npm-alpha`, environment ID, actual reviewer and UTC review time. Set its `directPublish` and `adminBypassDisabled` fields true only after those settings are independently checked. Never copy an example as evidence. Live environment reads additionally require the same ID, reviewer, self-review prevention and exact tag restriction.
+
+After selecting the final source and tarball, separate publication approval must identify both bytes and source. Only then enable repository variables `NPM_ALPHA_APPROVED_SOURCE` and `NPM_ALPHA_APPROVED_SHA256` with those exact values. Their presence does not replace the required human environment review. Dispatch `publish.yml` from the approved tag with matching source, digest and CI run inputs. No workflow creates or moves that tag, changes repository settings or configures npm ownership.
+
+The first job verifies existing protections, artifact evidence, registry state and dry-run without OIDC. The `publish` job waits for `npm-alpha` approval, rechecks settings and the live approval history for this run, downloads and cryptographically verifies the candidate again, and refuses changed tags or an existing version. Only that job has `id-token: write`. It runs no install, tests, lifecycle hooks or build, and uses empty npm configuration files to prevent stored-token fallback. An administrator bypass alone cannot pass the explicit expected-reviewer approval-history check.
+
+A separate job without OIDC downloads the registry tarball, checks the approved SHA-256 and all dist-tags, installs the exact registry version, retains its lockfile, and runs audit/signature/provenance and production-graph checks. The pinned npm CLI returns cryptographically verified bundles with `audit signatures --json --include-attestations`; the verifier binds the root package subject, archive digest, signing workflow identity, source commit, tag and publication run/attempt. That publication attempt is read from the same workflow run's publication receipt, so rerunning verification does not confuse it with a newer verification attempt or the original build CI run. Registry-mode package smoke installs by exact version, compares installed package files with the approved archive and then exercises the actual installed CLI under both protocols. Verification failures block announcement, even if npm accepted publication. Rerun a failed verification job after investigating; do not rerun publication as a substitute for inspection.
+
+Local tests cover policy failures and fixture behavior. They do not prove npm OIDC ownership, GitHub environment approval execution, registry publication or future artifact provenance. Those remain live, separately approved release steps. The environment controls follow [GitHub's documented API](https://docs.github.com/en/rest/deployments/environments), with explicit human evidence for settings that API responses do not expose.
 
 ## Withdrawal authority
 

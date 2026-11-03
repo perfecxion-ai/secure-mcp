@@ -140,7 +140,7 @@ test('npm absence requires successful metadata and preserves the whole dist-tag 
   assert.equal(registry['dist-tags'].latest, '1.0.0');
 });
 
-test('manual preflight has read-only permissions and the publication hold remains intact', async () => {
+test('manual preflight has read-only permissions and cannot publish', async () => {
   const workflow = await readFile('.github/workflows/npm-preflight.yml', 'utf8');
   assert.match(workflow, /workflow_dispatch:/);
   assert.doesNotMatch(workflow, /\b(?:push|pull_request|schedule|environment|id-token):/);
@@ -152,9 +152,6 @@ test('manual preflight has read-only permissions and the publication hold remain
   for (const [, target] of workflow.matchAll(/uses:\s+(\S+)/g)) {
     assert.match(target!, /^[\w/-]+@[a-f0-9]{40}$/);
   }
-  const hold = await readFile('.github/workflows/publish.yml', 'utf8');
-  assert.match(hold, /exit 1/);
-  assert.doesNotMatch(hold, /npm publish|id-token:|secrets\./);
 });
 
 test('preflight npm command dry-runs an exact tarball without lifecycle hooks', async (t) => {
