@@ -1,0 +1,9 @@
+{
+  "id": "RUNBOOK-NETWORK-01",
+  "steps": [
+    "Compare destination, parent process and timestamp with the asset's expected polling job.",
+    "Verify change approval and inspect the actual command line before closing the alert.",
+    "Escalate to the asset owner if the destination, schedule or process differs, or approval cannot be established."
+  ],
+  "warning": "Matching fixture facts support a hypothesis, not proof that a live alert is benign."
+}

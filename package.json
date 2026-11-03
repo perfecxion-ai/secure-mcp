@@ -28,7 +28,9 @@
     "docs/INSTALL.md",
     "docs/validation/REAL_USER_VALIDATION.md",
     "docs/validation/TRIAL_RECEIPT.md",
-    "docs/validation/README.md"
+    "docs/validation/README.md",
+    "docs/DEMO.md",
+    "docs/TRUSTED_TOOLS.md"
   ],
   "sideEffects": false,
   "scripts": {
