@@ -58,55 +58,87 @@ try {
   } finally {
     await directory.close();
   }
+  // Bound queued and syncing records together; each frame is at most 4 KiB.
   let pending = 0;
   let healthy = true;
+  let flushing = false;
   let tail = Promise.resolve();
+  const queue = [];
   const sockets = new Set();
+  const flush = () => {
+    if (flushing) return;
+    flushing = true;
+    // Yield once so records arriving in the same turn share an append and fsync.
+    tail = new Promise((resolve) => setImmediate(resolve))
+      .then(async () => {
+        while (queue.length) {
+          const batch = queue.splice(0, 64);
+          const data = Buffer.concat(batch.map((entry) => entry.data));
+          if (!healthy || bytes + data.length > maxBytes) throw new Error('Journal unavailable');
+          await journal.writeFile(data);
+          await journal.sync();
+          bytes += data.length;
+          const acknowledgements = new Map();
+          for (const { socket } of batch)
+            acknowledgements.set(socket, (acknowledgements.get(socket) ?? 0) + 1);
+          for (const [socket, count] of acknowledgements) {
+            if (socket.destroyed) continue;
+            if (socket.writableLength + count > 4096) socket.destroy();
+            else socket.write(Buffer.alloc(count, 6));
+          }
+          pending -= batch.length;
+        }
+      })
+      .catch(() => {
+        healthy = false;
+        queue.length = 0;
+        pending = 0;
+        for (const socket of sockets) socket.destroy();
+      })
+      .finally(() => {
+        flushing = false;
+      });
+  };
   server = createServer((socket) => {
     sockets.add(socket);
     socket.once('close', () => sockets.delete(socket));
     socket.on('error', () => {});
     socket.setTimeout(2000, () => socket.destroy());
-    let data = Buffer.alloc(0);
-    let accepted = false;
+    let remainder = Buffer.alloc(0);
     socket.on('data', (chunk) => {
-      if (accepted) {
+      if (!healthy || chunk.length > 1024 * 4096) {
         socket.destroy();
         return;
       }
-      if (data.length + chunk.length > 4096) {
-        socket.destroy();
-        return;
-      }
-      data = Buffer.concat([data, chunk]);
-      if (!data.includes(10)) return;
-      accepted = true;
-      if (!healthy || pending >= 64 || data.at(-1) !== 10 || data.indexOf(10) !== data.length - 1) {
-        socket.destroy();
-        return;
-      }
-      try {
-        const event = JSON.parse(data.toString('utf8'));
-        if (event.schema !== 1 || typeof event.requestId !== 'string')
-          throw new Error('Invalid record');
-      } catch {
-        socket.destroy();
-        return;
-      }
-      pending++;
-      tail = tail
-        .then(async () => {
-          if (!healthy || bytes + data.length > maxBytes) throw new Error('Journal unavailable');
-          await journal.writeFile(data);
-          await journal.sync();
-          bytes += data.length;
-          socket.end(Buffer.from([6]));
-        })
-        .catch(() => {
-          healthy = false;
+      const data = Buffer.concat([remainder, chunk]);
+      let start = 0;
+      for (;;) {
+        const newline = data.indexOf(10, start);
+        if (newline === -1) break;
+        const frame = data.subarray(start, newline + 1);
+        if (frame.length > 4096 || pending >= 1024) {
           socket.destroy();
-        })
-        .finally(() => pending--);
+          return;
+        }
+        try {
+          const event = JSON.parse(frame.toString('utf8'));
+          if (event.schema !== 1 || typeof event.requestId !== 'string')
+            throw new Error('Invalid record');
+        } catch {
+          socket.destroy();
+          return;
+        }
+        // Copy the frame so a small queued record does not retain a large input chunk.
+        queue.push({ data: Buffer.from(frame), socket });
+        pending++;
+        flush();
+        start = newline + 1;
+      }
+      if (data.length - start > 4096) {
+        socket.destroy();
+        return;
+      }
+      remainder = Buffer.from(data.subarray(start));
     });
   });
   server.maxConnections = 64;

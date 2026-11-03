@@ -17,7 +17,10 @@ export interface AuditEvent {
   readonly method?: 'GET' | 'POST' | 'DELETE' | 'OPTIONS' | 'other';
   readonly status?: number;
 }
-export type AuditSink = (event: AuditEvent) => void | Promise<void>;
+export type AuditSink = ((event: AuditEvent) => void | Promise<void>) & {
+  // The dispatcher owns this sink and closes it after draining accepted writes.
+  close?: () => void | Promise<void>;
+};
 const watchedStreams = new WeakSet<Writable>();
 export function jsonAuditSink(stream: Writable): AuditSink {
   if (!watchedStreams.has(stream)) {
@@ -49,6 +52,7 @@ export class AuditDispatcher {
   private readonly pending = new Set<Promise<void>>();
   private failures = 0;
   private dropped = 0;
+  private sinkClosing: Promise<void> | undefined;
   constructor(
     private readonly sink: AuditSink,
     private readonly capacity = 64,
@@ -92,7 +96,10 @@ export class AuditDispatcher {
       }),
     ]);
     clearTimeout(timer);
-    return this.pending.size;
+    const remaining = this.pending.size;
+    this.sinkClosing ??= Promise.resolve().then(() => this.sink.close?.());
+    await this.sinkClosing;
+    return remaining;
   }
 }
 

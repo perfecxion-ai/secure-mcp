@@ -6,6 +6,7 @@ import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
 import { once } from 'node:events';
 import { SecureRuntime, socketAuditSink } from '../../dist/index.js';
+import { verifyBursts } from './bursts.mjs';
 
 const directory = await mkdtemp(join(tmpdir(), 'mcp-audit-'));
 const socket = join(directory, 'audit.sock');
@@ -31,6 +32,7 @@ async function create(timeoutMs = 1000) {
   return SecureRuntime.create({ config: { allowedTools: ['policy_status'], audit: { socketPath: socket, timeoutMs, maxPending: 64 } } });
 }
 try {
+  report.bursts = await verifyBursts();
   await start();
   runtime = await create();
   const principal = { issuer: 'fixture', subject: 'private-subject-sentinel', scopes: ['policy:read'] };
