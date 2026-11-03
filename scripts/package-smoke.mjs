@@ -214,20 +214,77 @@ try {
       assert.ok(!audit.includes(sentinel), 'Fixture content or path in audit');
   }
   // A caller closing stdin must not leave a daemon behind.
-  const child = spawn(binary, ['--workspace', workspace], { stdio: ['pipe', 'pipe', 'pipe'] });
-  child.stdin.end();
-  const exit = await new Promise((resolveExit, reject) => {
-    const timer = setTimeout(() => {
-      child.kill('SIGKILL');
-      reject(new Error('CLI did not exit after stdin EOF'));
-    }, 5000);
-    child.once('error', reject);
-    child.once('exit', (value) => {
-      clearTimeout(timer);
-      resolveExit(value);
+  const exitsAfterEof = async (command, args) => {
+    const child = spawn(command, args, { stdio: ['pipe', 'pipe', 'pipe'] });
+    child.stdout.resume();
+    child.stderr.resume();
+    child.stdin.end();
+    return new Promise((resolveExit, reject) => {
+      const timer = setTimeout(() => {
+        child.kill('SIGKILL');
+        reject(new Error('Server did not exit after stdin EOF'));
+      }, 5000);
+      child.once('error', (error) => {
+        clearTimeout(timer);
+        reject(error);
+      });
+      child.once('exit', (value) => {
+        clearTimeout(timer);
+        resolveExit(value);
+      });
     });
+  };
+  assert.equal(await exitsAfterEof(binary, ['--workspace', workspace]), 0);
+  let triage;
+  if (files.includes('package/examples/triage/verify.mjs')) {
+    const example = join(directory, 'node_modules/@perfecxion/secure-mcp-server/examples/triage');
+    const result = JSON.parse(
+      execFileSync(process.execPath, [join(example, 'verify.mjs')], {
+        cwd: directory,
+        encoding: 'utf8',
+        timeout: 10_000,
+        maxBuffer: 1024 * 1024,
+      }),
+    );
+    assert.equal(result.resourceDenial, 'pass');
+    assert.equal(result.auditFailure, 'fail closed');
+    assert.equal(result.restart, 'pass');
+    assert.equal(result.auditPrivacy, 'pass');
+    assert.equal(await exitsAfterEof(process.execPath, [join(example, 'server.mjs')]), 0);
+    // Inject a real handler which ignores cancellation and keeps a process handle.
+    // The installed server's shutdown path must still force a nonzero exit.
+    const preload = join(directory, 'stubborn-handler.mjs');
+    await writeFile(
+      preload,
+      `
+import { SecureRuntime, defineTool } from '@perfecxion/secure-mcp-server';
+import { z } from 'zod';
+const original = SecureRuntime.create;
+SecureRuntime.create = async () => {
+  let started;
+  const running = new Promise(resolve => { started = resolve; });
+  const runtime = await original.call(SecureRuntime, {
+    config: { allowedTools: ['stubborn'], localScopes: ['test:read'], limits: { shutdownMs: 20 } },
+    audit: () => {},
+    tools: [defineTool({ name: 'stubborn', description: 'Test fixture',
+      requiredScopes: ['test:read'], readOnly: true, inputSchema: z.strictObject({}),
+      async invoke() { setInterval(() => {}, 1000); started(); return new Promise(() => {}); }
+    })]
   });
-  assert.equal(exit, 0);
+  void runtime.invoke(runtime.localPrincipal(), 'stubborn', {});
+  await running;
+  await import('node:fs/promises').then(fs => fs.writeFile(new URL('./handler-started', import.meta.url), 'yes'));
+  return runtime;
+};
+`,
+    );
+    assert.equal(
+      await exitsAfterEof(process.execPath, ['--import', preload, join(example, 'server.mjs')]),
+      1,
+    );
+    assert.equal(await readFile(join(directory, 'handler-started'), 'utf8'), 'yes');
+    triage = { workflow: 'pass', stdinEof: 'pass', uncooperativeHandlerExit: 1 };
+  }
   const report = {
     result: dependencyEvidence?.graph === 'different' ? 'failed_dependency_comparison' : 'pass',
     node: process.version,
@@ -246,6 +303,7 @@ try {
     protocols,
     auditPrivacy: 'pass',
     stdinEof: 'pass',
+    ...(triage && { triage }),
     ...(dependencyEvidence && { dependencyEvidence }),
     npm: execFileSync('npm', ['--version'], { encoding: 'utf8' }).trim(),
   };

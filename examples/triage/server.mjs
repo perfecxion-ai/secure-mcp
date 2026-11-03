@@ -10,11 +10,12 @@ function stop() {
     try {
       const remaining = await runtime.close();
       await handle.close();
-      process.exitCode = remaining ? 1 : 0;
-    } catch {
-      process.exitCode = 1;
-    } finally {
       clearTimeout(force);
+      // Trusted extensions can retain handles after the grace period. Do not
+      // leave a detached process behind when the host has closed the session.
+      process.exit(remaining ? 1 : 0);
+    } catch {
+      process.exit(1);
     }
   })();
   return stopping;
