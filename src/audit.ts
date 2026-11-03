@@ -141,6 +141,15 @@ export class AuditDispatcher {
   }
 }
 
+interface AuditRequestContext {
+  readonly requestId: string;
+  toolOutcomeRecorded: boolean;
+}
+const requests = new AsyncLocalStorage<AuditRequestContext>();
+export function currentAuditRequest(): AuditRequestContext | undefined {
+  return requests.getStore();
+}
+
 // Observe the SDK's structured response before serialization. Never parse or log
 // response text, request IDs supplied by clients, error messages, or tool arguments.
 export class AuditedMcpServer extends McpServer {
@@ -151,7 +160,11 @@ export class AuditedMcpServer extends McpServer {
     transport.send = async (message, options) => {
       try {
         if ('error' in message) await this.observeProtocolError?.(message.error.code);
-        if ('result' in message && message.result.isError === true)
+        if (
+          'result' in message &&
+          message.result.isError === true &&
+          !currentAuditRequest()?.toolOutcomeRecorded
+        )
           await this.observeToolRejection?.();
       } catch {
         // Audit loss must deny the call without suppressing its failure response.
@@ -171,7 +184,25 @@ export class AuditedMcpServer extends McpServer {
       }
       await send(message, options);
     };
-    await super.connect(transport);
+    const start = transport.start;
+    transport.start = async () => {
+      // The SDK installs onmessage before start. Wrap it here so buffered
+      // messages delivered during start have the same context as later input.
+      const onmessage = transport.onmessage;
+      transport.onmessage = (message, extra) => {
+        if ('method' in message && 'id' in message)
+          requests.run({ requestId: randomUUID(), toolOutcomeRecorded: false }, () =>
+            onmessage?.(message, extra),
+          );
+        else onmessage?.(message, extra);
+      };
+      await start.call(transport);
+    };
+    try {
+      await super.connect(transport);
+    } finally {
+      transport.start = start;
+    }
   }
 }
 export async function record(

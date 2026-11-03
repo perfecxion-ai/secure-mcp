@@ -5,7 +5,14 @@ import { parseConfig } from './config.js';
 import type { RuntimeConfig } from './config.js';
 import { mayInvoke } from './policy.js';
 import type { Principal } from './policy.js';
-import { auditContext, AuditDispatcher, AuditedMcpServer, jsonAuditSink, record } from './audit.js';
+import {
+  auditContext,
+  AuditDispatcher,
+  AuditedMcpServer,
+  currentAuditRequest,
+  jsonAuditSink,
+  record,
+} from './audit.js';
 import type { AuditSink } from './audit.js';
 import { socketAuditSink } from './collector.js';
 import { ExecutionController } from './execution.js';
@@ -137,7 +144,7 @@ export class SecureRuntime {
       await this.audit.write({
         schema: 1,
         time: new Date().toISOString(),
-        ...auditContext(identity, 'unknown', requestId),
+        ...auditContext(identity, 'unknown', requestId ?? currentAuditRequest()?.requestId),
         kind: 'protocol',
         outcome,
         durationMs: 0,
@@ -147,7 +154,7 @@ export class SecureRuntime {
       await this.audit.write({
         schema: 1,
         time: new Date().toISOString(),
-        ...auditContext(identity, 'unknown', requestId),
+        ...auditContext(identity, 'unknown', requestId ?? currentAuditRequest()?.requestId),
         kind: 'protocol',
         outcome: 'tool_rejected',
         durationMs: 0,
@@ -178,8 +185,9 @@ export class SecureRuntime {
     requestId?: string,
   ): Promise<CallToolResult> {
     const tool = this.registry.get(name);
+    const request = currentAuditRequest();
     const event = {
-      ...auditContext(principal, tool?.name ?? 'unknown', requestId),
+      ...auditContext(principal, tool?.name ?? 'unknown', requestId ?? request?.requestId),
       kind: 'tool' as const,
     };
     const start = performance.now();
@@ -211,6 +219,7 @@ export class SecureRuntime {
           value.isError ? 'tool_error' : 'success',
           start,
         );
+        if (request) request.toolOutcomeRecorded = true;
         return value;
       }, signal);
       outcome = result.isError ? 'tool_error' : 'success';
@@ -220,6 +229,7 @@ export class SecureRuntime {
       if (outcome !== 'audit_unavailable') {
         try {
           await record((event) => this.audit.write(event), event, outcome, start);
+          if (request) request.toolOutcomeRecorded = true;
         } catch (auditError) {
           outcome = failureCode(auditError);
         }
