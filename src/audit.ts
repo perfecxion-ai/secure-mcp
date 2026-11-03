@@ -109,6 +109,22 @@ export class AuditDispatcher {
       clearTimeout(timer);
     }
   }
+  private async closeSink(): Promise<void> {
+    let timer: ReturnType<typeof setTimeout> | undefined;
+    try {
+      await Promise.race([
+        Promise.resolve().then(() => this.sink.close?.()),
+        new Promise<never>((_, reject) => {
+          timer = setTimeout(() => reject(new RuntimeFailure('audit_unavailable')), this.timeoutMs);
+        }),
+      ]);
+    } catch {
+      this.failures++;
+      throw new RuntimeFailure('audit_unavailable');
+    } finally {
+      clearTimeout(timer);
+    }
+  }
   async close(): Promise<number> {
     let timer: ReturnType<typeof setTimeout> | undefined;
     await Promise.race([
@@ -119,7 +135,7 @@ export class AuditDispatcher {
     ]);
     clearTimeout(timer);
     const remaining = this.pending.size;
-    this.sinkClosing ??= Promise.resolve().then(() => this.sink.close?.());
+    this.sinkClosing ??= this.closeSink();
     await this.sinkClosing;
     return remaining;
   }
