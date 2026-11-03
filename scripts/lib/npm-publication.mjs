@@ -104,6 +104,21 @@ export function publicationArguments(tarball) {
   ];
 }
 
+export function validatePublicationReceipt(receipt, source, digest, runId, runAttempt) {
+  assert.match(runId ?? '', /^[1-9][0-9]*$/);
+  assert.match(runAttempt ?? '', /^[1-9][0-9]*$/);
+  assert.equal(receipt.sourceCommit, source);
+  assert.equal(receipt.sha256, digest);
+  assert.equal(receipt.version, policy.version);
+  assert.equal(receipt.registry, policy.registry);
+  assert.equal(receipt.publicationRunId, runId, 'Receipt must come from this publication run');
+  assert.match(receipt.publicationRunAttempt ?? '', /^[1-9][0-9]*$/);
+  assert.ok(
+    Number(receipt.publicationRunAttempt) <= Number(runAttempt),
+    'Publication attempt cannot be newer than verification',
+  );
+}
+
 export function validatePublishedRegistry(metadata, previousTags) {
   assert.equal(metadata.name, policy.package);
   assert.deepEqual(

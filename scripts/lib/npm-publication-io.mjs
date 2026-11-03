@@ -17,6 +17,12 @@ export const command = (binary, args, options = {}) =>
 export const api = (path) =>
   JSON.parse(github('api', '--hostname', 'github.com', `repos/${policy.repository}/${path}`));
 
+export const evidenceJson = (value) =>
+  JSON.stringify(value, null, 2).replace(
+    /[\u2013\u2014]/g,
+    (character) => `\\u${character.charCodeAt(0).toString(16)}`,
+  ) + '\n';
+
 export async function verifySettings(source, digest) {
   const settings = JSON.parse(await readFile('.github/npm-publisher-policy.json', 'utf8'));
   validatePublicationGate(settings, process.env, source, digest);
@@ -26,6 +32,7 @@ export async function verifySettings(source, digest) {
     environment,
     api('environments/npm-alpha/deployment-branch-policies?per_page=100'),
   );
+
   return { settings, environment };
 }
 

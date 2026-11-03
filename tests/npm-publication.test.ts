@@ -10,6 +10,7 @@ import {
   validateApproval,
   validatePreflight,
   publicationArguments,
+  validatePublicationReceipt,
   validatePublishedRegistry,
   validatePublicationWorkflow,
   // @ts-expect-error Release helpers are JavaScript and execute without a build.
@@ -19,6 +20,8 @@ import {
   compareInstalledPackage,
   // @ts-expect-error Release helpers are JavaScript and execute without a build.
 } from '../scripts/lib/npm-registry-smoke.mjs';
+// @ts-expect-error Release helpers are JavaScript and execute without a build.
+import { evidenceJson } from '../scripts/lib/npm-publication-io.mjs';
 
 const source = 'a'.repeat(40);
 const digest = 'b'.repeat(64);
@@ -68,6 +71,37 @@ const preflight = {
   targetVersionAbsent: true,
   registryTags: { latest: '1.0.0' },
 };
+
+test('publication receipt preserves the publisher attempt across verification reruns', () => {
+  const receipt = {
+    sourceCommit: source,
+    sha256: digest,
+    version: preflight.version,
+    registry: preflight.registry,
+    publicationRunId: '100',
+    publicationRunAttempt: '1',
+  };
+  validatePublicationReceipt(receipt, source, digest, '100', '1');
+  validatePublicationReceipt(receipt, source, digest, '100', '2');
+  assert.throws(() => validatePublicationReceipt(receipt, source, digest, '42', '1'));
+  assert.throws(() =>
+    validatePublicationReceipt(
+      { ...receipt, publicationRunAttempt: '3' },
+      source,
+      digest,
+      '100',
+      '2',
+    ),
+  );
+  assert.throws(() => validatePublicationReceipt(receipt, source, 'c'.repeat(64), '100', '1'));
+});
+
+test('saved evidence escapes Unicode dashes without changing signed string values', () => {
+  const checkpoint = { checkpoint: 'signed\u2013checkpoint\u2014value' };
+  const json = evidenceJson(checkpoint);
+  assert.doesNotMatch(json, /[\u2013\u2014]/);
+  assert.deepEqual(JSON.parse(json), checkpoint);
+});
 
 test('publication needs a reviewed settings receipt and independently enabled exact source and digest', () => {
   validatePublicationGate(settings, gate, source, digest);

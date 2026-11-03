@@ -3,22 +3,47 @@ import { createHash } from 'node:crypto';
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { join, resolve } from 'node:path';
 import { validateContext, validateInputs, policy } from './lib/npm-preflight.mjs';
-import { validatePreflight, validatePublishedRegistry } from './lib/npm-publication.mjs';
+import {
+  validatePreflight,
+  validatePublishedRegistry,
+  validatePublicationReceipt,
+} from './lib/npm-publication.mjs';
 import {
   command,
   downloadCandidate,
   registryMetadata,
   fetchBounded,
   npmEnvironment,
+  evidenceJson,
 } from './lib/npm-publication-io.mjs';
 import { compareProductionGraphs } from './lib/consumer-evidence.mjs';
+import { validateNpmProvenance } from './lib/npm-provenance.mjs';
 
-const [source, digest, run, preflightPath, destination, ...extra] = process.argv.slice(2);
-assert.ok(destination && preflightPath && extra.length === 0);
+const [source, digest, run, preflightPath, publicationPath, destination, ...extra] =
+  process.argv.slice(2);
+assert.ok(destination && preflightPath && publicationPath && extra.length === 0);
 validateInputs(source, digest, run);
 validateContext(process.env, source, command('git', ['rev-parse', 'HEAD']).trim(), 'publish.yml');
+assert.equal(
+  process.versions.node,
+  '24.22.1',
+  'Registry verification requires pinned Node 24.22.1',
+);
+assert.equal(
+  command('npm', ['--version']).trim(),
+  '11.19.1',
+  'Verified-attestation parsing requires npm 11.19.1',
+);
 const preflight = JSON.parse(await readFile(preflightPath, 'utf8'));
 validatePreflight(preflight, source, digest, run);
+const publication = JSON.parse(await readFile(publicationPath, 'utf8'));
+validatePublicationReceipt(
+  publication,
+  source,
+  digest,
+  process.env.GITHUB_RUN_ID,
+  process.env.GITHUB_RUN_ATTEMPT,
+);
 const directory = resolve(destination);
 await downloadCandidate(source, digest, run, directory);
 const published = validatePublishedRegistry(await registryMetadata(), preflight.registryTags);
@@ -55,15 +80,27 @@ assert.equal(lock.packages[''].dependencies[policy.package], policy.version);
 assert.equal(lock.packages[`node_modules/${policy.package}`].version, policy.version);
 const collect = async (name, args) => {
   const result = JSON.parse(command('npm', args, { cwd: consumer, env }));
-  await writeFile(join(directory, name), JSON.stringify(result, null, 2) + '\n');
+  const serialized = evidenceJson(result);
+  await writeFile(
+    join(directory, name),
+    name === 'registry-inventory.json' ? serialized.replaceAll(directory, '.') : serialized,
+  );
   return result;
 };
-await collect('registry-signatures.json', [
+const signatures = await collect('registry-signatures.json', [
   'audit',
   'signatures',
   '--json',
+  '--include-attestations',
   `--registry=${policy.registry}`,
 ]);
+const provenance = validateNpmProvenance(signatures, {
+  source,
+  sha512: createHash('sha512').update(archive).digest('hex'),
+  runId: publication.publicationRunId,
+  runAttempt: publication.publicationRunAttempt,
+});
+await writeFile(join(directory, 'registry-provenance-binding.json'), evidenceJson(provenance));
 await collect('registry-audit.json', [
   'audit',
   '--omit=dev',
@@ -77,46 +114,43 @@ const comparison = compareProductionGraphs(
   JSON.parse(await readFile(join(directory, 'sbom.cdx.json'), 'utf8')),
   sbom,
 );
-await writeFile(
-  join(directory, 'registry-dependency-comparison.json'),
-  JSON.stringify(comparison, null, 2) + '\n',
-);
+await writeFile(join(directory, 'registry-dependency-comparison.json'), evidenceJson(comparison));
 assert.equal(
   comparison.result,
   'match',
   'Registry consumer graph differs from the signed SBOM; review before announcement',
 );
-command(process.execPath, [
-  'scripts/package-smoke.mjs',
-  '--artifact',
-  downloaded,
-  '--registry-version',
-  policy.version,
-  '--evidence-directory',
-  join(directory, 'smoke'),
-  '--sbom',
-  join(directory, 'sbom.cdx.json'),
-]);
+command(
+  process.execPath,
+  [
+    'scripts/package-smoke.mjs',
+    '--artifact',
+    downloaded,
+    '--registry-version',
+    policy.version,
+    '--evidence-directory',
+    join(directory, 'smoke'),
+    '--sbom',
+    join(directory, 'sbom.cdx.json'),
+  ],
+  { env },
+);
 validatePublishedRegistry(await registryMetadata(), preflight.registryTags);
 await writeFile(
   join(directory, 'registry-verification.json'),
-  JSON.stringify(
-    {
-      sourceCommit: source,
-      sha256: digest,
-      version: policy.version,
-      result: 'verified',
-      checks: [
-        'registry bytes and all tags',
-        'exact-version consumer install',
-        'retained lockfile and production graph',
-        'signatures and provenance',
-        'dependency audit',
-        'both-protocol package smoke',
-      ],
-    },
-    null,
-    2,
-  ) + '\n',
+  evidenceJson({
+    sourceCommit: source,
+    sha256: digest,
+    version: policy.version,
+    result: 'verified',
+    checks: [
+      'registry bytes and all tags',
+      'exact-version consumer install',
+      'retained lockfile and production graph',
+      'signatures and exact source/workflow/publication-run provenance',
+      'dependency audit',
+      'both-protocol package smoke',
+    ],
+  }),
 );
 console.log('Registry bytes, tags and fresh exact-version consumer checks passed.');

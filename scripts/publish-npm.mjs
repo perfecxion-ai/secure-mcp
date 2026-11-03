@@ -15,6 +15,7 @@ import {
   downloadCandidate,
   registryMetadata,
   npmEnvironment,
+  evidenceJson,
 } from './lib/npm-publication-io.mjs';
 
 const [source, digest, run, preflightPath, destination, ...extra] = process.argv.slice(2);
@@ -31,6 +32,7 @@ assert.equal(process.versions.node, '24.22.1');
 assert.equal(command('npm', ['--version']).trim(), '11.19.1');
 const { settings, environment } = await verifySettings(source, digest);
 assert.match(process.env.GITHUB_RUN_ID ?? '', /^[1-9][0-9]*$/);
+assert.match(process.env.GITHUB_RUN_ATTEMPT ?? '', /^[1-9][0-9]*$/);
 validateApproval(
   api(`actions/runs/${process.env.GITHUB_RUN_ID}/approvals`),
   settings,
@@ -61,19 +63,17 @@ assert.equal(
 const result = command('npm', publicationArguments(tarball), { cwd: npmCwd, env: npmEnv });
 await writeFile(
   join(directory, 'npm-publication.json'),
-  JSON.stringify(
-    {
-      sourceCommit: source,
-      sha256: digest,
-      version: policy.version,
-      registry: policy.registry,
-      previousTags: tags,
-      npmResult: JSON.parse(result),
-      postPublicationVerification: 'pending separate job',
-    },
-    null,
-    2,
-  ) + '\n',
+  evidenceJson({
+    sourceCommit: source,
+    sha256: digest,
+    version: policy.version,
+    registry: policy.registry,
+    previousTags: tags,
+    publicationRunId: process.env.GITHUB_RUN_ID,
+    publicationRunAttempt: process.env.GITHUB_RUN_ATTEMPT,
+    npmResult: JSON.parse(result),
+    postPublicationVerification: 'pending separate job',
+  }),
 );
 console.log(
   'npm accepted the publication command; separate registry verification is still required.',
