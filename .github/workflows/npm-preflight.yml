@@ -1,0 +1,66 @@
+name: Review npm candidate
+on:
+  workflow_dispatch:
+    inputs:
+      source_sha:
+        description: Exact reviewed source commit, also targeted by v2.0.0-alpha.2
+        required: true
+        type: string
+      tarball_sha256:
+        description: Independently selected SHA-256 from the candidate packet
+        required: true
+        type: string
+      ci_run:
+        description: Successful main CI run that built and attested the candidate
+        required: true
+        type: string
+permissions:
+  contents: read
+  actions: read
+  attestations: read
+concurrency:
+  group: npm-alpha-preflight
+  cancel-in-progress: false
+jobs:
+  preflight:
+    name: Verify candidate without publishing authority
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    env:
+      MCP_SOURCE_SHA: ${{ inputs.source_sha }}
+      MCP_TARBALL_SHA256: ${{ inputs.tarball_sha256 }}
+      MCP_CI_RUN: ${{ inputs.ci_run }}
+    steps:
+      - name: Require the reviewed tag and source before checkout
+        shell: bash
+        run: |
+          set -euo pipefail
+          [[ "$MCP_SOURCE_SHA" =~ ^[a-f0-9]{40}$ ]]
+          [[ "$MCP_TARBALL_SHA256" =~ ^[a-f0-9]{64}$ ]]
+          [[ "$MCP_CI_RUN" =~ ^[1-9][0-9]*$ ]]
+          [[ "$GITHUB_REPOSITORY" == perfecxion-ai/secure-mcp ]]
+          [[ "$GITHUB_EVENT_NAME" == workflow_dispatch ]]
+          [[ "$GITHUB_REF" == refs/tags/v2.0.0-alpha.2 ]]
+          [[ "$GITHUB_SHA" == "$MCP_SOURCE_SHA" ]]
+          [[ "$GITHUB_WORKFLOW_SHA" == "$MCP_SOURCE_SHA" ]]
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ inputs.source_sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: '24.22.1'
+          package-manager-cache: false
+      - name: Reverify the candidate, record registry state and dry-run
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: node scripts/npm-preflight.mjs "$MCP_SOURCE_SHA" "$MCP_TARBALL_SHA256" "$MCP_CI_RUN" "$RUNNER_TEMP/npm-candidate"
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: npm-preflight-${{ inputs.source_sha }}
+          path: |
+            ${{ runner.temp }}/npm-candidate/npm-preflight.json
+            ${{ runner.temp }}/npm-candidate/npm-dry-run.json
+            ${{ runner.temp }}/npm-candidate/provenance-verification.json
+            ${{ runner.temp }}/npm-candidate/sbom-verification.json
+          if-no-files-found: error
