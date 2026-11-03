@@ -4,8 +4,8 @@ import type { AuditEvent } from './audit.js';
 import { AsyncLocalStorage } from 'node:async_hooks';
 import { createServer } from 'node:http';
 import type { Server } from 'node:http';
-import { createMcpHandler } from '@modelcontextprotocol/server';
-import { hostHeaderValidation, toNodeHandler } from '@modelcontextprotocol/node';
+import { createMcpHandler, validateHostHeader } from '@modelcontextprotocol/server';
+import { toNodeHandler } from '@modelcontextprotocol/node';
 import { createTokenVerifier } from './identity.js';
 import type { Principal } from './policy.js';
 import type { SecureRuntime } from './runtime.js';
@@ -40,7 +40,6 @@ export async function serveHttp(runtime: SecureRuntime): Promise<HttpHandle> {
   const resource = new URL(config.resource);
   const metadataPath = '/.well-known/oauth-protected-resource/mcp';
   const challenge = `Bearer resource_metadata="${resource.origin}${metadataPath}"`;
-  const validateHost = hostHeaderValidation([resource.hostname]);
   const handler = createMcpHandler(
     () => {
       const principal = identity.getStore();
@@ -125,7 +124,15 @@ export async function serveHttp(runtime: SecureRuntime): Promise<HttpHandle> {
             status: response.status,
             durationMs: Math.round(performance.now() - trace.start),
           });
-          return response;
+          // Node owns connection reuse and signals close at maxRequestsPerSocket.
+          // Preserve the body stream while removing the SDK's hop-by-hop override.
+          const headers = new Headers(response.headers);
+          headers.delete('connection');
+          return new Response(response.body, {
+            status: response.status,
+            statusText: response.statusText,
+            headers,
+          });
         } catch {
           trace.terminal = runtime.audit.healthy ? 'internal' : 'audit_unavailable';
           // toNodeHandler converts thrown fetch errors to 500. Return the intended
@@ -146,7 +153,8 @@ export async function serveHttp(runtime: SecureRuntime): Promise<HttpHandle> {
       maxHeaderSize: 16_384,
       requestTimeout: 15_000,
       headersTimeout: 10_000,
-      keepAliveTimeout: 2000,
+      // Node's bundled fetch retires sockets 2000 ms before the advertised timeout.
+      keepAliveTimeout: 5000,
       connectionsCheckingInterval: 1000,
     },
     (request, response) => {
@@ -166,13 +174,10 @@ export async function serveHttp(runtime: SecureRuntime): Promise<HttpHandle> {
         reject('bad_target', 400, 'Invalid request target');
         return;
       }
-      // Closing rejected connections avoids retaining an unconsumed slow body.
-      response.setHeader('connection', 'close');
-      if (!validateHost(request, response)) {
-        count('host_denied');
+      if (!validateHostHeader(request.headers.host, [resource.hostname]).ok) {
+        reject('host_denied', 403, 'Forbidden host');
         return;
       }
-      response.removeHeader('connection');
       const origin = request.headers.origin;
       if (origin !== undefined && !config.allowedOrigins.includes(origin)) {
         reject('origin_denied', 403, 'Forbidden origin');
