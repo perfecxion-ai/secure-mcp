@@ -167,16 +167,10 @@ test(
         assert.equal(response.status, 401);
         assert.equal(await response.text(), 'Unauthorized');
         assert.match(response.headers.get('www-authenticate')!, /resource_metadata=/);
-        const rejection = events
-          .slice(before)
-          .findLast(
-            (event) =>
-              event.kind === 'http' && event.outcome === 'response' && event.status === 401,
-          );
-        assert.ok(rejection);
-        assert.equal(rejection.actor, 'anonymous');
-        assert.ok(
-          !events.some((event) => event.requestId === rejection.requestId && event.kind === 'tool'),
+        assert.equal(
+          events.length,
+          before,
+          'rejected identity cannot consume durable audit capacity',
         );
       });
     }
@@ -186,7 +180,12 @@ test(
       headers: { authorization: `Bearer ${atSubjectLimit}` },
     });
     assert.equal(accepted.status, 200);
-    await accepted.text();
+    assert.match(
+      await accepted.text(),
+      new RegExp(
+        `secure_mcp_http_rejections_total\\{reason="unauthorized"\\} ${invalid.length}\\n`,
+      ),
+    );
     const wrongMethod = await fetch(metrics, {
       method: 'POST',
       headers: { authorization: `Bearer ${good}` },
