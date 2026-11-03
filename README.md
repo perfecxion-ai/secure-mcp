@@ -297,6 +297,7 @@ Read the [threat model](docs/THREAT_MODEL.md), [operations guide](docs/OPERATION
 | Milestone | State |
 | --- | --- |
 | Alpha.1 | Historical [GitHub prerelease](https://github.com/perfecxion-ai/secure-mcp/releases/tag/v2.0.0-alpha.1); excluded from npm promotion |
+| Alpha.3 | Development after the November 3 review; no frozen candidate or digest |
 | Alpha.2 candidate | Frozen, built once by protected-main CI, with verified provenance and signed SBOM ([record](https://github.com/perfecxion-ai/secure-mcp/blob/42282c0c304a4a282f0fdb4a19ac241241f488a4/docs/validation/ALPHA2.md)); held for remediation |
 | Independent human trials | Open: VS Code and Cursor receipts with restart and repeat use |
 | Remote operator evidence | Open: an independent issuer and audit deployment |
@@ -347,7 +348,7 @@ Configuration is defined by `src/config.ts` and rejects unknown keys; `config.sc
 | [Threat model](docs/THREAT_MODEL.md) | Understand trust boundaries and remaining assurance gaps |
 | [Migration](docs/MIGRATION.md) | Move from v1 and review the license change |
 | [Verification and trial guide](docs/validation/REAL_USER_VALIDATION.md) | Verify a candidate and record a trial |
-| [Releasing](https://github.com/perfecxion-ai/secure-mcp/blob/089e53efbcc55da9256e706b9acb2e101b79bf83/docs/RELEASING.md) and [npm publishing](https://github.com/perfecxion-ai/secure-mcp/blob/089e53efbcc55da9256e706b9acb2e101b79bf83/docs/NPM_PUBLISHING.md) | Follow the maintainer release gates |
+| [Releasing](https://github.com/perfecxion-ai/secure-mcp/blob/ba6f1829a5ff1784799037ae10a953895e939920/docs/RELEASING.md) and [npm publishing](https://github.com/perfecxion-ai/secure-mcp/blob/ba6f1829a5ff1784799037ae10a953895e939920/docs/NPM_PUBLISHING.md) | Follow the maintainer release gates |
 
 ## License
 
