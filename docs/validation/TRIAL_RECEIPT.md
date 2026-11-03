@@ -1,6 +1,6 @@
-# Alpha.2 consumer trial receipt
+# Alpha.3 consumer trial receipt template
 
-Status: template, not a completed trial. Fill this from actual observations against the frozen candidate. Use one receipt per tester/host, and retain the original alpha.1 reported review without backfilling missing facts. Agent runs must be labeled engineering checks.
+Status: template, not a completed trial. No alpha.3 candidate is frozen yet. Fill this from actual observations after receiving its exact candidate packet. Use one receipt per tester/host, and retain earlier alpha.1 reports and alpha.2 review evidence without backfilling or transferring their results. Agent runs must be labeled engineering checks.
 
 ## Artifact and environment
 
@@ -41,7 +41,7 @@ Do not record tokens, secrets or identifiable private infrastructure. Record exa
 | Second useful task in a return session | | State a distinct useful outcome | |
 | Friction and manual interventions | | Reproducible explanation | |
 
-For remote operator trials additionally record distinct-principal scope separation, invalid/expired token behavior, collector interruption, unhealthy/fail-closed behavior, recovery after delivery repair and service restart, and audit capacity/retention operations. A local host pass does not establish remote authentication coverage.
+For remote operator trials additionally record distinct-principal scope separation, invalid/expired token behavior, collector interruption, unhealthy/fail-closed behavior, recovery after delivery repair and service restart, and audit capacity/retention operations. Record the token media type, transport protocol version, HTTP status and MCP result separately. Count terminal tool outcomes separately from admission events; pre-admission HTTP rejections use aggregate metrics rather than individual audit events. A local host pass does not establish remote authentication coverage.
 
 ## Decision
 

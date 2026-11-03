@@ -27,7 +27,7 @@ Expected facts:
 - Change approval for `CHG-1042` is explicitly unverified. The brief should request approval and actual command-line verification before closure.
 - No live telemetry or change-management system was queried.
 
-After the useful task, request `{"resource":"restricted"}`. It must return `denied`, without the restricted fixture marker. Adding a `subject` field must fail schema validation. Inspect stderr audit outcomes and correlate `allowed` with terminal records using their request IDs. Audit records must not contain resource content, file paths or the restricted marker.
+After the useful task, request `{"resource":"restricted"}`. It must return `denied`, without the restricted fixture marker. Adding a `subject` field must fail schema validation. Inspect stderr audit outcomes and correlate `allowed` with terminal records using their server-generated request IDs. `allowed` means admission past policy and schema checks; the handler can still deny a resource or fail. Count the terminal outcome once rather than treating both records as completed calls. Audit records must not contain resource content, file paths or the restricted marker.
 
 Stop and restart the isolated server, then compare the alert's schedule and destination in another session. Record actual host versions, the tested tarball digest, whether the brief was useful, and manual interventions in the [trial receipt](validation/TRIAL_RECEIPT.md). An LLM's wording is not deterministic; assess its facts and explicit unknowns.
 

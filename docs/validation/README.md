@@ -2,15 +2,19 @@
 
 Reports identify a workload and a particular runtime. The [run identity record](https://github.com/perfecxion-ai/secure-mcp/blob/6fec1886ca2e400694007819384105fdba9eb6a6/docs/validation/2026-10-27-endurance-run-identities.json) ties completed guarded runs to source/build hashes and separately records their process exit status. Passing results are not transferable to arbitrary tools, clients, deployment settings, or later source changes.
 
-## Current candidate
+## Current development and retained candidates
+
+Development is alpha.3 while the [November 3 review findings](https://github.com/perfecxion-ai/secure-mcp/blob/6cdcf434fdb0e7049cfc26d93869442296f44a91/docs/validation/2026-11-03-review-followup.md) are addressed. No alpha.3 candidate or digest is frozen. The [alpha.2 candidate and its evidence](https://github.com/perfecxion-ai/secure-mcp/blob/42282c0c304a4a282f0fdb4a19ac241241f488a4/docs/validation/ALPHA2.md) remain intact and are held for remediation. Use the [current fresh-install guide](REAL_USER_VALIDATION.md) only after receiving the successor candidate packet. Earlier technical and human results do not transfer to the new package.
+
+## Historical alpha.1 candidate
 
 [Human reviews passed according to the maintainer](https://github.com/perfecxion-ai/secure-mcp/blob/6fec1886ca2e400694007819384105fdba9eb6a6/docs/validation/2026-10-28-human-review.md). The [GitHub prerelease is published and verified](https://github.com/perfecxion-ai/secure-mcp/blob/6fec1886ca2e400694007819384105fdba9eb6a6/docs/validation/2026-10-29-published-alpha.json); exact review metadata remains distinct from the technical acceptance reports.
 
 The [reported attack review](https://github.com/perfecxion-ai/secure-mcp/blob/6fec1886ca2e400694007819384105fdba9eb6a6/docs/validation/2026-10-27-reported-attack-review.md) records maintainer-supplied findings against the same runtime source. Its provenance and missing raw-artifact limits are explicit; it is separate from the reproduced acceptance below.
 
-Use the [candidate record](https://github.com/perfecxion-ai/secure-mcp/blob/6fec1886ca2e400694007819384105fdba9eb6a6/docs/validation/CANDIDATE.md) for the current runtime and the [fresh-install guide](https://github.com/perfecxion-ai/secure-mcp/blob/6fec1886ca2e400694007819384105fdba9eb6a6/docs/validation/REAL_USER_VALIDATION.md) for the trial. It contains the 44-test, actual browser/issuer, durable collector, storage failure, real-host, container, and immutable artifact evidence. Its final endurance status is recorded explicitly rather than inferred from older results.
+The [alpha.1 candidate record](https://github.com/perfecxion-ai/secure-mcp/blob/6fec1886ca2e400694007819384105fdba9eb6a6/docs/validation/CANDIDATE.md) and [original trial guide](https://github.com/perfecxion-ai/secure-mcp/blob/6fec1886ca2e400694007819384105fdba9eb6a6/docs/validation/REAL_USER_VALIDATION.md) retain the 44-test, actual browser/issuer, durable collector, storage failure, real-host, container, and immutable artifact evidence. Its final endurance status is recorded explicitly rather than inferred from older results.
 
-The guarded-runtime and initial-alpha reports below are historical. Their runtime module hashes differ from the current candidate.
+The guarded-runtime and initial-alpha reports below are historical. Their runtime module hashes differ from that alpha.1 candidate and current development.
 
 ## Guarded runtime
 
@@ -52,6 +56,6 @@ The HTTP driver used a 256 MiB heap limit and its maximum measured event-loop de
 | [Initial alpha record](https://github.com/perfecxion-ai/secure-mcp/blob/6fec1886ca2e400694007819384105fdba9eb6a6/docs/validation/2026-10-27-alpha.json)                          | Earlier local candidate and its file hashes; historical 30-test, package, container, and issuer checks                   |
 | Initial `codex-host.json` and `claude-host.json` reports               | Earlier host acceptance before the element guard; superseded for current runtime identification by guarded reports above |
 
-All load measurements ran on the same ARM64 DGX Spark host. Background validation and overlapping load runs occurred; these were not isolated capacity benchmarks. These historical reports use a small local document, four callers, and JSON audit to `/dev/null`; the current candidate separately measures acknowledged durable audit. Stdio `startupMs` measures transport connection rather than first-call readiness. Latency percentiles cover the last 10,000 calls, not all calls. See [benchmark instructions](https://github.com/perfecxion-ai/secure-mcp/blob/6fec1886ca2e400694007819384105fdba9eb6a6/docs/BENCHMARKS.md).
+All load measurements ran on the same ARM64 DGX Spark host. Background validation and overlapping load runs occurred; these were not isolated capacity benchmarks. These historical reports use a small local document, four callers, and JSON audit to `/dev/null`; the historical alpha.1 candidate separately measured acknowledged durable audit. Stdio `startupMs` measures transport connection rather than first-call readiness. Latency percentiles cover the last 10,000 calls, not all calls. See [benchmark instructions](https://github.com/perfecxion-ai/secure-mcp/blob/6fec1886ca2e400694007819384105fdba9eb6a6/docs/BENCHMARKS.md).
 
 Only synthetic fixtures and filtered reports belong here. Do not add raw assistant transcripts, credentials, issuer keys, real document contents, or local Git configuration.

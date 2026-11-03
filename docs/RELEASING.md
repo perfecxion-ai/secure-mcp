@@ -1,10 +1,10 @@
 # Preparing a prerelease
 
-The first [GitHub prerelease, `2.0.0-alpha.1`](https://github.com/perfecxion-ai/secure-mcp/releases/tag/v2.0.0-alpha.1), was published after maintainer approval using the already-tested tarball. This procedure governs subsequent prerelease preparation. It is a limited experimental distribution, not a stable production release. npm publication and MCP registry submission remain separate decisions. The publication workflow remains disabled; each publication needs an approved concrete release. Alpha.1 is explicitly rejected for npm promotion. Prepare alpha.2 under [the readiness plan](https://github.com/perfecxion-ai/secure-mcp/issues/57), with [separate npm identity and approval preparation](NPM_PUBLISHING.md).
+The first [GitHub prerelease, `2.0.0-alpha.1`](https://github.com/perfecxion-ai/secure-mcp/releases/tag/v2.0.0-alpha.1), was published after maintainer approval using the already-tested tarball. This procedure governs subsequent prerelease preparation. It is a limited experimental distribution, not a stable production release. npm publication and MCP registry submission remain separate decisions. The alpha.3 publication setup gate is configured, but no candidate/tag is selected and exact-artifact approval variables remain unset. Alpha.1 is explicitly rejected for npm promotion, and the frozen alpha.2 candidate is held for remediation. Prepare alpha.3 under [the review follow-up](validation/2026-11-03-review-followup.md), with [separate npm identity and approval preparation](NPM_PUBLISHING.md).
 
 ## Pin the artifact and evidence
 
-Select an exact source commit, version and digest from the reviewed candidate packet. The [existing candidate record](validation/CANDIDATE.md) is historical alpha.1 evidence, not an alpha.2 approval. No final alpha.2 digest has been selected. Version equality does not establish artifact equality. Once a candidate is distributed to reviewers, do not replace its bytes under the same version; use a new prerelease version after package changes.
+Select an exact source commit, version and digest from the reviewed candidate packet. The [alpha.1 record](validation/CANDIDATE.md) and [held alpha.2 record](validation/ALPHA2.md) remain historical evidence for those artifacts. No alpha.3 candidate or digest is selected. Version equality does not establish artifact equality. Once a candidate is distributed to reviewers, do not replace its bytes under the same version; use a new prerelease version after package changes.
 
 Download an unexpired CI artifact with `scripts/prepare-validation.mjs`, or use the retained operator-owned bundle. Recheck it with the current verifier:
 
@@ -18,7 +18,7 @@ This uses GitHub CLI to verify provenance and SBOM signatures again, pins the so
 
 The [release-verification record](validation/2026-10-28-release-verification.json) records a successful retained-bundle check, a fresh download, and rejection of a modified tarball.
 
-For a final consumer check, use `scripts/package-smoke.mjs --artifact /absolute/path/to/the.tgz`. Retain its result and the verifier output. Do not replace the candidate tarball with a new `npm pack` output, even if the version matches.
+For a final consumer check, use `scripts/package-smoke.mjs --artifact /absolute/path/to/the.tgz --sbom /absolute/path/to/sbom.cdx.json --evidence-directory /new/private/evidence-directory`. Retain its result, consumer lockfile, production graph comparison, audit/signature evidence and the verifier output. Resolve dependency differences before acceptance. Do not replace the candidate tarball with a new `npm pack` output, even if the version matches.
 
 ## Prepare a reviewable release packet
 
@@ -35,7 +35,7 @@ The proposal must identify:
 - Implemented controls and trust boundaries, measured acceptance, reported human-review coverage, known limits, and the private vulnerability-reporting channel.
 - Explicit publication scope and maintainer decision. A successful CI run or a review pass alone does not publish a release.
 
-The [human-review record](validation/2026-10-28-human-review.md) reports two passing testers on VS Code and Cursor. Exact versions, repeat-use details, and remote-issuer coverage are not recorded. Present that evidence as reported; do not claim the original three-user adoption target or production approval. The alpha.2 npm decision requires fresh exact-digest two-host trials with repeat use, plus independent operator evidence while remote authentication remains a principal launch claim. Keep post-freeze receipts as supplemental evidence with their own revision; do not rebuild the package to include them.
+The [human-review record](validation/2026-10-28-human-review.md) reports two passing testers on VS Code and Cursor. Exact versions, repeat-use details, and remote-issuer coverage are not recorded. Present that evidence as reported; do not claim the original three-user adoption target or production approval. The successor's npm decision requires fresh exact-digest two-host trials with repeat use, plus independent operator evidence while remote authentication remains a principal launch claim. Keep post-freeze receipts as supplemental evidence with their own revision; do not rebuild the package to include them.
 
 ## Publish only the approved packet
 

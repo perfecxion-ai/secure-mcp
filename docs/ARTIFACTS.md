@@ -2,9 +2,9 @@
 
 CI validates a package installation and restricted container before uploading the npm tarball and production CycloneDX dependency inventory. The artifact name contains the exact source commit: `verified-alpha-<commit>`.
 
-For successful pushes to protected `main`, a separate job downloads those artifacts and creates build-provenance and SBOM attestations. That job has signing permissions but never checks out source, installs dependencies, or executes the package. Pull requests have read-only permissions and do not create attestations. npm publication remains disabled.
+For successful pushes to protected `main`, a separate job downloads those artifacts and creates build-provenance and SBOM attestations. That job has signing permissions but never checks out source, installs dependencies, or executes the package. Pull requests have read-only permissions and do not create attestations. npm publication has no approved artifact; its separate setup and approval gates are described in [the publisher checklist](NPM_PUBLISHING.md).
 
-The [candidate record](validation/CANDIDATE.md) selects the immutable artifact for fresh-install trials. Prepare it without rebuilding:
+Development is alpha.3, with no frozen candidate or selected digest. The [alpha.1 record](validation/CANDIDATE.md) and [held alpha.2 record](validation/ALPHA2.md) describe retained historical artifacts, not acceptance of the current source. Once the successor's exact main commit is selected, prepare its immutable artifact without rebuilding:
 
 ```bash
 node scripts/prepare-validation.mjs EXACT_MAIN_COMMIT /tmp/secure-mcp-candidate
@@ -12,20 +12,22 @@ node scripts/prepare-validation.mjs EXACT_MAIN_COMMIT /tmp/secure-mcp-candidate
 
 The script requires an unexpired artifact from successful main CI, verifies workflow/ref/source identity, compares the downloaded SBOM with the signed predicate, and writes a checksum/verification manifest. It refuses an existing destination. The [fresh-install guide](validation/REAL_USER_VALIDATION.md) covers installation, feedback, and rollback. GitHub artifact retention is finite; the manifest records its expiry date.
 
-For manual verification after downloading the same artifact, use the GitHub CLI:
+For manual verification after downloading the same artifact, set `MCP_TARBALL` and `MCP_SOURCE_SHA` from the authenticated candidate packet and use the GitHub CLI:
 
 ```bash
-gh attestation verify perfecxion-secure-mcp-server-2.0.0-alpha.1.tgz \
+: "${MCP_TARBALL:?Required verified tarball path}"
+: "${MCP_SOURCE_SHA:?Required exact source commit}"
+gh attestation verify "$MCP_TARBALL" \
   --repo perfecxion-ai/secure-mcp \
   --signer-workflow perfecxion-ai/secure-mcp/.github/workflows/ci.yml \
   --source-ref refs/heads/main \
-  --source-digest EXACT_MAIN_COMMIT
-gh attestation verify perfecxion-secure-mcp-server-2.0.0-alpha.1.tgz \
+  --source-digest "$MCP_SOURCE_SHA"
+gh attestation verify "$MCP_TARBALL" \
   --repo perfecxion-ai/secure-mcp \
   --predicate-type https://cyclonedx.org/bom \
   --signer-workflow perfecxion-ai/secure-mcp/.github/workflows/ci.yml \
   --source-ref refs/heads/main \
-  --source-digest EXACT_MAIN_COMMIT
+  --source-digest "$MCP_SOURCE_SHA"
 ```
 
 Compare the attested source revision with the intended commit, not only the package version. Alpha builds can share an unreleased version number. Attestation binds a digest to its workflow and source; it does not prove that the code is secure, independently reviewed, or approved for release.

@@ -52,7 +52,7 @@ MCP lets an AI assistant call tools on your behalf, so the server that exposes t
 | --- | --- |
 | stdio and Streamable HTTP | Official SDK, tested with modern (`2026-07-28`) and legacy (`2025-11-25`) clients |
 | Tool visibility and execution policy | Explicit allowlist, all required scopes, read-only mode |
-| Remote identity | External JWT issuer, pinned JWKS URL, `typ: at+jwt`, audience and lifetime validation, OAuth protected resource metadata |
+| Remote identity | External JWT issuer, pinned JWKS URL, `typ: at+jwt` or `application/at+jwt` (case-insensitive), audience and lifetime validation, OAuth protected resource metadata |
 | Execution bounds | Input and output limits, concurrency, deadlines, cancellation, shutdown |
 | Documents | Linux workspace confinement, no symlinks or hidden paths, bounded UTF-8 reads |
 | API example | Optional single fixed URL, GET only, redirects denied |
@@ -84,11 +84,11 @@ flowchart LR
     bounds -. outcome .-> audit
 ```
 
-1. The **transport** accepts a stdio session or an HTTP request. HTTP validates the Host and Origin headers before authentication.
+1. The **transport** accepts a stdio session or an HTTP request. HTTP validates the request target, Host and Origin headers, then authenticates protected requests before buffering their bodies or admitting them to audited execution.
 2. **Identity** is fixed at the transport boundary: the local operator principal for stdio, or the verified token subject and scopes for HTTP.
 3. **Policy** decides which tools are visible and callable. A tool must be allowlisted, every required scope must be present, and read-only mode blocks tools that declare side effects.
 4. **Execution bounds** reserve a capacity slot and a deadline, validate input exactly once inside them, and then run the handler.
-5. **Audit** records admission and the terminal outcome with a server-generated request ID. Arguments and results never enter the audit stream.
+5. **Audit** records admitted work and its terminal outcome with a server-generated request ID. `allowed` means tool admission, not successful completion. HTTP rejections before admission use aggregate counters instead of per-request audit events; health, metadata and CORS preflight responses are also outside that event stream. Arguments and results never enter it.
 
 ## See it in action
 
@@ -114,7 +114,7 @@ flowchart LR
 
 Development is now `2.0.0-alpha.3` while the independent review findings are addressed. No alpha.3 candidate is frozen. The original alpha.2 bytes remain available for review, but new acceptance trials and npm promotion are on hold pending the availability fixes. Follow [the remediation plan](https://github.com/perfecxion-ai/secure-mcp/issues/57).
 
-Alpha.2 is **not available on npm**. A frozen alpha.2 candidate is recorded in [the alpha.2 record](https://github.com/perfecxion-ai/secure-mcp/blob/42282c0c304a4a282f0fdb4a19ac241241f488a4/docs/validation/ALPHA2.md) and is distributed for independent trials through an authenticated maintainer handoff. Alpha.1 remains a [GitHub prerelease](https://github.com/perfecxion-ai/secure-mcp/releases/tag/v2.0.0-alpha.1), excluded from npm promotion. A checksum shipped with an untrusted archive does not authenticate it. To verify build provenance and the signed SBOM yourself, follow the [verification and trial guide](docs/validation/REAL_USER_VALIDATION.md).
+Alpha.2 is **not available on npm**. Its frozen candidate and prior handoff are retained in [the historical alpha.2 record](https://github.com/perfecxion-ai/secure-mcp/blob/42282c0c304a4a282f0fdb4a19ac241241f488a4/docs/validation/ALPHA2.md); use a new candidate packet when remediation is complete. Alpha.1 remains a [GitHub prerelease](https://github.com/perfecxion-ai/secure-mcp/releases/tag/v2.0.0-alpha.1), excluded from npm promotion. A checksum shipped with an untrusted archive does not authenticate it. To verify build provenance and the signed SBOM yourself, follow the [verification and trial guide](docs/validation/REAL_USER_VALIDATION.md).
 
 Run this in Bash after setting `MCP_TARBALL` to the absolute path of the received tarball and `MCP_EXPECTED_SHA256` to its independently trusted digest. No checkout, build, `npm ci`, or GitHub CLI is required for a maintainer-verified handoff:
 
@@ -177,7 +177,7 @@ No npm version is selected for publication. After a separate approval, the relea
 
 ## Remote mode: Streamable HTTP with OAuth
 
-Over HTTP, SecureMCP acts as an OAuth 2.0 protected resource. It verifies access tokens from an external issuer on every request; it does not issue, refresh or revoke tokens. Start from the packaged [`examples/http.json`](examples/http.json):
+Over HTTP, SecureMCP acts as an OAuth 2.0 protected resource. It verifies access tokens from an external issuer for `/mcp` and `/metrics`; health, protected-resource metadata and permitted CORS preflight responses do not require a token. It does not issue, refresh or revoke tokens. Start from the packaged [`examples/http.json`](examples/http.json):
 
 ```json
 {
@@ -198,7 +198,7 @@ Over HTTP, SecureMCP acts as an OAuth 2.0 protected resource. It verifies access
 }
 ```
 
-Copy it to an operator-owned directory, replace the resource, issuer and JWKS URLs, then run `"$MCP_NODE" "$MCP_CLI" --config /path/to/http.json`. Access tokens must be asymmetrically signed (RS256 by default; ES256 and EdDSA are opt-in), carry `typ: at+jwt`, and include `iss`, an exact resource `aud`, `sub`, `iat`, `exp` and a space-separated `scope`. Lifetime and age are capped by `maxTokenAgeSeconds`. Tools need `documents:read`, `policy:read` or `api:read`; `/metrics` needs `metrics:read`.
+Copy it to an operator-owned directory, replace the resource, issuer and JWKS URLs, then run `"$MCP_NODE" "$MCP_CLI" --config /path/to/http.json`. Access tokens must be asymmetrically signed (RS256 by default; ES256 and EdDSA are opt-in), carry `typ: at+jwt` or `typ: application/at+jwt` (case-insensitive), and include `iss`, an exact resource `aud`, `sub`, `iat`, `exp` and a space-separated `scope`. Type values with added whitespace or parameters are rejected. Lifetime and age are capped by `maxTokenAgeSeconds`. Tools need `documents:read`, `policy:read` or `api:read`; `/metrics` needs `metrics:read`.
 
 <p align="center">
   <img src="docs/images/http-oauth.png" width="920" alt="Terminal: an unauthenticated POST to /mcp returns 401 with a resource_metadata challenge; the protected resource metadata lists the authorization server; a token with only policy:read discovers only policy_status and cannot call documents_read; a token with documents:read reads the approved file.">
@@ -206,7 +206,9 @@ Copy it to an operator-owned directory, replace the resource, issuer and JWKS UR
 
 <p align="center"><sub>A local lab issuer minted two RS256 access tokens. Bob holds <code>policy:read</code> and never discovers <code>documents_read</code>; Alice holds both scopes and can read. <code>mcp-call.sh</code> is a three-line <code>curl</code> wrapper.</sub></p>
 
-Terminate TLS in a reverse proxy that preserves the configured resource hostname in `Host`, and bind the runtime to loopback when the proxy runs on the same host. Have that proxy buffer request bodies and limit per-client connections and request rates; the runtime's own connection and request limits are deliberately small and are shared by authenticated and unauthenticated clients. See [operations](docs/OPERATIONS.md) for collectors, metrics, health checks and shutdown.
+Terminate TLS in a reverse proxy that preserves the configured resource hostname in `Host`, and bind the runtime to loopback when the proxy runs on the same host. Have that proxy buffer request bodies and limit per-client connections and request rates. Token verification and authenticated request admission have separate bounded budgets; connection and partial-header capacity remain shared network limits.
+
+HTTP requires `audit.maxPending >= 3` and admits at most `min(2 * limits.maxConcurrent, floor(audit.maxPending / 3))` requests, reserving capacity for overlapping audit writes. Ordinary admission overload returns 503 without latching audit unhealthy. Pre-admission rejections increment `secure_mcp_http_rejections_total` counters rather than durable per-request records; use proxy logs when individual rejected requests must be retained. Audit delivery failure for admitted work still latches readiness unhealthy. See [operations](docs/OPERATIONS.md) for the exact event boundaries, collectors, metrics, health checks and shutdown.
 
 ## Extend with a trusted tool
 

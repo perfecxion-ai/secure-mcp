@@ -36,6 +36,8 @@ For a remote API integration, inject a narrowly scoped credential from operator 
 
 For HTTP exposure, replace the fixture identity grant with your verified issuer/subject resource policy and use the supported authenticated HTTP transport. Never assign the local fixture principal to incoming HTTP callers. Review the JWT contract and revocation limits in [operations](OPERATIONS.md).
 
+If you supply a custom callable audit sink, its optional `close()` hook is owned by the runtime and runs once after the bounded drain. Both drain and hook have separate `audit.timeoutMs` budgets; a failed or hung hook makes audit unhealthy and rejects shutdown. Do not share that owned sink between independently closing runtimes. Handle shutdown errors and a nonzero remaining-work count in your embedding; closing the transport alone does not close the runtime.
+
 ## Validate the integration
 
 Run the verifier before modifying the example, then adapt its checks to the real resources. Exercise allowed work, a same-scope caller denied a different resource, malformed input, cancellation, oversized output, upstream failure, audit delivery failure and clean restart. Keep stdout reserved for MCP when serving. Use the [trial receipt](validation/TRIAL_RECEIPT.md) to record the exact installed digest and environment.

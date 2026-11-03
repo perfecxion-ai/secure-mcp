@@ -1,6 +1,6 @@
 # Fresh-install validation
 
-This alpha is for isolated Linux installations with approved, disposable documents. This round tests the next version through fresh installations; legacy deployments and credential migration are outside its scope. Do not replace an existing server installation. Alpha.2 is being prepared and is not published to npm. The [existing alpha.1 GitHub prerelease](https://github.com/perfecxion-ai/secure-mcp/releases/tag/v2.0.0-alpha.1) remains historical and is not eligible for npm promotion. Do not substitute it for an alpha.2 trial.
+This alpha is for isolated Linux installations with approved, disposable documents. This round tests the next version through fresh installations; legacy deployments and credential migration are outside its scope. Do not replace an existing server installation. Development is `2.0.0-alpha.3`, with no frozen candidate, selected digest or npm publication approval. Alpha.2 is held for remediation; preserve its bytes and receipts. The [existing alpha.1 GitHub prerelease](https://github.com/perfecxion-ai/secure-mcp/releases/tag/v2.0.0-alpha.1) remains historical and is not eligible for npm promotion. Run new acceptance trials only after an authenticated handoff of the successor candidate; neither earlier artifact substitutes for it.
 
 ## Select Node before running npm
 
@@ -32,7 +32,7 @@ Expect Node `v24.22.1` or a later Node 24 security patch, and npm `11.x`. Repeat
 
 ## Obtain the candidate
 
-The maintainer supplies a frozen candidate packet with its exact version, source SHA, tarball name and expected SHA-256. No alpha.2 digest is assigned in this guide. Set these values from an authenticated handoff, then choose your bundle directory:
+The maintainer supplies a frozen candidate packet with its exact version, source SHA, tarball name and expected SHA-256. No alpha.3 digest is assigned in this guide. Set these values from an authenticated handoff, then choose your bundle directory:
 
 ```bash
 : "${MCP_VERSION:?Required from the candidate packet}"
@@ -98,18 +98,24 @@ Bundle recipients can skip this section. If you have a repository checkout and w
 
 ```bash
 npm ci --ignore-scripts
-node scripts/package-smoke.mjs --artifact "$MCP_TARBALL" > "$MCP_TRIAL/package-check.json"
+node scripts/package-smoke.mjs --artifact "$MCP_TARBALL" \
+  --sbom "$MCP_BUNDLE/sbom.cdx.json" \
+  --evidence-directory "$MCP_TRIAL/consumer-evidence" > "$MCP_TRIAL/package-check.json"
 ```
 
-This installs that exact tarball in a temporary consumer directory with install scripts disabled. It tests silent import, both MCP protocol generations, tool discovery, an approved read, read-only policy, traversal/absolute/hidden/symlink/directory rejection, audit canaries, and stdin-EOF shutdown. The JSON result includes the package digest and per-protocol outcomes; it contains no tokens, fixture content, or machine paths. Temporary files are removed when the check finishes. This step needs npm registry access for dependencies and does not modify an existing MCP host configuration.
+This installs that exact tarball in a temporary consumer directory with install scripts disabled. It tests silent import, both MCP protocol generations, tool discovery, an approved read, read-only policy, traversal/absolute/hidden/symlink/directory rejection, audit canaries, the installed triage example and stdin-EOF shutdown. The JSON result includes the package digest and per-protocol outcomes; it contains no tokens, fixture content, or machine paths. Temporary installations are removed when the check finishes.
+
+The new evidence directory retains the consumer lockfile, production inventory, vulnerability audit, dependency-signature results and a comparison with the signed build SBOM. Consumers resolve their own dependencies: investigate a graph difference before acceptance instead of assuming the build inventory describes a later installation. The evidence directory must not already exist. This step needs npm registry access and does not modify an existing MCP host configuration.
 
 Keep the result with your feedback. This automated SDK check does not substitute for the trusted artifact handoff or your actual host trial.
 
 ## Independent remote operator trial
 
-This is required before retaining remote authentication as a principal launch claim, and is separate from local host acceptance. An independent operator should use their issuer and audit deployment, with a separate test realm/client and the issuer's supported login flow. Follow [operations](../OPERATIONS.md) for exact audience, `at+jwt` token type, scopes, TLS proxy, Host/Origin rules, short token lifetimes, and the durable collector. Keep the runtime on loopback behind the TLS proxy. The Keycloak lab provides a reproducible browser integration example; it is not a managed identity deployment or an MFA acceptance test.
+This is required before retaining remote authentication as a principal launch claim, and is separate from local host acceptance. An independent operator should use their issuer and audit deployment, with a separate test realm/client and the issuer's supported login flow. Follow [operations](../OPERATIONS.md) for exact audience, `at+jwt` or `application/at+jwt` token type (case-insensitive), scopes, TLS proxy, Host/Origin rules, short token lifetimes, and the durable collector. Keep the runtime on loopback behind the TLS proxy. The Keycloak lab provides a reproducible browser integration example; it is not a managed identity deployment or an MFA acceptance test.
 
-Confirm an authorized account can list/read, a policy-only account cannot discover or invoke document access, expired tokens receive 401, and audit records correlate transport and tool outcomes without token or document content. Exercise collector unavailability once in the disposable trial: readiness must become unhealthy and work must fail closed. Restore the collector, restart the server, and confirm readiness before continuing. Retain a content-free count/status summary rather than raw authentication traces.
+Confirm an authorized account can list/read, a policy-only account cannot discover or invoke document access, expired tokens receive 401, and admitted requests have correlated transport and tool outcomes without token or document content. Count terminal tool outcomes separately from `allowed` admissions. Pre-admission HTTP rejections use aggregate metrics, not per-request audit records; successful health, metadata and CORS preflight responses are also outside that event stream. HTTP needs at least three pending audit slots, with request capacity described in operations. Ordinary overload should return 503 without making a healthy collector latch unhealthy.
+
+Exercise collector unavailability once in the disposable trial: readiness must become unhealthy and work must fail closed. If response headers have not been sent, HTTP reports 503; an already-started legacy SSE response can retain HTTP 200 while its protocol stream fails. Inspect the MCP result and readiness, not just the HTTP status. Restore the collector, restart the server, and confirm readiness before continuing. Retain a content-free count/status summary rather than raw authentication traces.
 
 ## Feedback and exit criteria
 
@@ -119,4 +125,4 @@ Stop the trial for an unexpected file read, cross-user tool access, missing dura
 
 For the minimum npm-alpha decision, two independent humans must complete digest-bound trials on VS Code and Cursor, including restart and repeat useful work. Fix and retest blockers and record onboarding friction. Add independent remote-operator evidence while remote authentication remains a principal launch claim; our local issuer labs do not replace that evidence.
 
-The broader adoption target remains three independent successful users, two returning users and one externally authored integration. The earlier alpha.1 pass is reported historical evidence, not an alpha.2 receipt. Agent checks and automated tests must remain labeled as engineering evidence.
+The broader adoption target remains three independent successful users, two returning users and one externally authored integration. Earlier alpha.1 human reports and alpha.2 review evidence remain tied to those artifacts; neither is an alpha.3 acceptance receipt. Agent checks and automated tests must remain labeled as engineering evidence.
