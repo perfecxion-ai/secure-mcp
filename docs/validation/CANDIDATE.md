@@ -1,4 +1,6 @@
-# Fresh-install validation candidate
+# Historical alpha.1 validation candidate
+
+The current fresh-install handoff is the [frozen alpha.2 candidate](ALPHA2.md). The measurements below describe alpha.1 and do not establish alpha.2 human, browser or endurance results. Alpha.1 remains excluded from npm promotion. Current publishing controls and pending approval are recorded in the alpha.2 record.
 
 Status: local acceptance passed October 27, 2026; human-review pass reported October 28. The [human-review record](2026-10-28-human-review.md) records the outcome and remaining metadata. The candidate is now available as an approved [GitHub prerelease](https://github.com/perfecxion-ai/secure-mcp/releases/tag/v2.0.0-alpha.1); see the [publication record](2026-10-29-published-alpha.json).
 
@@ -57,4 +59,4 @@ Earlier incomplete attempts remain recorded: [before the error-response repair](
 
 The maintainer reports two successful human trials: one with VS Code MCP support and one with Cursor, both described as latest versions. Preserve exact version, repeat-use, and remote-issuer details as they become available; the report does not establish the complete original three-user adoption matrix. The exact artifact has been published as a GitHub prerelease after maintainer approval. Local acceptance and onboarding success do not establish production approval or independent security certification.
 
-This validation round targets the next version through fresh installations. Legacy deployment inventory, remediation, and migration are outside its scope and do not block this trial. Before a stable public release, validate the target operator's issuer/MFA and audit-retention setup, obtain independent security review, and make an explicit publication decision. The npm publication workflow remains disabled.
+This historical validation round targeted the next version through fresh installations. Legacy deployment inventory, remediation, and migration were outside its scope. Before a stable public release, validate the target operator's issuer/MFA and audit-retention setup, obtain independent security review, and make an explicit publication decision. At the time of this alpha.1 record, the npm publication workflow was disabled. See the alpha.2 record for current settings and approval gates.
