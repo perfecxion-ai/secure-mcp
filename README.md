@@ -71,6 +71,10 @@ Read the [threat model](docs/THREAT_MODEL.md), [operations guide](docs/OPERATION
 
 The tool registry contains `documents_read`, `policy_status`, and optional `api_read`. Enable the API tool by configuring `api.url`, adding `api_read` to `allowedTools`, and granting `api:read`. It accepts no caller-controlled URL or headers.
 
+## Try a useful workflow
+
+The [sanitized alert-triage demo](docs/DEMO.md) combines an alert, approved asset context and a runbook into a brief with explicit unknowns. It demonstrates resource authorization, a denied operation, audit inspection and failure recovery using harmless fixtures. The [trusted-tool guide](docs/TRUSTED_TOOLS.md) shows how to build a separate consumer using public exports. These examples are engineering demonstrations; independent repeat-use and external integration evidence remain open.
+
 ## Extend with a trusted tool
 
 ```typescript

@@ -8,6 +8,8 @@ During the alpha.2 preparation, a successful public registry read returned only 
 
 The GitHub repository is `perfecxion-ai/secure-mcp`. Its main branch requires the `Validate runtime` check with strict up-to-date checks and enforces protection for administrators. The protected `npm-alpha` environment now exists (ID `26083491597`). Authenticated API reads confirmed required reviewer `scthornton` (User ID `38704968`), self-review prevention and one deployment tag restriction, `v2.0.0-alpha.2`. The maintainer confirmed that administrator bypass was disabled and saved in the GitHub UI. This is a maintainer UI confirmation, not an API-verified field; the documented REST schema does not expose that setting consistently. npm trusted-publisher settings remain unverified. These are observations at preparation time; recheck settings before approval.
 
+Both GitHub accounts belong to the same maintainer. This separates workflow initiation and approval by account; it is not an independent two-person review.
+
 ## Proposed settings
 
 | Setting | Required value or evidence |
