@@ -2,9 +2,9 @@
 
 Reports identify a workload and a particular runtime. The [run identity record](https://github.com/perfecxion-ai/secure-mcp/blob/6fec1886ca2e400694007819384105fdba9eb6a6/docs/validation/2026-10-27-endurance-run-identities.json) ties completed guarded runs to source/build hashes and separately records their process exit status. Passing results are not transferable to arbitrary tools, clients, deployment settings, or later source changes.
 
-## Current development and retained candidates
+## Candidate identity and retained evidence
 
-Development is alpha.3 while the [November 3 review findings](https://github.com/perfecxion-ai/secure-mcp/blob/6cdcf434fdb0e7049cfc26d93869442296f44a91/docs/validation/2026-11-03-review-followup.md) are addressed. No alpha.3 candidate or digest is frozen. The [alpha.2 candidate and its evidence](https://github.com/perfecxion-ai/secure-mcp/blob/42282c0c304a4a282f0fdb4a19ac241241f488a4/docs/validation/ALPHA2.md) remain intact and are held for remediation. Use the [current fresh-install guide](REAL_USER_VALIDATION.md) only after receiving the successor candidate packet. Earlier technical and human results do not transfer to the new package.
+Alpha.3 validation follows the [November 3 review findings](https://github.com/perfecxion-ai/secure-mcp/blob/6cdcf434fdb0e7049cfc26d93869442296f44a91/docs/validation/2026-11-03-review-followup.md). The separately supplied verified bundle, manifest and candidate packet identify its exact source, digest and artifact-specific evidence; use those records with the [fresh-install guide](REAL_USER_VALIDATION.md). They do not imply publication approval. The [alpha.2 candidate and its evidence](https://github.com/perfecxion-ai/secure-mcp/blob/42282c0c304a4a282f0fdb4a19ac241241f488a4/docs/validation/ALPHA2.md) remain intact, held for remediation and not recommended for new acceptance trials. Earlier technical and human results do not transfer to the new package.
 
 ## Historical alpha.1 candidate
 

@@ -112,9 +112,9 @@ flowchart LR
 
 ### 1. Select a reviewed candidate
 
-Development is now `2.0.0-alpha.3` while the independent review findings are addressed. No alpha.3 candidate is frozen. The original alpha.2 bytes remain available for review, but new acceptance trials and npm promotion are on hold pending the availability fixes. Follow [the remediation plan](https://github.com/perfecxion-ai/secure-mcp/issues/57).
+For `2.0.0-alpha.3` validation, obtain the separately supplied verified bundle and candidate packet. That packet and its manifest identify the exact source commit, tarball SHA-256 and evidence for the selected artifact. Use that identity throughout installation and testing; a verified bundle does not imply npm publication approval. Follow [the readiness tracker](https://github.com/perfecxion-ai/secure-mcp/issues/57) for release decisions.
 
-Alpha.2 is **not available on npm**. Its frozen candidate and prior handoff are retained in [the historical alpha.2 record](https://github.com/perfecxion-ai/secure-mcp/blob/42282c0c304a4a282f0fdb4a19ac241241f488a4/docs/validation/ALPHA2.md); use a new candidate packet when remediation is complete. Alpha.1 remains a [GitHub prerelease](https://github.com/perfecxion-ai/secure-mcp/releases/tag/v2.0.0-alpha.1), excluded from npm promotion. A checksum shipped with an untrusted archive does not authenticate it. To verify build provenance and the signed SBOM yourself, follow the [verification and trial guide](docs/validation/REAL_USER_VALIDATION.md).
+Alpha.2 is held for remediation and is not recommended for new acceptance trials. Its bytes and prior handoff remain in [the historical alpha.2 record](https://github.com/perfecxion-ai/secure-mcp/blob/42282c0c304a4a282f0fdb4a19ac241241f488a4/docs/validation/ALPHA2.md). Alpha.1 remains a [GitHub prerelease](https://github.com/perfecxion-ai/secure-mcp/releases/tag/v2.0.0-alpha.1), excluded from npm promotion. A checksum shipped with an untrusted archive does not authenticate it. To verify build provenance and the signed SBOM yourself, follow the [verification and trial guide](docs/validation/REAL_USER_VALIDATION.md).
 
 Run this in Bash after setting `MCP_TARBALL` to the absolute path of the received tarball and `MCP_EXPECTED_SHA256` to its independently trusted digest. No checkout, build, `npm ci`, or GitHub CLI is required for a maintainer-verified handoff:
 
@@ -170,7 +170,7 @@ These examples are engineering demonstrations; independent repeat-use and extern
 
 ### After an npm publication decision
 
-No npm version is selected for publication. After a separate approval, the release packet will supply an exact version and an installation command using `--save-exact`. Retain the resulting consumer lockfile with that artifact's evidence.
+Use npm only when a separate publication decision identifies an approved exact version. Follow that release packet's installation command with `--save-exact`, and retain the resulting consumer lockfile with the artifact's evidence. The verified-bundle quickstart above does not depend on npm publication of SecureMCP.
 
 > [!WARNING]
 > Do not use an unqualified install: `latest` remains v1. The `alpha` tag is mutable, and a range such as `^2.0.0-alpha.2` can admit later releases. Exact pins and the consumer lockfile preserve the reviewed selection.
@@ -297,7 +297,7 @@ Read the [threat model](docs/THREAT_MODEL.md), [operations guide](docs/OPERATION
 | Milestone | State |
 | --- | --- |
 | Alpha.1 | Historical [GitHub prerelease](https://github.com/perfecxion-ai/secure-mcp/releases/tag/v2.0.0-alpha.1); excluded from npm promotion |
-| Alpha.3 | Development after the November 3 review; no frozen candidate or digest |
+| Alpha.3 validation | Exact source, digest and evidence come from the separately supplied verified bundle and candidate packet |
 | Alpha.2 candidate | Frozen, built once by protected-main CI, with verified provenance and signed SBOM ([record](https://github.com/perfecxion-ai/secure-mcp/blob/42282c0c304a4a282f0fdb4a19ac241241f488a4/docs/validation/ALPHA2.md)); held for remediation |
 | Independent human trials | Open: VS Code and Cursor receipts with restart and repeat use |
 | Remote operator evidence | Open: an independent issuer and audit deployment |

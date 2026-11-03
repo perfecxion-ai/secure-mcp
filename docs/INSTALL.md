@@ -30,7 +30,7 @@ For VS Code, `vscode-mcp.json` uses the `servers` format for a workspace `.vscod
 
 For a macOS or Windows desktop, keep Node, the installation and documents on Linux. A VS Code Remote-SSH workspace is a candidate path: configure the server in the remote Linux workspace and confirm its process and paths resolve there. A remote window alone is not evidence of where a selected harness launches MCP. Alternatively, use Streamable HTTP with a Linux operator's issuer/TLS setup described in [operations](OPERATIONS.md). Record and validate that exact desktop-to-Linux combination before calling it supported. Neither path implies native desktop package support.
 
-The JSON generation and server launch can be tested automatically. Actual VS Code/Cursor versions, harness behavior and repeat use need independent [trial receipts](validation/TRIAL_RECEIPT.md) against the next frozen candidate. Development is alpha.3; no frozen alpha.3 artifact or completed human receipt is claimed.
+The JSON generation and server launch can be tested automatically. Actual VS Code/Cursor versions, harness behavior and repeat use need independent [trial receipts](validation/TRIAL_RECEIPT.md) bound to the exact source and digest in the supplied alpha.3 candidate packet. This guide supplies instructions, not completed human evidence or publication approval.
 
 ## Complete a useful first session
 

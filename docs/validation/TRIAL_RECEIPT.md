@@ -1,6 +1,6 @@
 # Alpha.3 consumer trial receipt template
 
-Status: template, not a completed trial. No alpha.3 candidate is frozen yet. Fill this from actual observations after receiving its exact candidate packet. Use one receipt per tester/host, and retain earlier alpha.1 reports and alpha.2 review evidence without backfilling or transferring their results. Agent runs must be labeled engineering checks.
+Status: template, not a completed trial. Fill this from actual observations against the exact source and digest in the supplied alpha.3 candidate packet and verified bundle. Use one receipt per tester/host, and retain earlier alpha.1 reports and alpha.2 review evidence without backfilling or transferring their results. Agent runs must be labeled engineering checks. Completing this template does not authorize publication.
 
 ## Artifact and environment
 

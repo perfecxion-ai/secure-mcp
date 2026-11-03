@@ -1,6 +1,6 @@
 # Fresh-install validation
 
-This alpha is for isolated Linux installations with approved, disposable documents. This round tests the next version through fresh installations; legacy deployments and credential migration are outside its scope. Do not replace an existing server installation. Development is `2.0.0-alpha.3`, with no frozen candidate, selected digest or npm publication approval. Alpha.2 is held for remediation; preserve its bytes and receipts. The [existing alpha.1 GitHub prerelease](https://github.com/perfecxion-ai/secure-mcp/releases/tag/v2.0.0-alpha.1) remains historical and is not eligible for npm promotion. Run new acceptance trials only after an authenticated handoff of the successor candidate; neither earlier artifact substitutes for it.
+This alpha is for isolated Linux installations with approved, disposable documents. This round tests alpha.3 through fresh installations; legacy deployments and credential migration are outside its scope. Do not replace an existing server installation. Use the exact source and digest from the separately supplied candidate packet and verified bundle manifest; this guide does not select an artifact or authorize npm publication. Alpha.2 is held for remediation and is not recommended for new acceptance trials; preserve its bytes and receipts. The [existing alpha.1 GitHub prerelease](https://github.com/perfecxion-ai/secure-mcp/releases/tag/v2.0.0-alpha.1) remains historical and is not eligible for npm promotion. Run acceptance trials after an authenticated handoff of the alpha.3 candidate; neither earlier artifact substitutes for it.
 
 ## Select Node before running npm
 
@@ -32,7 +32,7 @@ Expect Node `v24.22.1` or a later Node 24 security patch, and npm `11.x`. Repeat
 
 ## Obtain the candidate
 
-The maintainer supplies a frozen candidate packet with its exact version, source SHA, tarball name and expected SHA-256. No alpha.3 digest is assigned in this guide. Set these values from an authenticated handoff, then choose your bundle directory:
+The maintainer supplies a frozen candidate packet with its exact version, source SHA, tarball name and expected SHA-256. Those separately recorded values identify the candidate; the version number alone is insufficient. Set them from an authenticated handoff, then choose your bundle directory:
 
 ```bash
 : "${MCP_VERSION:?Required from the candidate packet}"
