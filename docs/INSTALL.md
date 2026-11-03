@@ -43,7 +43,7 @@ Use the host's MCP tool view or ask it to perform these calls explicitly, with u
 5. Inspect the host's server stderr/output panel. Audit records should describe decisions and outcomes without workspace paths, filenames or document contents. Stderr is not durable audit storage.
 6. Stop this MCP server through the host, start it again, and repeat the approved read. Record the restart result.
 
-Then replace the harmless fixture with approved copies of two short runbooks and complete a real comparison or triage task. Return for a second session and record whether the result was useful and what required manual help. An automated smoke test does not establish this usage evidence.
+For a complete fixture workflow, follow the [alert-triage demo](DEMO.md). Then replace the harmless fixture with approved copies of two short runbooks and complete a real comparison or triage task. Return for a second session and record whether the result was useful and what required manual help. An automated smoke test does not establish this usage evidence.
 
 Doctor reports local configuration/workspace checks only. If the host cannot start, verify the absolute Node path and supported version on the server machine, the CLI path, and workspace permissions. If serving appears idle in a terminal, stdio is waiting for an MCP client. If audit delivery has latched unhealthy, follow the recovery procedure in [operations](OPERATIONS.md) before restarting; a restart alone does not repair the underlying delivery failure.
 
