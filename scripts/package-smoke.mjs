@@ -15,16 +15,21 @@ import {
 import { tmpdir } from 'node:os';
 import { join, resolve, basename } from 'node:path';
 import { compareProductionGraphs } from './lib/consumer-evidence.mjs';
+import { registryInstallArguments, compareInstalledPackage } from './lib/npm-registry-smoke.mjs';
 import { Client } from '@modelcontextprotocol/client';
 import { StdioClientTransport } from '@modelcontextprotocol/client/stdio';
 
 const { values } = parseArgs({
   options: {
     artifact: { type: 'string' },
+    'registry-version': { type: 'string' },
     'evidence-directory': { type: 'string' },
     sbom: { type: 'string' },
   },
 });
+const registryInstall =
+  values['registry-version'] &&
+  registryInstallArguments(values['registry-version'], values.artifact);
 const evidence = values['evidence-directory'] && resolve(values['evidence-directory']);
 if (values.sbom) assert.ok(evidence, '--sbom requires --evidence-directory');
 if (evidence) await mkdir(evidence, { mode: 0o700 }); // Never overwrite an earlier receipt.
@@ -60,12 +65,31 @@ try {
   );
   execFileSync(
     'npm',
-    ['install', '--save-exact', '--ignore-scripts', '--no-audit', '--no-fund', `./${archive}`],
+    registryInstall || [
+      'install',
+      '--save-exact',
+      '--ignore-scripts',
+      '--no-audit',
+      '--no-fund',
+      `./${archive}`,
+    ],
     {
       cwd: directory,
       stdio: ['ignore', 'pipe', 'pipe'],
     },
   );
+  if (registryInstall) {
+    await compareInstalledPackage(
+      join(directory, archive),
+      files,
+      join(directory, 'node_modules/@perfecxion/secure-mcp-server'),
+    );
+    const lock = JSON.parse(await readFile(join(directory, 'package-lock.json'), 'utf8'));
+    assert.equal(
+      lock.packages[''].dependencies['@perfecxion/secure-mcp-server'],
+      values['registry-version'],
+    );
+  }
   let dependencyEvidence;
   if (evidence) {
     for (const name of ['package.json', 'package-lock.json'])
@@ -110,7 +134,9 @@ try {
     }
     dependencyEvidence = {
       signatures: signatures.error ? 'failed' : 'pass',
-      candidateSignature: 'Local tarball root is not a registry signature/provenance check',
+      candidateSignature: registryInstall
+        ? 'Registry root signatures checked; exact provenance policy is verified separately'
+        : 'Local tarball root is not a registry signature/provenance check',
       graph: comparison?.result ?? 'not compared',
       lockfile: 'package-lock.json',
     };
@@ -291,7 +317,11 @@ SecureRuntime.create = async () => {
     platform: process.platform,
     architecture: process.arch,
     package: archive,
-    source: values.artifact ? 'provided immutable artifact' : 'local npm pack',
+    source: registryInstall
+      ? 'exact registry version compared with approved artifact'
+      : values.artifact
+        ? 'provided immutable artifact'
+        : 'local npm pack',
     sha256: createHash('sha256')
       .update(await readFile(join(directory, archive)))
       .digest('hex'),

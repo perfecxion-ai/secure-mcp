@@ -19,7 +19,8 @@ export function validateInputs(source, digest, run) {
   assert.ok(Number.isSafeInteger(Number(run)), 'CI run ID is out of range');
 }
 
-export function validateContext(env, source, checkout) {
+export function validateContext(env, source, checkout, workflow = policy.workflow, oidc = false) {
+  assert.ok([policy.workflow, 'publish.yml'].includes(workflow));
   assert.equal(env.GITHUB_ACTIONS, 'true', 'GitHub Actions context required');
   assert.equal(env.GITHUB_REPOSITORY, policy.repository, 'Wrong repository');
   assert.equal(env.GITHUB_EVENT_NAME, 'workflow_dispatch', 'Manual dispatch required');
@@ -28,7 +29,7 @@ export function validateContext(env, source, checkout) {
   assert.equal(env.GITHUB_WORKFLOW_SHA, source, 'Workflow source mismatch');
   assert.equal(
     env.GITHUB_WORKFLOW_REF,
-    `${policy.repository}/.github/workflows/${policy.workflow}@${policy.ref}`,
+    `${policy.repository}/.github/workflows/${workflow}@${policy.ref}`,
     'Workflow identity mismatch',
   );
   assert.equal(env.GITHUB_SERVER_URL, 'https://github.com');
@@ -38,10 +39,15 @@ export function validateContext(env, source, checkout) {
     'NODE_AUTH_TOKEN',
     'NPM_TOKEN',
     'NPM_AUTH_TOKEN',
-    'ACTIONS_ID_TOKEN_REQUEST_URL',
-    'ACTIONS_ID_TOKEN_REQUEST_TOKEN',
+    ...(!oidc ? ['ACTIONS_ID_TOKEN_REQUEST_URL', 'ACTIONS_ID_TOKEN_REQUEST_TOKEN'] : []),
   ]) {
     assert.ok(!env[key], `Preflight must not receive ${key}`);
+  }
+  if (oidc) {
+    assert.ok(
+      env.ACTIONS_ID_TOKEN_REQUEST_URL && env.ACTIONS_ID_TOKEN_REQUEST_TOKEN,
+      'Publishing requires OIDC',
+    );
   }
 }
 

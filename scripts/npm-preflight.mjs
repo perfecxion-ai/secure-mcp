@@ -14,9 +14,9 @@ import {
   dryRunArguments,
 } from './lib/npm-preflight.mjs';
 
-const [source, digest, runId, destination, ...extra] = process.argv.slice(2);
+const [source, digest, runId, destination, mode, ...extra] = process.argv.slice(2);
 assert.ok(
-  destination && extra.length === 0,
+  destination && extra.length === 0 && (mode === undefined || mode === '--publisher-preflight'),
   'Usage: node scripts/npm-preflight.mjs SOURCE_SHA TARBALL_SHA256 CI_RUN NEW_DIRECTORY',
 );
 validateInputs(source, digest, runId);
@@ -28,7 +28,12 @@ const command = (binary, args, options = {}) =>
     maxBuffer: 16 * 1024 * 1024,
     ...options,
   });
-validateContext(process.env, source, command('git', ['rev-parse', 'HEAD']).trim());
+validateContext(
+  process.env,
+  source,
+  command('git', ['rev-parse', 'HEAD']).trim(),
+  mode ? 'publish.yml' : policy.workflow,
+);
 assert.equal(process.versions.node, '24.22.1', 'Preflight requires the pinned Node 24.22.1');
 const npmVersion = command('npm', ['--version']).trim();
 assert.equal(npmVersion, '11.19.1', 'Preflight requires the tested npm 11.19.1 toolchain');
