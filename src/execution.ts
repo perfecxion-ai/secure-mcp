@@ -2,6 +2,7 @@ import { RuntimeFailure } from './errors.js';
 export class ExecutionController {
   private readonly active = new Set<{ controller: AbortController; settled: Promise<void> }>();
   private closing = false;
+  private shutdown: Promise<number> | undefined;
   constructor(
     private readonly maxConcurrent: number,
     private readonly timeoutMs: number,
@@ -49,7 +50,11 @@ export class ExecutionController {
       signal.removeEventListener('abort', onAbort);
     }
   }
-  async close(graceMs: number): Promise<number> {
+  close(graceMs: number): Promise<number> {
+    this.shutdown ??= this.drain(graceMs);
+    return this.shutdown;
+  }
+  private async drain(graceMs: number): Promise<number> {
     this.closing = true;
     for (const entry of this.active) entry.controller.abort(new RuntimeFailure('shutting_down'));
     let timer: ReturnType<typeof setTimeout> | undefined;

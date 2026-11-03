@@ -97,7 +97,7 @@ test('HTTP resource server and official SDK integration', { timeout: 30_000 }, a
         );
       });
     for (const path of ['/\\mcp', '/mcp\\', '//other.example\\mcp'])
-      assert.equal(await raw(path), 404, path);
+      assert.equal(await raw(path), 400, path);
     assert.equal(await raw('/health?label=\\query', 'GET'), 200);
     assert.equal(events.filter((event) => event.kind === 'tool').length, before);
   });
@@ -302,14 +302,8 @@ test('HTTP resource server and official SDK integration', { timeout: 30_000 }, a
       assert.ok(
         events.some((event) => event.kind === 'protocol' && event.outcome === 'invalid_params'),
       );
-      assert.ok(
-        events.some(
-          (event) => event.kind === 'http' && event.status === 401 && event.actor === 'anonymous',
-        ),
-      );
-      assert.ok(events.some((event) => event.outcome === 'host_denied'));
-      assert.ok(events.some((event) => event.outcome === 'origin_denied'));
-      for (const status of [400, 413, 404])
+      assert.ok(!events.some((event) => event.kind === 'http' && event.actor === 'anonymous'));
+      for (const status of [400, 413])
         assert.ok(events.some((event) => event.kind === 'http' && event.status === status));
       const tool = events.find((event) => event.kind === 'tool' && event.outcome === 'success')!;
       assert.ok(
@@ -338,6 +332,11 @@ test('HTTP resource server and official SDK integration', { timeout: 30_000 }, a
     assert.equal(response.status, 200);
     const metrics = await response.text();
     assert.match(metrics, /secure_mcp_calls_total/);
+    for (const reason of ['unauthorized', 'host_denied', 'origin_denied', 'not_found'])
+      assert.match(
+        metrics,
+        new RegExp(`secure_mcp_http_rejections_total\\{reason="${reason}"\\} [1-9]`),
+      );
     assert.ok(!metrics.includes('alice'));
     assert.ok(!JSON.stringify(events).includes(good));
   });
