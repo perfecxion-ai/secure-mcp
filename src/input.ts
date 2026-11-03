@@ -1,7 +1,17 @@
 import { z } from 'zod';
 import type { StandardSchemaWithJSON } from '@modelcontextprotocol/server';
 
-// Count collection entries before schema validation or recursive serialization.
+// The SDK's arguments record parser drops this own key. Reject it before that
+// parse, rather than allow a different object to reach strict tool validation.
+export function hasReservedToolArgumentKey(value: unknown): boolean {
+  return (
+    value !== null &&
+    typeof value === 'object' &&
+    Object.prototype.hasOwnProperty.call(value, '__proto__')
+  );
+}
+
+// Count entries and reject reserved keys before schema validation or serialization.
 // The bounded iterative walk also terminates for cyclic embedding inputs.
 export function withinInputElementLimit(value: unknown, maximum: number): boolean {
   const pending: unknown[] = [value];
@@ -9,6 +19,7 @@ export function withinInputElementLimit(value: unknown, maximum: number): boolea
   while (pending.length) {
     const current = pending.pop();
     if (current === null || typeof current !== 'object') continue;
+    if (hasReservedToolArgumentKey(current)) return false;
     if (Array.isArray(current)) {
       for (const child of current as unknown[]) {
         if (++count > maximum) return false;
