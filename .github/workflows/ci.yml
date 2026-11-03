@@ -30,12 +30,27 @@ jobs:
       - run: npm run test:oauth
       - run: npm audit --audit-level=high
       - run: npm --prefix labs/oauth audit --audit-level=high
-      - run: npm run test:package
       - run: npm run test:container
       - run: node labs/audit/storage-failure.mjs
       - run: npm run test:proxy
-      - run: npm sbom --omit=dev --sbom-format=cyclonedx > sbom.cdx.json
-      - run: npm pack --ignore-scripts
+      - run: node scripts/production-sbom.mjs > sbom.cdx.json
+      - name: Pack and test the exact candidate bytes
+        run: |
+          npm pack --ignore-scripts
+          set -- *.tgz
+          test "$#" -eq 1
+          sha256sum "$1" > candidate.sha256
+          node scripts/package-smoke.mjs --artifact "$1" --sbom sbom.cdx.json --evidence-directory consumer-evidence
+          sha256sum --check candidate.sha256
+      - name: Retain consumer evidence even when comparison fails
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: consumer-check-${{ github.sha }}
+          path: |
+            consumer-evidence/
+            candidate.sha256
+          if-no-files-found: ignore
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: verified-alpha-${{ github.sha }}
