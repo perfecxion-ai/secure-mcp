@@ -19,8 +19,11 @@ export function createTokenVerifier(
       maxTokenAge: config.maxTokenAgeSeconds,
       clockTolerance: 0,
     });
+    // RFC 9068 section 4 and RFC 7515 section 4.1.9 require both media-type forms.
+    const tokenType =
+      typeof protectedHeader.typ === 'string' ? protectedHeader.typ.toLowerCase() : undefined;
     if (
-      protectedHeader.typ !== 'at+jwt' ||
+      (tokenType !== 'at+jwt' && tokenType !== 'application/at+jwt') ||
       typeof payload.sub !== 'string' ||
       !payload.sub ||
       payload.sub.length > 256 ||

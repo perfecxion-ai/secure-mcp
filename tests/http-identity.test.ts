@@ -84,6 +84,21 @@ test(
       (error: unknown) =>
         typeof error === 'object' && error !== null && 'code' in error && error.code === -32602,
     );
+    for (const typ of ['application/at+jwt', 'AT+JWT', 'ApPlIcAtIoN/aT+jWt']) {
+      await t.test(`HTTP accepts access-token media type ${typ}`, async () => {
+        const typedClient = new Client(
+          { name: 'token-type-test', version: '1' },
+          { versionNegotiation: { mode: { pin: '2026-07-28' } } },
+        );
+        t.after(() => typedClient.close());
+        await typedClient.connect(
+          new StreamableHTTPClientTransport(new URL(handle.url), {
+            requestInit: { headers: { authorization: `Bearer ${await sign(claims, typ)}` } },
+          }),
+        );
+        assert.ok(!(await typedClient.callTool({ name: 'policy_status', arguments: {} })).isError);
+      });
+    }
 
     const pem = await exportSPKI(trusted.publicKey);
     const der = Buffer.from(pem.replace(/-----[^-]+-----|\s/g, ''), 'base64');
@@ -92,6 +107,12 @@ test(
       ['wrong audience', await sign({ ...claims, aud: 'https://other.example/mcp' })],
       ['wrong token type', await sign(claims, 'JWT')],
       ['missing token type', await sign(claims, '')],
+      ['unrelated media type', await sign(claims, 'application/jwt')],
+      ['wrong media type prefix', await sign(claims, 'text/at+jwt')],
+      ['duplicate media type prefix', await sign(claims, 'application/application/at+jwt')],
+      ['media type parameters', await sign(claims, 'application/at+jwt; charset=utf-8')],
+      ['media type trailing newline', await sign(claims, 'at+jwt\n')],
+      ['media type leading whitespace', await sign(claims, ' application/at+jwt')],
       [
         'wrong signing key',
         await new SignJWT(claims)
