@@ -30,7 +30,7 @@ For VS Code, `vscode-mcp.json` uses the `servers` format for a workspace `.vscod
 
 For a macOS or Windows desktop, keep Node, the installation and documents on Linux. A VS Code Remote-SSH workspace is a candidate path: configure the server in the remote Linux workspace and confirm its process and paths resolve there. A remote window alone is not evidence of where a selected harness launches MCP. Alternatively, use Streamable HTTP with a Linux operator's issuer/TLS setup described in [operations](OPERATIONS.md). Record and validate that exact desktop-to-Linux combination before calling it supported. Neither path implies native desktop package support.
 
-The JSON generation and server launch can be tested automatically. Actual VS Code/Cursor versions, harness behavior and repeat use need independent [trial receipts](validation/TRIAL_RECEIPT.md); they have not been established for alpha.2 yet.
+The JSON generation and server launch can be tested automatically. Actual VS Code/Cursor versions, harness behavior and repeat use need independent [trial receipts](validation/TRIAL_RECEIPT.md) bound to the exact source and digest in the supplied alpha.3 candidate packet. This guide supplies instructions, not completed human evidence or publication approval.
 
 ## Complete a useful first session
 
@@ -45,7 +45,7 @@ Use the host's MCP tool view or ask it to perform these calls explicitly, with u
 
 For a complete fixture workflow, follow the [alert-triage demo](DEMO.md). Then replace the harmless fixture with approved copies of two short runbooks and complete a real comparison or triage task. Return for a second session and record whether the result was useful and what required manual help. An automated smoke test does not establish this usage evidence.
 
-Doctor reports local configuration/workspace checks only. If the host cannot start, verify the absolute Node path and supported version on the server machine, the CLI path, and workspace permissions. If serving appears idle in a terminal, stdio is waiting for an MCP client. If audit delivery has latched unhealthy, follow the recovery procedure in [operations](OPERATIONS.md) before restarting; a restart alone does not repair the underlying delivery failure.
+Doctor reports local configuration/workspace checks only. Startup errors go to stderr with a configuration field and fixed reason, without echoing paths, values or unknown setting names. If the host cannot start, use that reason to check the absolute Node path and supported version, the CLI path, strict JSON configuration and workspace permissions. Protocol stdout remains separate. If serving appears idle in a terminal, stdio is waiting for an MCP client. If audit delivery has latched unhealthy, follow the recovery procedure in [operations](OPERATIONS.md) before restarting; a restart alone does not repair the underlying delivery failure. The CLI exits nonzero on shutdown when audit is unhealthy, including stdin EOF or a signal; a handled tool denial alone does not make a healthy shutdown fail.
 
 ## Keep the trial evidence
 
