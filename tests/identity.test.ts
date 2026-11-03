@@ -5,6 +5,110 @@ import { exportJWK, generateKeyPair, SignJWT } from 'jose';
 import { parseConfig } from '../src/config.js';
 import { createTokenVerifier } from '../src/identity.js';
 
+test('access-token types accept only the registered media type in either case', async (t) => {
+  const [trusted, attacker] = await Promise.all([
+    generateKeyPair('ES256'),
+    generateKeyPair('ES256'),
+  ]);
+  const jwk = { ...(await exportJWK(trusted.publicKey)), kid: 'trusted', alg: 'ES256' };
+  const server = createServer((_request, response) => {
+    response.setHeader('content-type', 'application/json');
+    response.end(JSON.stringify({ keys: [jwk] }));
+  });
+  await new Promise<void>((resolve) => server.listen(0, '127.0.0.1', resolve));
+  t.after(
+    () =>
+      new Promise<void>((resolve) => {
+        server.close(() => resolve());
+        server.closeAllConnections();
+      }),
+  );
+  const address = server.address();
+  assert.ok(address && typeof address !== 'string');
+  const issuer = `http://127.0.0.1:${address.port}`;
+  const resource = 'https://mcp.example/mcp';
+  const verify = createTokenVerifier(
+    parseConfig({
+      transport: 'http',
+      http: { issuer, resource, jwksUrl: issuer + '/jwks', algorithms: ['ES256'] },
+    }).http!,
+  );
+  const now = Math.floor(Date.now() / 1000);
+  const claims = {
+    sub: 'token-type-fixture',
+    iss: issuer,
+    aud: resource,
+    iat: now,
+    exp: now + 300,
+    scope: 'policy:read',
+  };
+  const sign = (typ: unknown, key = trusted.privateKey, payload = claims) =>
+    new SignJWT(payload)
+      .setProtectedHeader({
+        alg: 'ES256',
+        kid: 'trusted',
+        // Deliberately sign malformed values too: JSON input has no TypeScript types.
+        ...(typ === undefined ? {} : { typ: typ as string }),
+      })
+      .sign(key);
+  for (const typ of [
+    'at+jwt',
+    'application/at+jwt',
+    'AT+JWT',
+    'APPLICATION/AT+JWT',
+    'aT+jWt',
+    'aPpLiCaTiOn/aT+jWt',
+  ]) {
+    await t.test(`accepts ${typ} only with valid signature and claims`, async () => {
+      assert.deepEqual(await verify(await sign(typ)), {
+        subject: claims.sub,
+        issuer,
+        scopes: ['policy:read'],
+        expiresAt: claims.exp,
+      });
+      await assert.rejects(verify(await sign(typ, attacker.privateKey)));
+      await assert.rejects(
+        verify(await sign(typ, trusted.privateKey, { ...claims, exp: now - 1 })),
+      );
+      await assert.rejects(
+        verify(
+          await sign(typ, trusted.privateKey, { ...claims, aud: 'https://other.example/mcp' }),
+        ),
+      );
+    });
+  }
+  for (const typ of [
+    undefined,
+    null,
+    false,
+    3,
+    ['at+jwt'],
+    { value: 'at+jwt' },
+    '',
+    'JWT',
+    'application/jwt',
+    'text/at+jwt',
+    'application/application/at+jwt',
+    'application/at+jwt; charset=utf-8',
+    'at+jwt; charset=utf-8',
+    ' at+jwt',
+    'at+jwt ',
+    'at+jwt\n',
+    'at+jwt\r',
+    'at+jwt\0',
+    'application\\at+jwt',
+    'application//at+jwt',
+    'application/%61t+jwt',
+    'at+jwt/',
+    'at+jwt,application/at+jwt',
+    '\uff41t+jwt',
+  ]) {
+    await t.test(`rejects ${JSON.stringify(typ)}`, async () => {
+      await assert.rejects(verify(await sign(typ)));
+    });
+  }
+});
+
 test('JWKS rotation, cache expiry, and issuer outages preserve the trust boundary', async (t) => {
   // Advance only wall time. Network I/O and its timeout keep their real clocks.
   t.mock.timers.enable({ apis: ['Date'], now: Date.now() });
