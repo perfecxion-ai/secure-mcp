@@ -55,18 +55,18 @@ const environment = {
   ],
   deployment_branch_policy: { protected_branches: false, custom_branch_policies: true },
 };
-const branches = { total_count: 1, branch_policies: [{ name: 'v2.0.0-alpha.2', type: 'tag' }] };
+const branches = { total_count: 1, branch_policies: [{ name: 'v2.0.0-alpha.3', type: 'tag' }] };
 const approval = { state: 'approved', user: { id: 38704968 }, environments: [{ id: 99 }] };
 const preflight = {
   status: 'preflight-passed',
   sourceCommit: source,
-  version: '2.0.0-alpha.2',
+  version: '2.0.0-alpha.3',
   package: '@perfecxion/secure-mcp-server',
   registry: 'https://registry.npmjs.org/',
   tag: 'alpha',
-  hashes: { 'perfecxion-secure-mcp-server-2.0.0-alpha.2.tgz': digest },
+  hashes: { 'perfecxion-secure-mcp-server-2.0.0-alpha.3.tgz': digest },
   workflowRun: 42,
-  workflowRef: 'perfecxion-ai/secure-mcp/.github/workflows/publish.yml@refs/tags/v2.0.0-alpha.2',
+  workflowRef: 'perfecxion-ai/secure-mcp/.github/workflows/publish.yml@refs/tags/v2.0.0-alpha.3',
   workflowSha: source,
   targetVersionAbsent: true,
   registryTags: { latest: '1.0.0' },
@@ -94,6 +94,15 @@ test('publication receipt preserves the publisher attempt across verification re
     ),
   );
   assert.throws(() => validatePublicationReceipt(receipt, source, 'c'.repeat(64), '100', '1'));
+  assert.throws(() =>
+    validatePublicationReceipt(
+      { ...receipt, version: '2.0.0-alpha.2' },
+      source,
+      digest,
+      '100',
+      '1',
+    ),
+  );
 });
 
 test('saved evidence escapes Unicode dashes without changing signed string values', () => {
@@ -137,8 +146,11 @@ test('publication needs a reviewed settings receipt and independently enabled ex
 
 test('environment must already enforce exact reviewers, self-review prevention and the single tag', () => {
   validateEnvironment(settings, environment, branches);
+  validateEnvironment(settings, { ...environment, can_admins_bypass: false }, branches);
   for (const patch of [
     { name: 'new-auto-created' },
+    { can_admins_bypass: true },
+    { can_admins_bypass: null },
     { protection_rules: [] },
     { protection_rules: [{ ...environment.protection_rules[0], prevent_self_review: false }] },
     {
@@ -159,7 +171,8 @@ test('environment must already enforce exact reviewers, self-review prevention a
       branch_policies: [...branches.branch_policies, { name: 'main', type: 'branch' }],
     },
     { total_count: 1, branch_policies: [{ name: 'v*', type: 'tag' }] },
-    { total_count: 1, branch_policies: [{ name: 'v2.0.0-alpha.2', type: 'branch' }] },
+    { total_count: 1, branch_policies: [{ name: 'v2.0.0-alpha.2', type: 'tag' }] },
+    { total_count: 1, branch_policies: [{ name: 'v2.0.0-alpha.3', type: 'branch' }] },
   ])
     assert.throws(() => validateEnvironment(settings, environment, branchPolicy));
 });
@@ -182,6 +195,7 @@ test('publication cannot substitute a successful preflight from another artifact
   for (const patch of [
     { sourceCommit: 'c'.repeat(40) },
     { version: '2.0.0-alpha.1' },
+    { version: '2.0.0-alpha.2' },
     { workflowRun: 43 },
     { hashes: {} },
     { tag: 'latest' },
@@ -212,7 +226,7 @@ test('post-publication requires unchanged other tags, canonical registry bytes a
     version: preflight.version,
     dist: {
       tarball:
-        'https://registry.npmjs.org/@perfecxion/secure-mcp-server/-/secure-mcp-server-2.0.0-alpha.2.tgz',
+        'https://registry.npmjs.org/@perfecxion/secure-mcp-server/-/secure-mcp-server-2.0.0-alpha.3.tgz',
       attestations: { provenance: { predicateType: 'https://slsa.dev/provenance/v1' } },
     },
   };
@@ -250,6 +264,7 @@ test('workflow policy catches loss of approval, permission separation or post-pu
     workflow.replace('scripts/verify-npm-publication.mjs', 'scripts/skip-verification.mjs'),
     workflow.replace('contents: read', 'contents: read\n  id-token: write'),
     workflow.replace('cancel-in-progress: false', 'cancel-in-progress: true'),
+    workflow.replace('refs/tags/v2.0.0-alpha.3', 'refs/tags/v2.0.0-alpha.2'),
   ])
     assert.throws(() => validatePublicationWorkflow(changed));
 });
@@ -266,10 +281,10 @@ test('registry smoke rejects ranges and compares the actual installed package wi
   const archive = join(directory, 'candidate.tgz');
   execFileSync('tar', ['-czf', archive, '-C', directory, 'package/package.json']);
   const files = ['package/package.json'];
-  assert.ok(registryInstallArguments('2.0.0-alpha.2', archive).includes('--save-exact'));
-  for (const version of ['alpha', '^2.0.0-alpha.2', '2.0.0-alpha.1'])
+  assert.ok(registryInstallArguments('2.0.0-alpha.3', archive).includes('--save-exact'));
+  for (const version of ['alpha', '^2.0.0-alpha.3', '2.0.0-alpha.1', '2.0.0-alpha.2'])
     assert.throws(() => registryInstallArguments(version, archive));
-  assert.throws(() => registryInstallArguments('2.0.0-alpha.2', undefined));
+  assert.throws(() => registryInstallArguments('2.0.0-alpha.3', undefined));
   await compareInstalledPackage(archive, files, installed);
   await writeFile(join(installed, 'package.json'), metadata + ' ');
   await assert.rejects(

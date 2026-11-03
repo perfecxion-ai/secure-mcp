@@ -37,7 +37,11 @@ export async function verifySettings(source, digest) {
 }
 
 export async function downloadCandidate(source, digest, run, directory) {
-  assert.equal(api('commits/v2.0.0-alpha.2').sha, source, 'Release tag changed');
+  assert.equal(
+    api(`commits/${policy.ref.slice('refs/tags/'.length)}`).sha,
+    source,
+    'Release tag changed',
+  );
   validateCiRun(api(`actions/runs/${run}`), source, run);
   const comparison = api(`compare/${source}...main`);
   assert.ok(['ahead', 'identical'].includes(comparison.status), 'Source must remain on main');

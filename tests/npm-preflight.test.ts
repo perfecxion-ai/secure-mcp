@@ -22,11 +22,11 @@ const context = {
   GITHUB_ACTIONS: 'true',
   GITHUB_REPOSITORY: 'perfecxion-ai/secure-mcp',
   GITHUB_EVENT_NAME: 'workflow_dispatch',
-  GITHUB_REF: 'refs/tags/v2.0.0-alpha.2',
+  GITHUB_REF: 'refs/tags/v2.0.0-alpha.3',
   GITHUB_SHA: source,
   GITHUB_WORKFLOW_SHA: source,
   GITHUB_WORKFLOW_REF:
-    'perfecxion-ai/secure-mcp/.github/workflows/npm-preflight.yml@refs/tags/v2.0.0-alpha.2',
+    'perfecxion-ai/secure-mcp/.github/workflows/npm-preflight.yml@refs/tags/v2.0.0-alpha.3',
   GITHUB_SERVER_URL: 'https://github.com',
   GITHUB_API_URL: 'https://api.github.com',
 };
@@ -43,7 +43,7 @@ const run = {
 };
 const metadata = {
   name: '@perfecxion/secure-mcp-server',
-  version: '2.0.0-alpha.2',
+  version: '2.0.0-alpha.3',
   publishConfig: { registry: 'https://registry.npmjs.org/', tag: 'alpha', access: 'public' },
   engines: { node: '>=24.22.1 <25' },
   os: ['linux'],
@@ -72,6 +72,7 @@ test('npm preflight accepts only an exact manual release-tag context without pub
     { GITHUB_EVENT_NAME: 'push' },
     { GITHUB_REF: 'refs/heads/main' },
     { GITHUB_REF: 'refs/tags/v2.0.0-alpha.1' },
+    { GITHUB_REF: 'refs/tags/v2.0.0-alpha.2' },
     { GITHUB_SHA: 'c'.repeat(40) },
     { GITHUB_WORKFLOW_SHA: 'c'.repeat(40) },
     { GITHUB_WORKFLOW_REF: context.GITHUB_WORKFLOW_REF.replace('npm-preflight', 'publish') },
@@ -110,7 +111,8 @@ test('npm preflight rejects other artifacts and unsafe package publication setti
   for (const patch of [
     { name: '@someone/secure-mcp-server' },
     { version: '2.0.0-alpha.1' },
-    { version: '2.0.0-alpha.3' },
+    { version: '2.0.0-alpha.2' },
+    { version: '2.0.0-alpha.4' },
     { publishConfig: { ...metadata.publishConfig, tag: 'latest' } },
     { publishConfig: { ...metadata.publishConfig, registry: 'https://registry.invalid/' } },
     { publishConfig: { ...metadata.publishConfig, access: 'restricted' } },
@@ -129,7 +131,7 @@ test('npm absence requires successful metadata and preserves the whole dist-tag 
     {},
     { ...registry, name: 'wrong-package' },
     { ...registry, versions: {} },
-    { ...registry, versions: { ...registry.versions, '2.0.0-alpha.2': {} } },
+    { ...registry, versions: { ...registry.versions, '2.0.0-alpha.3': {} } },
     { ...registry, 'dist-tags': {} },
     { ...registry, 'dist-tags': { latest: '2.0.0-alpha.1' } },
     { ...registry, 'dist-tags': { latest: '1.0.0', next: null } },
@@ -147,7 +149,7 @@ test('manual preflight has read-only permissions and cannot publish', async () =
   assert.doesNotMatch(workflow, /:\s*write\b|secrets\.|npm (?:publish|ci|install)|npm run build/);
   assert.match(workflow, /persist-credentials: false/);
   assert.match(workflow, /runs-on: ubuntu-24\.04/);
-  assert.match(workflow, /refs\/tags\/v2\.0\.0-alpha\.2/);
+  assert.ok(workflow.includes(`[[ "$GITHUB_REF" == ${policy.ref} ]]`));
   assert.match(workflow, /MCP_SOURCE_SHA: \$\{\{ inputs\.source_sha \}\}/);
   for (const [, target] of workflow.matchAll(/uses:\s+(\S+)/g)) {
     assert.match(target!, /^[\w/-]+@[a-f0-9]{40}$/);
@@ -234,7 +236,7 @@ if (args.includes('--help')) {
 }
 if (args[0] === 'api') {
   const path = args.at(-1);
-  if (path.endsWith('/commits/v2.0.0-alpha.2')) output = {sha:source};
+  if (path.endsWith('/commits/v2.0.0-alpha.3')) output = {sha:source};
   else if (path.endsWith('/actions/runs/42')) output = run;
   else if (path.includes('/compare/')) output = {status:'identical'};
   else if (path.endsWith('/artifacts')) output = {artifacts:[{id:7,name:'verified-alpha-'+source,expired:false}]};

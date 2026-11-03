@@ -13,7 +13,7 @@ test('npm provenance policy binds the cryptographically verified bundle to the a
   const directory = await mkdtemp(join(tmpdir(), 'secure-mcp-provenance-policy-'));
   t.after(() => rm(directory, { recursive: true, force: true }));
   const repo = 'https://github.com/perfecxion-ai/secure-mcp';
-  const ref = 'refs/tags/v2.0.0-alpha.2';
+  const ref = 'refs/tags/v2.0.0-alpha.3';
   const identity = `${repo}/.github/workflows/publish.yml@${ref}`;
   const expected = {
     source: 'a'.repeat(40),
@@ -53,11 +53,12 @@ test('npm provenance policy binds the cryptographically verified bundle to the a
   };
   const goodCertificate = await certificate('expected', identity);
   const otherCertificate = await certificate('other', identity.replace('publish.yml', 'other.yml'));
+  const heldCertificate = await certificate('held', identity.replace('alpha.3', 'alpha.2'));
   const statement = {
     _type: 'https://in-toto.io/Statement/v1',
     subject: [
       {
-        name: 'pkg:npm/%40perfecxion/secure-mcp-server@2.0.0-alpha.2',
+        name: 'pkg:npm/%40perfecxion/secure-mcp-server@2.0.0-alpha.3',
         digest: { sha512: expected.sha512 },
       },
     ],
@@ -85,7 +86,7 @@ test('npm provenance policy binds the cryptographically verified bundle to the a
     verified: [
       {
         name: '@perfecxion/secure-mcp-server',
-        version: '2.0.0-alpha.2',
+        version: '2.0.0-alpha.3',
         registry: 'https://registry.npmjs.org/',
         location: 'node_modules/@perfecxion/secure-mcp-server',
         attestationBundles: [
@@ -121,6 +122,15 @@ test('npm provenance policy binds the cryptographically verified bundle to the a
     ])
       assert.throws(() => validateNpmProvenance(value, expected));
   });
+  await t.test('rejects held alpha.2 package and signing identity', () => {
+    const heldReport = report();
+    heldReport.verified[0]!.version = '2.0.0-alpha.2';
+    assert.throws(() => validateNpmProvenance(heldReport, expected), /verified root package/);
+    assert.throws(
+      () => validateNpmProvenance(report(statement, heldCertificate), expected),
+      /signer identity/,
+    );
+  });
   const mutations: [string, (value: typeof statement) => void][] = [
     [
       'subject',
@@ -132,6 +142,12 @@ test('npm provenance policy binds the cryptographically verified bundle to the a
       'package',
       (value) => {
         value.subject[0]!.name = 'pkg:npm/other@1.0.0';
+      },
+    ],
+    [
+      'held alpha.2 subject',
+      (value) => {
+        value.subject[0]!.name = 'pkg:npm/%40perfecxion/secure-mcp-server@2.0.0-alpha.2';
       },
     ],
     [
@@ -158,6 +174,13 @@ test('npm provenance policy binds the cryptographically verified bundle to the a
       'ref',
       (value) => {
         value.predicate.buildDefinition.externalParameters.workflow.ref = 'refs/heads/main';
+      },
+    ],
+    [
+      'held alpha.2 tag',
+      (value) => {
+        value.predicate.buildDefinition.externalParameters.workflow.ref =
+          'refs/tags/v2.0.0-alpha.2';
       },
     ],
     [
