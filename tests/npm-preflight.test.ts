@@ -2,7 +2,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { execFileSync, spawnSync } from 'node:child_process';
 import { mkdtemp, mkdir, readFile, writeFile, rm, access } from 'node:fs/promises';
-import { join } from 'node:path';
+import { join, resolve } from 'node:path';
 import { tmpdir } from 'node:os';
 import {
   policy,
@@ -202,10 +202,15 @@ test('preflight npm command dry-runs an exact tarball without lifecycle hooks', 
   await assert.rejects(access(canary));
 });
 
-test('preflight orchestration stops on a substituted CI source or tarball digest', async (t) => {
+test('preflight orchestration stops on a substituted checkout, CI source or tarball digest', async (t) => {
   const directory = await mkdtemp(join(tmpdir(), 'secure-mcp-preflight-wrapper-'));
   t.after(() => rm(directory, { recursive: true, force: true }));
-  const actualSource = execFileSync('git', ['rev-parse', 'HEAD'], { encoding: 'utf8' }).trim();
+  const checkout = join(directory, 'checkout');
+  execFileSync('git', ['init', '--quiet', checkout]);
+  // The mocked release has a synthetic HEAD, independent of the caller's checkout.
+  // No commit, identity override or source-repository mutation is needed.
+  const actualSource = source;
+  const script = resolve('scripts/npm-preflight.mjs');
   await mkdir(join(directory, 'package'));
   await writeFile(join(directory, 'package/package.json'), JSON.stringify(metadata));
   execFileSync('tar', ['-czf', join(directory, policy.filename), '-C', directory, 'package']);
@@ -249,15 +254,18 @@ console.log(JSON.stringify(output));
 `,
     { mode: 0o700 },
   );
-  for (const [name, badCi, error] of [
-    ['ci-source', '1', /CI source mismatch/],
-    ['tarball-digest', '0', /Approved tarball digest mismatch/],
+  for (const [name, checkoutSource, badCi, error] of [
+    ['checkout-source', 'c'.repeat(40), '0', /Checkout source mismatch/],
+    ['ci-source', actualSource, '1', /CI source mismatch/],
+    ['tarball-digest', actualSource, '0', /Approved tarball digest mismatch/],
   ] as const) {
+    await writeFile(join(checkout, '.git/HEAD'), checkoutSource + '\n');
     await t.test(name, () => {
       const result = spawnSync(
         process.execPath,
-        ['scripts/npm-preflight.mjs', actualSource, digest, '42', join(directory, name)],
+        [script, actualSource, digest, '42', join(directory, name)],
         {
+          cwd: checkout,
           encoding: 'utf8',
           timeout: 10_000,
           env: {

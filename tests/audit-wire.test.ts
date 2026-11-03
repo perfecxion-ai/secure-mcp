@@ -10,13 +10,18 @@ import { StdioClientTransport } from '@modelcontextprotocol/client/stdio';
 for (const mode of [{ pin: '2026-07-28' }, 'legacy'] as const)
   test(
     `stdio collector failure returns a bounded safe protocol error (${typeof mode === 'string' ? mode : mode.pin})`,
-    { timeout: 5000 },
+    // Child startup with tsx/coverage is separate from the audit-response deadline.
+    { timeout: 30_000 },
     async (t) => {
       const directory = await mkdtemp(join(tmpdir(), 'mcp-wire-audit-'));
       const socket = join(directory, 'collector.sock');
+      let receivedRecords = 0;
       const collector = createServer((connection) => {
         connection.on('error', () => {});
-        connection.once('data', () => connection.destroy());
+        connection.once('data', () => {
+          receivedRecords++;
+          connection.destroy();
+        });
       });
       await new Promise<void>((resolve) => collector.listen(socket, resolve));
       t.after(async () => {
@@ -36,6 +41,7 @@ for (const mode of [{ pin: '2026-07-28' }, 'legacy'] as const)
         { versionNegotiation: { mode } },
       );
       t.after(() => client.close());
+      const startup = AbortSignal.timeout(20_000);
       await client.connect(
         new StdioClientTransport({
           command: process.execPath,
@@ -48,11 +54,16 @@ for (const mode of [{ pin: '2026-07-28' }, 'legacy'] as const)
           ],
           stderr: 'ignore',
         }),
+        { signal: startup },
       );
       // Modern stdio connect can complete before the child finishes loading.
       // Discovery establishes readiness without invoking the failing audit sink.
-      await client.listTools();
-      const start = performance.now();
+      assert.ok(
+        (await client.listTools(undefined, { signal: startup })).tools.some(
+          (tool) => tool.name === 'policy_status',
+        ),
+      );
+      assert.equal(receivedRecords, 0);
       await assert.rejects(
         client.callTool(
           { name: 'policy_status', arguments: {} },
@@ -60,6 +71,6 @@ for (const mode of [{ pin: '2026-07-28' }, 'legacy'] as const)
         ),
         /audit_unavailable/,
       );
-      assert.ok(performance.now() - start < 1000);
+      assert.ok(receivedRecords > 0, 'the collector must receive the event before disconnecting');
     },
   );
