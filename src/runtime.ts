@@ -15,7 +15,7 @@ import { createApiTool, createDocumentTool, defineTool, textResult } from './too
 import type { ToolDefinition } from './tools.js';
 import { assertSupportedNode } from './node-version.js';
 
-export const VERSION = '2.0.0-alpha.2';
+export const VERSION = '2.0.0-alpha.3';
 export interface RuntimeOptions {
   config?: unknown;
   tools?: readonly ToolDefinition[];
