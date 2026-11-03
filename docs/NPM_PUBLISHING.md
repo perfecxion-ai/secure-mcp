@@ -33,6 +33,14 @@ The [npm trusted-publisher documentation](https://docs.npmjs.com/trusted-publish
 
 ## Preflight and approval packet
 
+The dedicated `npm-preflight.yml` workflow implements read-only preparation. It has no publishing token, OIDC permission or protected-environment declaration; it cannot silently create an unprotected publishing environment. `publish.yml` remains a hard hold. The actual protected publishing job, verified npm settings and post-publication checks in issue 48 remain unfinished.
+
+After the final candidate source and digest are selected, a maintainer must separately authorize creation of the matching `v2.0.0-alpha.2` tag. The workflow must already exist at that commit. Dispatch the preflight from that exact tag with its source SHA, independently selected tarball SHA-256 and successful main CI run ID. It creates no tags and rejects branch dispatches, mismatched workflow/checkout sources, alpha.1 and registry errors. Do not create a provisional tag merely to test this workflow.
+
+Preflight uses the pinned Node 24.22.1 and checks for npm 11.19.1. It checks GitHub CLI support for the required source/ref/workflow verification flags and fails with an update instruction if the runner's CLI is too old. The saved report records the resolved toolchain. Its unconditional `npm publish --dry-run --ignore-scripts` runs outside the checkout with empty npm configuration files and the explicit public registry and alpha tag.
+
+Download the `npm-preflight-SOURCE_SHA` report artifact to inspect the verified source/run, digest, complete registry tag snapshot, target-version absence and dry-run result. This report does not establish npm publishing authority, protected settings, human acceptance, or approval. The existing candidate bundle remains the authoritative retained artifact. No live preflight has been run before the candidate and tag exist; local policy and dry-run tests do not claim GitHub signature verification for a future artifact.
+
 Prepare a read-only job that verifies the exact candidate version, source SHA, tarball digest, successful CI, signed provenance/SBOM and package metadata. Install/test without a publishing identity. Retain consumer dependency evidence and perform a dry-run without rebuilding the package. A dry-run does not prove the npm identity can publish.
 
 The approval packet must include the exact artifact, workflow/ref/environment, current registry versions and all dist-tags, expected unchanged `latest`, validation receipts, account settings and withdrawal authority. A failed registry request is not proof that a version is unused. The publishing job must reverify the approved bytes immediately before publishing and must not rebuild or repack them.
