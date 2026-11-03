@@ -1,8 +1,8 @@
 # Changelog
 
-## 2.0.0-alpha.3 (development)
+## 2.0.0-alpha.3 (validation candidate)
 
-Address the November 3 review findings in audit delivery, HTTP admission and request targets, access-token media types, startup diagnostics and request observability. See the [development notes](docs/releases/2.0.0-alpha.3.md). No frozen candidate or publication is claimed.
+Address the November 3 review findings in audit delivery, HTTP admission and request targets, access-token media types, startup diagnostics and request observability. See the [release notes](docs/releases/2.0.0-alpha.3.md) and [frozen candidate record](docs/validation/ALPHA3.md). Independent acceptance and publication remain separate gates.
 
 ## 2.0.0-alpha.2 (held candidate)
 
