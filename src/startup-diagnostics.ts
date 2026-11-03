@@ -33,7 +33,7 @@ const fields = new Set([
   'api.maxBytes',
 ]);
 const customReasons = new Map([
-  ['HTTP requires at least two pending audit records', 'must be at least 2 for HTTP admission'],
+  ['HTTP requires at least three pending audit records', 'must be at least 3 for HTTP admission'],
   [
     'HTTP requires an external issuer, JWKS URL, and resource URL',
     'requires an HTTP configuration block with resource, issuer and jwksUrl',
@@ -90,7 +90,9 @@ export function filesystemDiagnostic(
       : code === 'EACCES' || code === 'EPERM'
         ? 'is not accessible; check directory and file permissions'
         : code === 'ENOTDIR'
-          ? 'requires a directory; check the selected path'
+          ? area === 'config'
+            ? 'has a parent component that is not a directory; check the selected path'
+            : 'requires a directory; check the selected path'
           : code === 'EISDIR'
             ? 'must be a readable JSON file, not a directory'
             : 'could not be opened; check the selected path and permissions';

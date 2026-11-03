@@ -84,7 +84,7 @@ test(
             jwksUrl: 'https://issuer.example/keys',
           },
         },
-        /audit.maxPending: must be at least 2 for HTTP admission/,
+        /audit.maxPending: must be at least 3 for HTTP admission/,
       ],
       [[], /config: must be a JSON object/],
     ];
@@ -92,6 +92,27 @@ test(
       await writeFile(config, JSON.stringify(value));
       failure(['--config', config, '--doctor'], expected);
     }
+    await writeFile(
+      config,
+      JSON.stringify({
+        workspace,
+        transport: 'http',
+        audit: { maxPending: 2 },
+        http: {
+          resource: 'https://server.example/mcp',
+          issuer: 'https://issuer.example',
+          jwksUrl: 'https://issuer.example/keys',
+        },
+      }),
+    );
+    failure(
+      ['--config', config, '--doctor'],
+      /audit.maxPending: must be at least 3 for HTTP admission/,
+    );
+    failure(
+      ['--config', join(config, canary)],
+      /config: has a parent component that is not a directory/,
+    );
     await writeFile(config, `{"secret":"${canary}"`);
     failure(['--config', config], /config: invalid JSON/);
     failure(['--config', join(directory, `missing-${canary}`)], /config: does not exist/);
@@ -134,7 +155,7 @@ test(
         JSON.stringify({
           workspace,
           transport,
-          audit: { maxPending: transport === 'http' ? 2 : 1 },
+          audit: { maxPending: transport === 'http' ? 3 : 1 },
           ...(transport === 'http' && {
             http: {
               resource: 'https://server.example/mcp',
