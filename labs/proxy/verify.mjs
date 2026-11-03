@@ -118,6 +118,78 @@ if (process.argv.includes('--client')) {
     request.end();
   });
   assert.equal(hostileHost, 403);
+  // Four incomplete authenticated bodies would fill this lab's runtime admission budget.
+  // The proxy must hold them until complete so ordinary requests can still reach the runtime.
+  const slowRequests = [];
+  const slowResponses = [];
+  try {
+    await Promise.all(
+      Array.from(
+        { length: 4 },
+        () =>
+          new Promise((resolve, reject) => {
+            const started = performance.now();
+            const request = httpsRequest(resource, {
+              method: 'POST',
+              headers: {
+                authorization: `Bearer ${bearer}`,
+                'content-type': 'application/json',
+                'content-length': '4096',
+              },
+            });
+            slowRequests.push(request);
+            const response = new Promise((resolveResponse) => {
+              request.on('response', (message) => {
+                message.resume();
+                message.once('end', () =>
+                  resolveResponse({
+                    status: message.statusCode,
+                    elapsedMs: performance.now() - started,
+                  }),
+                );
+              });
+              request.on('error', (error) =>
+                resolveResponse({ code: error.code, elapsedMs: performance.now() - started }),
+              );
+            });
+            slowResponses.push(response);
+            request.on('error', reject);
+            request.setTimeout(10_000, () =>
+              request.destroy(new Error('Proxy body timeout missing')),
+            );
+            request.write('{', resolve);
+          }),
+      ),
+    );
+    for (let attempt = 0; attempt < 10; attempt++) {
+      await delay(100);
+      const result = await fetch(resource, {
+        method: 'POST',
+        headers: {
+          authorization: `Bearer ${bearer}`,
+          'content-type': 'application/json',
+          accept: 'application/json, text/event-stream',
+          'mcp-protocol-version': '2025-11-25',
+        },
+        body: JSON.stringify({
+          jsonrpc: '2.0',
+          id: attempt,
+          method: 'tools/call',
+          params: { name: 'policy_status', arguments: {} },
+        }),
+        signal: AbortSignal.timeout(4000),
+      });
+      assert.equal(result.status, 200, 'Buffered partial bodies must not occupy runtime admission');
+      assert.match(await result.text(), /policy_status/);
+    }
+    for (const result of await Promise.all(slowResponses)) {
+      assert.ok(result.status === 408 || result.code === 'ECONNRESET', JSON.stringify(result));
+      assert.ok(result.elapsedMs >= 4000 && result.elapsedMs < 10_000, JSON.stringify(result));
+    }
+    assert.equal((await fetch(base + '/health')).status, 200);
+  } finally {
+    for (const request of slowRequests) request.destroy();
+  }
   process.stdout.write(
     JSON.stringify({
       result: 'pass',
@@ -133,6 +205,8 @@ if (process.argv.includes('--client')) {
         'hostile Origin rejection',
         'allowed preflight',
         'hostile Host rejection',
+        'partial authenticated bodies stay outside runtime admission',
+        'proxy body timeout and healthy recovery',
       ],
     }) + '\n',
   );
@@ -167,6 +241,7 @@ if (process.argv.includes('--client')) {
       join(directory, 'config.json'),
       JSON.stringify({
         transport: 'http',
+        limits: { maxConcurrent: 2 },
         workspace: join(directory, 'documents'),
         http: {
           port: runtimePort,
