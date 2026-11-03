@@ -2,11 +2,14 @@
 import { readFile } from 'node:fs/promises';
 import { parseArgs } from 'node:util';
 import { dirname, resolve } from 'node:path';
-import { serveStdio, StdioServerTransport } from '@modelcontextprotocol/server/stdio';
-import { SecureRuntime, VERSION } from './runtime.js';
-import { serveHttp } from './http.js';
+import { assertSupportedNode, UnsupportedRuntimeError } from './node-version.js';
 
 async function main(): Promise<void> {
+  // Reject unsupported runtimes before loading SDK dependencies or opening resources.
+  assertSupportedNode();
+  const { SecureRuntime, VERSION } = await import('./runtime.js');
+  const { serveHttp } = await import('./http.js');
+  const { serveStdio, StdioServerTransport } = await import('@modelcontextprotocol/server/stdio');
   const { values } = parseArgs({
     options: {
       config: { type: 'string' },
@@ -109,9 +112,11 @@ async function main(): Promise<void> {
   process.once('SIGTERM', stop);
   if (runtime.config.transport === 'stdio') process.stdin.once('end', stop);
 }
-main().catch(() => {
+main().catch((error: unknown) => {
   process.stderr.write(
-    'secure-mcp: startup failed; check configuration, workspace access, and listener availability\n',
+    error instanceof UnsupportedRuntimeError
+      ? `secure-mcp: ${error.message}\n`
+      : 'secure-mcp: startup failed; check configuration, workspace access, and listener availability\n',
   );
   process.exitCode = 1;
 });

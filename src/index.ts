@@ -12,3 +12,4 @@ export type { AuditEvent, AuditSink } from './audit.js';
 export { serveHttp } from './http.js';
 export type { HttpHandle } from './http.js';
 export { RuntimeFailure } from './errors.js';
+export { UnsupportedRuntimeError, SUPPORTED_NODE_RANGE } from './node-version.js';

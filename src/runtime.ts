@@ -13,6 +13,7 @@ import { failureCode, RuntimeFailure } from './errors.js';
 import { deferredInputSchema, withinInputElementLimit } from './input.js';
 import { createApiTool, createDocumentTool, defineTool, textResult } from './tools.js';
 import type { ToolDefinition } from './tools.js';
+import { assertSupportedNode } from './node-version.js';
 
 export const VERSION = '2.0.0-alpha.2';
 export interface RuntimeOptions {
@@ -47,6 +48,7 @@ export class SecureRuntime {
   }
 
   static async create(options: RuntimeOptions = {}): Promise<SecureRuntime> {
+    assertSupportedNode();
     const runtime = new SecureRuntime(options);
     try {
       if (options.tools) for (const tool of options.tools) runtime.register(tool);

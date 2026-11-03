@@ -15,6 +15,10 @@ jobs:
         with:
           node-version: '24'
           cache: npm
+      - name: Record the latest supported Node 24 environment
+        run: |
+          node --version
+          npm --version
       - run: npm ci
       - run: npm run test:security
       - run: npm audit --audit-level=high
