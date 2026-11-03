@@ -31,6 +31,8 @@ Default tool limits: 16 concurrent operations, 10-second deadline, 64 KiB input,
 
 Only origin-form request targets are accepted. Absolute URLs, backslashes in paths, fragments and paths that normalize to a different route are rejected with 400 before the SDK adapter. Queries do not select routes. JSON-RPC batches are rejected with 400 before dispatch; batching was [removed from MCP in June 2025](https://modelcontextprotocol.io/specification/2025-06-18/changelog), before both supported protocol revisions.
 
+HTTP connections retain the 1,000-request limit and use a five-second idle timeout. Node controls the connection headers so clients can rotate sockets before exceeding the request limit. The idle timeout leaves room for Node's bundled fetch client to retire a connection two seconds before the advertised deadline; advertising only two seconds prevents that client from reusing connections.
+
 The explicit element budget addresses the SDK's [configuration-dependent input-validation advisory](https://github.com/modelcontextprotocol/typescript-sdk/security/advisories/GHSA-46jr-4wx8-v453). Installing a patched SDK alone does not enable this control. Keep both byte and element limits appropriate to the registered tools.
 
 Audit is newline-delimited JSON on stderr by default. Route it to a durable collector for remote validation. Never redirect stdout logging into the stdio protocol stream. Events omit request content, tokens, paths, client-supplied IDs, and raw exceptions. HTTP records use fixed endpoint/method categories and status codes; only verified identities receive a hashed actor. Server-generated request IDs correlate HTTP, SDK protocol failures, and tool decisions. Unknown tool names are recorded as `unknown`.
