@@ -1,0 +1,44 @@
+{
+  "classification": "Local browser integration, not independent operator acceptance",
+  "sourceCommit": "23d8647fe0dee1455f3f0f320f1399ff568198b8",
+  "buildContext": "Runtime built before a documentation-only rebase; module hashes identify the tested bytes",
+  "result": "pass",
+  "node": "v24.22.1",
+  "browserVersion": "Chrome/155.0.8059.39",
+  "sha256": {
+    "dist/audit.js": "ad8bba80114a17d3e6f340557b4e99f041d774fbef6bb850543d45d3455b4b49",
+    "dist/cli.js": "82da7820861e583d4e2d06c4b63f4e062424375bb30348828a823925afba8459",
+    "dist/collector.js": "fec836cf193d597ba3bc045e3e02bb670a530734a19e42f860588a014f513437",
+    "dist/config.js": "bfe347b96c5f572ff6a73ffcc6a959efa6bc07122960c21fe39ab9311a29e975",
+    "dist/errors.js": "af76f4cb2b27c84c7cfebae19dfcde21c524531072a5be4b5f941bd0a981cd50",
+    "dist/execution.js": "83db43ea5d70332738719d7bff891391d507c9f7b6c55953b0345a284dd6f9d1",
+    "dist/http.js": "7321d7e361a0a8dec65f2db547c51c29226c87d81d1b5f8d64e6e6c05fab42e3",
+    "dist/identity.js": "c02afb6b9864f2983a121a796d4dfc4f734737aa54f95382c74c1644c2ffc446",
+    "dist/index.js": "6dea6f8086c1cfce9ea22c7b25c293e80b933c5eaeac039c7a3753c631fdeed9",
+    "dist/input.js": "2c6aa227bdea5815ab7907404d0526173f66cb6d7d8b9f91e09114d78141c7ee",
+    "dist/node-version.js": "865d458c1555b6a95088b870db69a8443f7389de307bf781c26bfafe94588ae4",
+    "dist/policy.js": "23b3f3c42894e8849e5bda94a21db709906eac69b049d426c52b53889b326ac3",
+    "dist/runtime.js": "ec01a5b4d11459c8520f767e926db506122034f069f61df95b0491675c75b55f",
+    "dist/startup-diagnostics.js": "f6d1474e92f4aa6bab8fb3fd27b9e68dce891be7c1c96c6d82885c3e4755f674",
+    "dist/tools.js": "1abd5ebaa49e033605e465b64c70dc0912be780191f82c2bee63f1cc0cf2ea86"
+  },
+  "images": {
+    "keycloak": "quay.io/keycloak/keycloak@sha256:a78d6b79572168cb25886b80a8b5b8d4ed4390743e3eecb810538683e209dd6b",
+    "postgres": "postgres@sha256:2d2b8998d31037bf721cfdf764d76ba74171b4fab3431b7f72c27c56ddbdf9e3",
+    "nginx": "nginx@sha256:970364228b1e4f932abc22d321932816782cca8a20b85a77552a7cfe9acfb3b5",
+    "chromium": "selenium/standalone-chromium@sha256:c7c17cd79c62819a8329df00e610dbc4073c279da034a6f37135d454eb0d8870"
+  },
+  "keycloakMode": "production start with PostgreSQL and HTTPS",
+  "browserTrust": "ephemeral certificate SPKI pin",
+  "checks": [
+    "real browser rejects incorrect password",
+    "browser login and explicit consent with S256 PKCE, state, issuer, and verified nonce",
+    "Keycloak access tokens accepted by both MCP protocols with traversal denied",
+    "scope-restricted client cannot discover or invoke document tool; ID token rejected",
+    "real Keycloak key rotation respects refresh cooldown and overlapping keys",
+    "issuer outage permits fresh cached keys, rejects cold cache, and recovers after restart",
+    "logout invalidates refresh; issued JWT expires at its original deadline",
+    "authorization code replay rejected",
+    "audit omits credentials, tokens, identity text, and document paths"
+  ]
+}
