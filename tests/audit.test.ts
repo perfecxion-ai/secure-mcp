@@ -55,3 +55,73 @@ test('a stalled sink bounds tool latency and prevents invocation', async (t) => 
   assert.match(runtime.metrics(), /secure_mcp_audit_failures 1/);
   assert.equal(await runtime.close(), 1);
 });
+
+test('audit scope drains descendant writes even after the handler callback has returned', async () => {
+  const releases: (() => void)[] = [];
+  const audit = new AuditDispatcher(
+    () => new Promise<void>((resolve) => releases.push(resolve)),
+    2,
+    1000,
+  );
+  const scope = audit.scope();
+  let descendant: Promise<void> | undefined;
+  const result = scope.run(() => {
+    // Model an adapter returning after cancellation while its original write is pending.
+    descendant = audit.write(event).then(() => audit.write({ ...event, outcome: 'cancelled' }));
+    return 'handler finished';
+  });
+  assert.equal(result, 'handler finished');
+  let settled = false;
+  const draining = scope.settle().then(() => {
+    settled = true;
+  });
+  await delay(0);
+  assert.equal(releases.length, 1);
+  assert.equal(settled, false);
+  releases[0]!();
+  await delay(0);
+  assert.equal(releases.length, 2);
+  assert.equal(settled, false, 'Descendant cancellation record must settle before terminal audit');
+  releases[1]!();
+  await draining;
+  await descendant;
+  assert.equal(settled, true);
+  assert.equal(audit.healthy, true);
+  assert.equal(audit.state.pending, 0);
+});
+
+test('independent audit scopes do not wait for another request', async () => {
+  let release!: () => void;
+  const audit = new AuditDispatcher(
+    () =>
+      new Promise<void>((resolve) => {
+        release = resolve;
+      }),
+    2,
+    1000,
+  );
+  const first = audit.scope();
+  const second = audit.scope();
+  const writing = first.run(() => audit.write(event));
+  await delay(0);
+  await second.settle();
+  assert.equal(audit.state.pending, 1);
+  release();
+  await writing;
+  await first.settle();
+  assert.equal(audit.healthy, true);
+});
+
+test('audit scope drainage is bounded after delivery failure and leaves the loss latch intact', async () => {
+  const audit = new AuditDispatcher(() => new Promise<void>(() => {}), 1, 25);
+  const scope = audit.scope();
+  const outcome = scope.run(() => audit.write(event)).catch((error: unknown) => error);
+  await scope.settle();
+  assert.match(String(await outcome), /audit_unavailable/);
+  assert.deepEqual(audit.state, { pending: 1, failures: 1, dropped: 0 });
+  assert.equal(audit.healthy, false);
+  const refused = scope.run(() => audit.write(event)).catch((error: unknown) => error);
+  await scope.settle();
+  assert.match(String(await refused), /audit_unavailable/);
+  assert.deepEqual(audit.state, { pending: 1, failures: 1, dropped: 1 });
+});

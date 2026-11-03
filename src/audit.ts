@@ -1,4 +1,5 @@
 import { createHash, randomUUID } from 'node:crypto';
+import { AsyncLocalStorage } from 'node:async_hooks';
 import type { Writable } from 'node:stream';
 import type { Principal } from './policy.js';
 import { RuntimeFailure } from './errors.js';
@@ -17,7 +18,10 @@ export interface AuditEvent {
   readonly method?: 'GET' | 'POST' | 'DELETE' | 'OPTIONS' | 'other';
   readonly status?: number;
 }
-export type AuditSink = (event: AuditEvent) => void | Promise<void>;
+export type AuditSink = ((event: AuditEvent) => void | Promise<void>) & {
+  // The dispatcher owns this sink and closes it after draining accepted writes.
+  close?: () => void | Promise<void>;
+};
 const watchedStreams = new WeakSet<Writable>();
 export function jsonAuditSink(stream: Writable): AuditSink {
   if (!watchedStreams.has(stream)) {
@@ -47,8 +51,10 @@ export function auditContext(principal: Principal, tool: string, requestId: stri
 // Delivery loss latches readiness off until restart so failures cannot disappear.
 export class AuditDispatcher {
   private readonly pending = new Set<Promise<void>>();
+  private readonly scopes = new AsyncLocalStorage<Set<Promise<void>>>();
   private failures = 0;
   private dropped = 0;
+  private sinkClosing: Promise<void> | undefined;
   constructor(
     private readonly sink: AuditSink,
     private readonly capacity = 64,
@@ -60,7 +66,27 @@ export class AuditDispatcher {
   get state() {
     return { pending: this.pending.size, failures: this.failures, dropped: this.dropped };
   }
-  async write(event: AuditEvent): Promise<void> {
+  scope(): { run<T>(callback: () => T): T; settle(): Promise<void> } {
+    const writes = new Set<Promise<void>>();
+    return {
+      run: <T>(callback: () => T): T => this.scopes.run(writes, callback),
+      // Call after the handler settles. Include descendant writes that start
+      // while draining, but never wait on an unbounded raw sink promise.
+      settle: async () => {
+        while (writes.size) await Promise.allSettled([...writes]);
+      },
+    };
+  }
+  write(event: AuditEvent): Promise<void> {
+    const delivery = this.deliver(event);
+    const scope = this.scopes.getStore();
+    if (scope) {
+      scope.add(delivery);
+      void delivery.finally(() => scope.delete(delivery)).catch(() => {});
+    }
+    return delivery;
+  }
+  private async deliver(event: AuditEvent): Promise<void> {
     if (!this.healthy || this.pending.size >= this.capacity) {
       this.dropped++;
       throw new RuntimeFailure('audit_unavailable');
@@ -83,6 +109,22 @@ export class AuditDispatcher {
       clearTimeout(timer);
     }
   }
+  private async closeSink(): Promise<void> {
+    let timer: ReturnType<typeof setTimeout> | undefined;
+    try {
+      await Promise.race([
+        Promise.resolve().then(() => this.sink.close?.()),
+        new Promise<never>((_, reject) => {
+          timer = setTimeout(() => reject(new RuntimeFailure('audit_unavailable')), this.timeoutMs);
+        }),
+      ]);
+    } catch {
+      this.failures++;
+      throw new RuntimeFailure('audit_unavailable');
+    } finally {
+      clearTimeout(timer);
+    }
+  }
   async close(): Promise<number> {
     let timer: ReturnType<typeof setTimeout> | undefined;
     await Promise.race([
@@ -92,7 +134,10 @@ export class AuditDispatcher {
       }),
     ]);
     clearTimeout(timer);
-    return this.pending.size;
+    const remaining = this.pending.size;
+    this.sinkClosing ??= this.closeSink();
+    await this.sinkClosing;
+    return remaining;
   }
 }
 
