@@ -22,7 +22,13 @@
     "config.schema.json",
     "examples",
     "docs/THREAT_MODEL.md",
-    "docs/OPERATIONS.md"
+    "docs/OPERATIONS.md",
+    "SECURITY.md",
+    "docs/MIGRATION.md",
+    "docs/INSTALL.md",
+    "docs/validation/REAL_USER_VALIDATION.md",
+    "docs/validation/TRIAL_RECEIPT.md",
+    "docs/validation/README.md"
   ],
   "sideEffects": false,
   "scripts": {

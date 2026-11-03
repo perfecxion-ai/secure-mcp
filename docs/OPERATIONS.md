@@ -1,17 +1,16 @@
 # Operating the alpha
 
-Use Node 24 on Linux. The CLI defaults to stdio. `--config FILE` reads strict JSON; relative workspaces in that file resolve relative to the file. `--workspace DIRECTORY` overrides that value relative to the current directory. `--doctor` validates configuration and workspace access without starting a listener and prints only a sanitized summary. It does not verify identity-provider or audit-collector availability.
+Use Node `>=24.22.1 <25` on Linux. The CLI defaults to stdio. `--config FILE` reads strict JSON; relative workspaces in that file resolve relative to the file. `--workspace DIRECTORY` overrides that value relative to the current directory. `--doctor` validates configuration and workspace access without starting a listener and prints only a sanitized summary. It does not verify identity-provider or audit-collector availability.
 
 Prepare the document workspace from trusted copies of approved files, then mount it read-only for the server. Do not preserve hard links from untrusted imports: read-only access does not hide an already linked file or prevent changes through another writable alias. Workspace preparation and local writers remain operator trust boundaries; see [the threat model](THREAT_MODEL.md).
 
 ## HTTP
 
-Copy `examples/http.json`, select an approved workspace, and replace the example resource, issuer, and JWKS URLs. The resource path must be `/mcp`. Run:
+After the [installed-package setup](../README.md), copy the packaged `examples/http.json` into an operator-owned directory outside the package. Select an approved absolute workspace and replace the example resource, issuer and JWKS URLs. The resource path must be `/mcp`. With the README session variables, run the edited configuration:
 
 ```bash
-npm ci
-npm run build
-node dist/cli.js --config examples/http.json
+: "${MCP_HTTP_CONFIG:?Set the absolute path to the edited HTTP configuration}"
+"$MCP_NODE" "$MCP_CLI" --config "$MCP_HTTP_CONFIG"
 ```
 
 Terminate TLS in a reverse proxy and preserve the configured resource hostname in Host. The server ignores forwarded headers. Bind to loopback when the proxy is on the same host. HTTP URLs are accepted only for loopback lab endpoints; public issuer/resource/JWKS URLs must use HTTPS.
@@ -22,7 +21,7 @@ JWKS keys are cached for up to five minutes, with a 30-second refresh cooldown a
 
 Scopes: `documents:read` for approved documents, `policy:read` for policy diagnostics, `api:read` for the optional fixed API, and `metrics:read` for `/metrics`. Discovery filters tools using the same policy as invocation. A denied tool is absent from the caller's tool list.
 
-OAuth protected resource metadata is available at `/.well-known/oauth-protected-resource/mcp` and its root alias. Missing or invalid tokens return a 401 challenge referring to that metadata. Login, client registration, consent, MFA, issuance, and refresh belong to the identity provider. The disposable `labs/oauth` flows cover client credentials and authorization code with S256 PKCE against an external issuer. The latter scripts a fixture login and consent. The separate [Keycloak browser lab](../labs/keycloak/README.md) uses a real Chromium password/consent journey, PostgreSQL, provider HTTPS, and an NGINX TLS resource proxy. It tests both MCP protocols, scope isolation, key rotation/cooldown, outage/recovery, logout/refresh, expiry, and replay. Your own issuer policy, MFA, and production accounts still require operator validation. The [TLS proxy lab](../labs/proxy/README.md) also verifies certificate, Host, and Origin rejection.
+OAuth protected resource metadata is available at `/.well-known/oauth-protected-resource/mcp` and its root alias. Missing or invalid tokens return a 401 challenge referring to that metadata. Login, client registration, consent, MFA, issuance, and refresh belong to the identity provider. The disposable `labs/oauth` flows cover client credentials and authorization code with S256 PKCE against an external issuer. The latter scripts a fixture login and consent. The separate [Keycloak browser lab](https://github.com/perfecxion-ai/secure-mcp/blob/6fec1886ca2e400694007819384105fdba9eb6a6/labs/keycloak/README.md) uses a real Chromium password/consent journey, PostgreSQL, provider HTTPS, and an NGINX TLS resource proxy. It tests both MCP protocols, scope isolation, key rotation/cooldown, outage/recovery, logout/refresh, expiry, and replay. Your own issuer policy, MFA, and production accounts still require operator validation. The [TLS proxy lab](https://github.com/perfecxion-ai/secure-mcp/blob/6fec1886ca2e400694007819384105fdba9eb6a6/labs/proxy/README.md) also verifies certificate, Host, and Origin rejection.
 
 Browser origins are denied unless their exact scheme, hostname, and port appear in `allowedOrigins`. Native clients without Origin are permitted to attempt authentication. There is no wildcard CORS option. The configured Host hostname is checked independently.
 
@@ -44,7 +43,7 @@ For a fresh local validation deployment, create a private directory outside the 
 
 ```bash
 install -d -m 700 /tmp/secure-mcp-audit
-node examples/audit-collector.mjs --socket /tmp/secure-mcp-audit/collector.sock \
+"$MCP_NODE" "$MCP_TRIAL/install/node_modules/@perfecxion/secure-mcp-server/examples/audit-collector.mjs" --socket /tmp/secure-mcp-audit/collector.sock \
   --journal /tmp/secure-mcp-audit/events.jsonl
 ```
 
@@ -55,6 +54,8 @@ This local collector is a validation reference, with no automatic rotation, rete
 SIGINT, SIGTERM, and stdio EOF initiate shutdown. HTTP stops accepting requests, cancels active tools, and closes sockets. The process exits nonzero if trusted handlers fail to settle within the deadline. Library users must call `close()` and handle its remaining-work count.
 
 ## Container
+
+The following commands require a source checkout; Docker build files are not part of the installed npm package. No container registry release is implied.
 
 ```bash
 docker build -t secure-mcp:local .
@@ -67,6 +68,8 @@ docker run --rm -i --network none --read-only --cap-drop ALL \
 The image runs as the unprivileged `node` user. Mounted documents must be readable by that user. The command above is for stdio with network disabled. A remote HTTP deployment needs deliberate networking, a read-only config mount, and TLS routing. Never mount a Docker socket or a broad home directory.
 
 ## Verification and troubleshooting
+
+These contributor checks require a source checkout and `npm ci` on the supported Node version. Installed consumers use the [trial guide](validation/REAL_USER_VALIDATION.md) and their retained lockfile instead.
 
 ```bash
 npm run check

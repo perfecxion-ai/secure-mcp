@@ -6,4 +6,4 @@ Use [GitHub private vulnerability reporting](https://github.com/perfecxion-ai/se
 
 Include the source revision, configuration with secrets removed, prerequisites, a minimal reproduction, expected and observed behavior, and impact. Lab-only demonstrations are preferred. There is no published response SLA yet.
 
-The [threat model](docs/THREAT_MODEL.md) defines the current trust boundaries and limitations. The [baseline review](docs/reviews/2026-10-26-assessment.md) records historical defects; new regression tests do not establish production certification or universal prompt-injection protection.
+The [threat model](docs/THREAT_MODEL.md) defines the current trust boundaries and limitations. The [baseline review](https://github.com/perfecxion-ai/secure-mcp/blob/6fec1886ca2e400694007819384105fdba9eb6a6/docs/reviews/2026-10-26-assessment.md) records historical defects; new regression tests do not establish production certification or universal prompt-injection protection.

@@ -1,6 +1,6 @@
 # Fresh-install validation
 
-This alpha is for isolated Linux installations with approved, disposable documents. This round tests the next version through fresh installations; legacy deployments and credential migration are outside its scope. Do not replace an existing server installation. The package is available as a [GitHub prerelease](https://github.com/perfecxion-ai/secure-mcp/releases/tag/v2.0.0-alpha.1) and is not published to npm.
+This alpha is for isolated Linux installations with approved, disposable documents. This round tests the next version through fresh installations; legacy deployments and credential migration are outside its scope. Do not replace an existing server installation. Alpha.2 is being prepared and is not published to npm. The [existing alpha.1 GitHub prerelease](https://github.com/perfecxion-ai/secure-mcp/releases/tag/v2.0.0-alpha.1) remains historical and is not eligible for npm promotion. Do not substitute it for an alpha.2 trial.
 
 ## Select Node before running npm
 
@@ -32,39 +32,39 @@ Expect Node `v24.22.1` or a later Node 24 security patch, and npm `11.x`. Repeat
 
 ## Obtain the candidate
 
-Set the bundle location once. Change this path to the directory you received, or a new directory if you will download it yourself:
+The maintainer supplies a frozen candidate packet with its exact version, source SHA, tarball name and expected SHA-256. No alpha.2 digest is assigned in this guide. Set these values from an authenticated handoff, then choose your bundle directory:
 
 ```bash
+: "${MCP_VERSION:?Required from the candidate packet}"
+: "${MCP_SOURCE_SHA:?Required from the candidate packet}"
+: "${MCP_EXPECTED_SHA256:?Required from an authenticated source}"
 MCP_BUNDLE="$HOME/secure-mcp-candidate"
-MCP_TARBALL="$MCP_BUNDLE/perfecxion-secure-mcp-server-2.0.0-alpha.1.tgz"
+MCP_TARBALL="$MCP_BUNDLE/perfecxion-secure-mcp-server-$MCP_VERSION.tgz"
 ```
 
-### Download the published prerelease
-
-The [public release page](https://github.com/perfecxion-ai/secure-mcp/releases/tag/v2.0.0-alpha.1) provides the verified bundle files without GitHub CLI or Actions access. Download `perfecxion-secure-mcp-server-2.0.0-alpha.1.tgz`, `sbom.cdx.json`, `SHA256SUMS`, `validation-manifest.json`, `provenance-verification.json`, and `sbom-verification.json` into your chosen bundle directory. Use the npm tarball asset, not GitHub's automatically generated source archive. Continue with the digest check below, using the known project repository as the trusted source for the expected commit and checksum.
+When a candidate is available as a GitHub prerelease, download its npm tarball asset and bundle files into this directory, not the generated source archive. An earlier release's digest does not authenticate a new candidate.
 
 ### You were handed a verified bundle
 
 You do not need GitHub CLI, Actions access, a repository checkout, `npm ci`, or the optional repository smoke check for this path. You still need npm registry access when installing the package's dependencies below.
 
-The maintainer prepares the bundle with `prepare-validation.mjs`, which verifies the exact source/workflow provenance and signed SBOM. Obtain the expected commit and tarball SHA-256 through an authenticated message from the maintainer or the [candidate record on the known project repository](https://github.com/perfecxion-ai/secure-mcp/blob/main/docs/validation/CANDIDATE.md). Do not take the expected digest solely from files delivered alongside an otherwise untrusted archive.
+The maintainer prepares the bundle with `prepare-validation.mjs`, which verifies the exact source/workflow provenance and signed SBOM. Obtain the expected commit and tarball SHA-256 through an authenticated message from the maintainer or the candidate record at the exact source/revision named in that handoff. Do not take the expected digest solely from files delivered alongside an otherwise untrusted archive.
 
-The selected candidate is commit `1f9f7860696c4fae1bab650ab7f8c77513350657`. Its tarball SHA-256 is pinned in this check:
+Check the received bytes against the independently obtained digest:
 
 ```bash
-MCP_EXPECTED_SHA256="5c205f99e3011330fcab11dd981b89f00a735c0992151b7c9d58c32bb71ba5f0"
 printf '%s  %s\n' "$MCP_EXPECTED_SHA256" "$MCP_TARBALL" | sha256sum --check -
 (cd "$MCP_BUNDLE" && sha256sum --check SHA256SUMS)
 ```
 
-Both checks must report `OK`. Confirm `validation-manifest.json` names that source commit and retain it with `provenance-verification.json`, `sbom-verification.json`, and `sbom.cdx.json`. Those files document the maintainer's verification; their mere presence is not a new cryptographic verification by the recipient. Trust comes from the authenticated handoff of the verified digest, and the checksum binds your received bytes to it. If the digest or commit differs, stop and resolve the mismatch with the maintainer. Then go directly to **Start with stdio**.
+Both checks must report `OK`. Confirm `validation-manifest.json` names `$MCP_SOURCE_SHA` and retain it with `provenance-verification.json`, `sbom-verification.json`, and `sbom.cdx.json`. Those files document the maintainer's verification; their mere presence is not a new cryptographic verification by the recipient. Trust comes from the authenticated handoff of the verified digest, and the checksum binds your received bytes to it. If the digest or commit differs, stop and resolve the mismatch with the maintainer. Then go directly to **Start with stdio**.
 
 ### Download and verify it yourself
 
 This alternative is for maintainers and testers who want to perform provenance verification themselves. GitHub CLI must support `gh attestation verify` with source-digest and signer-workflow verification. Authenticate it for read access to Actions artifacts, then run from a checked-out copy of this repository. The output directory must not already exist:
 
 ```bash
-node scripts/prepare-validation.mjs 1f9f7860696c4fae1bab650ab7f8c77513350657 "$MCP_BUNDLE"
+node scripts/prepare-validation.mjs "$MCP_SOURCE_SHA" "$MCP_BUNDLE"
 (cd "$MCP_BUNDLE" && sha256sum --check SHA256SUMS)
 ```
 
@@ -78,27 +78,17 @@ Choose a new trial directory; it can be persistent and does not need to be under
 MCP_TRIAL="$HOME/secure-mcp-trial"
 mkdir -m 700 "$MCP_TRIAL"
 mkdir "$MCP_TRIAL/install" "$MCP_TRIAL/documents"
+printf 'Approved example runbook.\n' > "$MCP_TRIAL/documents/welcome.txt"
 cd "$MCP_TRIAL/install"
 npm init -y
-npm install --ignore-scripts "$MCP_TARBALL"
+npm install --save-exact --ignore-scripts "$MCP_TARBALL"
 MCP_CLI="$MCP_TRIAL/install/node_modules/@perfecxion/secure-mcp-server/dist/cli.js"
 "$MCP_NODE" "$MCP_CLI" --doctor --workspace "$MCP_TRIAL/documents"
 ```
 
 The real server entry point is `node_modules/@perfecxion/secure-mcp-server/dist/cli.js`. The `.bin/secure-mcp` executable is a convenience shim; launching the real entry point with the selected absolute Node path avoids host-shell version differences. Doctor prints a JSON configuration summary and exits. To run the server, the host uses the same command without `--doctor`.
 
-Generate a client configuration containing your actual absolute paths:
-
-```bash
-"$MCP_NODE" -e '
-console.log(JSON.stringify({mcpServers: {"secure-mcp-validation": {
-  command: process.execPath,
-  args: [process.argv[1], "--workspace", process.argv[2]]
-}}}, null, 2))
-' "$MCP_CLI" "$MCP_TRIAL/documents" > "$MCP_TRIAL/mcp-client-config.json"
-```
-
-Add that server entry to a separate test profile in your MCP host. The generated file is not installed into any existing host configuration automatically. The server uses stdin/stdout for MCP and stderr for audit. The current acceptance evidence includes actual Codex and Claude Code CLI hosts; record the exact host version you use. Do not enable unrelated shell or network tools for the trial.
+Generate the correct host configuration using the [installed-package guide](../INSTALL.md). It supplies separate VS Code and Cursor formats with absolute paths, explains configuration destinations and Linux remote execution, and does not modify existing profiles automatically. Keep the consumer lockfile and record exact host/harness versions. Do not enable unrelated shell or network tools for the isolated trial.
 
 Ask the host to list tools, read `welcome.txt`, and call `policy_status`. Confirm a traversal path such as `../outside.txt`, a hidden file, and a symlink to an outside file are rejected. Use a disposable outside file containing a unique harmless marker, and confirm the marker never appears in results. Files inside the workspace are trusted documents, not executable instructions or a guarantee of prompt-injection filtering.
 
@@ -115,16 +105,18 @@ This installs that exact tarball in a temporary consumer directory with install 
 
 Keep the result with your feedback. This automated SDK check does not substitute for the trusted artifact handoff or your actual host trial.
 
-## Optional remote trial
+## Independent remote operator trial
 
-Use a separate test realm/client and the issuer's supported login flow. Follow [operations](../OPERATIONS.md) for exact audience, `at+jwt` token type, scopes, TLS proxy, Host/Origin rules, short token lifetimes, and the durable collector. Keep the runtime on loopback behind the TLS proxy. The Keycloak lab provides a reproducible browser integration example; it is not a managed identity deployment or an MFA acceptance test.
+This is required before retaining remote authentication as a principal launch claim, and is separate from local host acceptance. An independent operator should use their issuer and audit deployment, with a separate test realm/client and the issuer's supported login flow. Follow [operations](../OPERATIONS.md) for exact audience, `at+jwt` token type, scopes, TLS proxy, Host/Origin rules, short token lifetimes, and the durable collector. Keep the runtime on loopback behind the TLS proxy. The Keycloak lab provides a reproducible browser integration example; it is not a managed identity deployment or an MFA acceptance test.
 
 Confirm an authorized account can list/read, a policy-only account cannot discover or invoke document access, expired tokens receive 401, and audit records correlate transport and tool outcomes without token or document content. Exercise collector unavailability once in the disposable trial: readiness must become unhealthy and work must fail closed. Restore the collector, restart the server, and confirm readiness before continuing. Retain a content-free count/status summary rather than raw authentication traces.
 
 ## Feedback and exit criteria
 
-Record the candidate commit and tarball SHA-256, Node/Linux/architecture and MCP host versions, transport, steps, expected result, actual result, and whether the behavior reproduced after a clean restart. Use the validation issue template for ordinary defects. Report suspected authorization bypass, data exposure, or token leakage through the repository's private vulnerability reporting channel; do not attach raw tokens, documents, config secrets, or unredacted logs.
+Complete a [trial receipt](TRIAL_RECEIPT.md), including the independently checked digest, exact OS/Node/npm/host/harness versions, commands and outcomes, clean restart, and a second useful session. Report suspected authorization bypass, data exposure or token leakage through [private vulnerability reporting](https://github.com/perfecxion-ai/secure-mcp/security/advisories/new); do not attach raw tokens, documents, config secrets or unredacted logs.
 
 Stop the trial for an unexpected file read, cross-user tool access, missing durable audit, recurring unbounded growth, or an unexplained crash. Shutdown the isolated server and collector and preserve sanitized evidence. Rollback is removal of these isolated install/config directories; there is no existing deployment or credential migration to undo.
 
-Target at least three independent testers across two MCP hosts, with one remote issuer deployment. Advance only after their acceptance steps pass, blocker defects are fixed and retested, onboarding friction is documented, and the operator confirms audit capacity and retention. These user observations are the next gate; local lab results do not substitute for them.
+For the minimum npm-alpha decision, two independent humans must complete digest-bound trials on VS Code and Cursor, including restart and repeat useful work. Fix and retest blockers and record onboarding friction. Add independent remote-operator evidence while remote authentication remains a principal launch claim; our local issuer labs do not replace that evidence.
+
+The broader adoption target remains three independent successful users, two returning users and one externally authored integration. The earlier alpha.1 pass is reported historical evidence, not an alpha.2 receipt. Agent checks and automated tests must remain labeled as engineering evidence.
