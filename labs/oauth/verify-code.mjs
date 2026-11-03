@@ -6,6 +6,7 @@ import { join } from 'node:path';
 import { tmpdir } from 'node:os';
 import { generateKeyPair, exportJWK } from 'jose';
 import { Provider, errors } from 'oidc-provider';
+import issuerPackage from 'oidc-provider/package.json' with { type: 'json' };
 import { Client, StreamableHTTPClientTransport } from '@modelcontextprotocol/client';
 import { SecureRuntime, serveHttp } from '../../dist/index.js';
 
@@ -220,7 +221,7 @@ try {
   assert.equal((await wrongVerifier.json()).error, 'invalid_grant');
   console.log(
     JSON.stringify({
-      issuer: 'oidc-provider 9.13.0',
+      issuer: `oidc-provider ${issuerPackage.version}`,
       flow: 'authorization_code with S256 PKCE',
       discovery: 'protected resource and OIDC metadata',
       token: 'RFC 9068 JWT',
