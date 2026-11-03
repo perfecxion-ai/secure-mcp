@@ -8,7 +8,7 @@ import { setTimeout as delay } from 'node:timers/promises';
 import { SecureRuntime } from '../../dist/index.js';
 
 const image =
-  'node:24-bookworm-slim@sha256:55fb5f5a527ea2c5c4a95f963e48ef90aa38c7b346054fdc8ee9957a2b55d205';
+  'node:24-bookworm-slim@sha256:c86ecead9e55a5210ac1727de38a4ca840bf03dcaf34dc9749addbf383b1920c';
 const name = 'mcp-storage-' + randomBytes(6).toString('hex');
 const directory = await mkdtemp(join(tmpdir(), 'mcp-storage-'));
 const docker = (...args) =>

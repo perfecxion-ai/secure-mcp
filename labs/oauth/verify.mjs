@@ -6,6 +6,7 @@ import { join } from 'node:path';
 import { tmpdir } from 'node:os';
 import { generateKeyPair, exportJWK } from 'jose';
 import { Provider, errors } from 'oidc-provider';
+import issuerPackage from 'oidc-provider/package.json' with { type: 'json' };
 import {
   Client,
   ClientCredentialsProvider,
@@ -104,7 +105,7 @@ try {
   );
   console.log(
     JSON.stringify({
-      issuer: 'oidc-provider 9.13.0',
+      issuer: `oidc-provider ${issuerPackage.version}`,
       flow: 'client_credentials',
       discovery: 'protected resource and OIDC metadata',
       token: 'RFC 9068 JWT',
