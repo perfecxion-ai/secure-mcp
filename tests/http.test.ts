@@ -62,6 +62,46 @@ test('HTTP resource server and official SDK integration', { timeout: 30_000 }, a
       .sign(keys.privateKey);
   const good = await token();
 
+  await t.test('raw backslashes in request paths are rejected before tool execution', async () => {
+    const before = events.filter((event) => event.kind === 'tool').length;
+    const raw = (path: string, method = 'POST') =>
+      new Promise<number | undefined>((resolve, reject) => {
+        // A URL object or fetch would normalize the backslash before sending it.
+        const request = httpRequest(
+          base,
+          {
+            path,
+            method,
+            headers: {
+              authorization: `Bearer ${good}`,
+              'content-type': 'application/json',
+              accept: 'application/json, text/event-stream',
+              'mcp-protocol-version': '2025-11-25',
+            },
+          },
+          (response) => {
+            response.resume();
+            response.once('end', () => resolve(response.statusCode));
+          },
+        );
+        request.on('error', reject);
+        request.end(
+          method === 'POST'
+            ? JSON.stringify({
+                jsonrpc: '2.0',
+                id: 90,
+                method: 'tools/call',
+                params: { name: 'policy_status', arguments: {} },
+              })
+            : undefined,
+        );
+      });
+    for (const path of ['/\\mcp', '/mcp\\', '//other.example\\mcp'])
+      assert.equal(await raw(path), 404, path);
+    assert.equal(await raw('/health?label=\\query', 'GET'), 200);
+    assert.equal(events.filter((event) => event.kind === 'tool').length, before);
+  });
+
   await t.test(
     'metadata and authentication challenge use configured canonical resource',
     async () => {

@@ -1,0 +1,192 @@
+{
+  "date": "2026-11-03",
+  "scope": "Engineering regression evidence, not an alpha.2 release or independent user receipt",
+  "sourceBaseline": "6fec1886ca2e400694007819384105fdba9eb6a6",
+  "environment": {
+    "node": "24.22.1",
+    "npm": "11.19.1",
+    "platform": "linux",
+    "architecture": "arm64"
+  },
+  "publishedAlpha1": {
+    "source": "1f9f7860696c4fae1bab650ab7f8c77513350657",
+    "sbomSha256": "da288518562a71297e35c3d99c92bf06f90a44ff2897a5c92c955d4724240613",
+    "components": [
+      "pkg:npm/%40hono/node-server@2.1.5",
+      "pkg:npm/%40modelcontextprotocol/node@2.1.2",
+      "pkg:npm/%40modelcontextprotocol/server@2.4.0",
+      "pkg:npm/hono@4.13.14"
+    ],
+    "omittedRuntimeDependencies": [
+      "@modelcontextprotocol/core@2.4.0",
+      "jose@6.2.13",
+      "zod@4.6.7"
+    ],
+    "limitation": "The signed SBOM is incomplete. A valid signature authenticates the stated inventory but does not establish its completeness. Existing release assets are unchanged."
+  },
+  "reproduction": {
+    "command": "npm ci --ignore-scripts && npm sbom --omit=dev --sbom-format=cyclonedx",
+    "observation": "npm 11.19.1 excludes shared production/development nodes via its omit selector. npm ls --omit=dev --all still lists those installed runtime packages.",
+    "fix": "Install unchanged lockfile using npm ci --omit=dev --ignore-scripts in an isolated directory. Remove only temporary root devDependencies after install, generate the complete installed SBOM without omit, and cross-check every dependency identity against npm ls --all."
+  },
+  "consumerDrift": {
+    "initialResult": "different; comparator returned exit 1 and retained successful functional smoke plus mismatch evidence",
+    "added": [
+      {
+        "purl": "pkg:npm/%40hono/node-server@2.1.6",
+        "version": "2.1.6",
+        "integrity": [
+          "SHA-512:a7f287f4c9df35cb26dec47ac7894d826e63f9037812df2cacaade765f4365f5e2c99d54437690d9856914b6ea92d60de4923e0c1f9564528cd8fa84e612ca8d"
+        ],
+        "dependencies": [
+          "pkg:npm/hono@4.13.16"
+        ]
+      },
+      {
+        "purl": "pkg:npm/hono@4.13.16",
+        "version": "4.13.16",
+        "integrity": [
+          "SHA-512:00e2ce121beb57e887f76c570a716bff9fb72a33ca708df13fadd726d5f9b290279339cf7478a3948b144e98bbffd1215aaad309e930e5ce738752be62c570ec"
+        ],
+        "dependencies": []
+      }
+    ],
+    "removed": [
+      {
+        "purl": "pkg:npm/%40hono/node-server@2.1.5",
+        "version": "2.1.5",
+        "integrity": [
+          "SHA-512:3203ff234e8676fb22943b29324fea991ce993c2ce512b4fea31406d2462e345b4f43868c949fe323edec8a2023ea7982b26ce8d514b548010cefbb56df21aed"
+        ],
+        "dependencies": [
+          "pkg:npm/hono@4.13.14"
+        ]
+      },
+      {
+        "purl": "pkg:npm/hono@4.13.14",
+        "version": "4.13.14",
+        "integrity": [
+          "SHA-512:ca144b436d54eaa6bd1ecbb637b41c6e1f2d13e58a11ca04ae3228e7a2de4868865c6a7db00ed4a44f3a522f6e7b16fad4a6a4886c2e1cc9f641d57bc3a8ba91"
+        ],
+        "dependencies": []
+      }
+    ],
+    "changed": [
+      {
+        "purl": "pkg:npm/%40modelcontextprotocol/node@2.1.2",
+        "build": {
+          "purl": "pkg:npm/%40modelcontextprotocol/node@2.1.2",
+          "version": "2.1.2",
+          "integrity": [
+            "SHA-512:208708a81a6be8d09042ce438094e0bdb48e030fb789a47fbaabaa83e7b49d709db9d7e33e0ffcd31d13b1e527431d7801402d1387ec24212924a3f26fa58f54"
+          ],
+          "dependencies": [
+            "pkg:npm/%40hono/node-server@2.1.5",
+            "pkg:npm/%40modelcontextprotocol/server@2.4.0",
+            "pkg:npm/hono@4.13.14"
+          ]
+        },
+        "consumer": {
+          "purl": "pkg:npm/%40modelcontextprotocol/node@2.1.2",
+          "version": "2.1.2",
+          "integrity": [
+            "SHA-512:208708a81a6be8d09042ce438094e0bdb48e030fb789a47fbaabaa83e7b49d709db9d7e33e0ffcd31d13b1e527431d7801402d1387ec24212924a3f26fa58f54"
+          ],
+          "dependencies": [
+            "pkg:npm/%40hono/node-server@2.1.6",
+            "pkg:npm/%40modelcontextprotocol/server@2.4.0",
+            "pkg:npm/hono@4.13.16"
+          ]
+        }
+      }
+    ],
+    "disposition": "Refresh only locked @hono/node-server from 2.1.5 to 2.1.6 and hono from 4.13.14 to 4.13.16. Direct dependency declarations remain unchanged. Fresh consumers still resolve independently.",
+    "releaseNotes": [
+      "https://github.com/honojs/hono/releases/tag/v4.13.16",
+      "https://github.com/honojs/node-server/releases/tag/v2.1.6"
+    ],
+    "securityScope": "These upstream patch releases contain security fixes. SecureMCP uses the SDK toNodeHandler/toWebRequest adapter and its own router, not the SDK class backed by Hono getRequestListener. No SecureMCP authentication bypass was established."
+  },
+  "audit": {
+    "buildProductionReportedVulnerabilities": 0,
+    "freshConsumerProductionReportedVulnerabilities": 0,
+    "fullBuildModerateCount": 10,
+    "fullBuildAffectedPackages": [
+      "@eslint-community/eslint-utils",
+      "@eslint/config-array",
+      "@typescript-eslint/eslint-plugin",
+      "@typescript-eslint/parser",
+      "@typescript-eslint/type-utils",
+      "@typescript-eslint/typescript-estree",
+      "@typescript-eslint/utils",
+      "eslint",
+      "minimatch",
+      "typescript-eslint"
+    ],
+    "advisory": "https://github.com/advisories/GHSA-g3hv-75wg-m249",
+    "classification": "The ten moderate entries are minimatch and its ESLint/TypeScript-ESLint development dependents. This audit response reports no Hono advisory; absence from npm audit is not a reachability proof."
+  },
+  "correctedProductionInventory": [
+    "pkg:npm/%40hono/node-server@2.1.6",
+    "pkg:npm/%40modelcontextprotocol/core@2.4.0",
+    "pkg:npm/%40modelcontextprotocol/node@2.1.2",
+    "pkg:npm/%40modelcontextprotocol/server@2.4.0",
+    "pkg:npm/hono@4.13.16",
+    "pkg:npm/jose@6.2.13",
+    "pkg:npm/zod@4.6.7"
+  ],
+  "consumerAfterRefresh": {
+    "result": "pass",
+    "node": "v24.22.1",
+    "platform": "linux",
+    "architecture": "arm64",
+    "package": "perfecxion-secure-mcp-server-2.0.0-alpha.1.tgz",
+    "source": "provided immutable artifact",
+    "sha256": "3c61b1112ae156d847b567d88f2a62ff490524d1afa8b3d4735c7153a069487a",
+    "files": 50,
+    "installation": "pass",
+    "lifecycleScripts": "disabled",
+    "import": "silent",
+    "stdio": "pass",
+    "protocols": [
+      {
+        "protocol": "2026-07-28",
+        "discovery": "pass",
+        "approvedRead": "pass",
+        "policy": "pass",
+        "rejected": [
+          "traversal",
+          "absolute path",
+          "hidden file",
+          "symlink file",
+          "symlink directory",
+          "directory"
+        ]
+      },
+      {
+        "protocol": "2025-11-25",
+        "discovery": "pass",
+        "approvedRead": "pass",
+        "policy": "pass",
+        "rejected": [
+          "traversal",
+          "absolute path",
+          "hidden file",
+          "symlink file",
+          "symlink directory",
+          "directory"
+        ]
+      }
+    ],
+    "auditPrivacy": "pass",
+    "stdinEof": "pass",
+    "dependencyEvidence": {
+      "signatures": "pass",
+      "candidateSignature": "Local tarball root is not a registry signature/provenance check",
+      "graph": "match",
+      "lockfile": "package-lock.json"
+    },
+    "npm": "11.19.1"
+  },
+  "remaining": "Final alpha.2 digest, signed candidate SBOM, x64 evidence, human receipts and post-publication registry root provenance remain separate gates."
+}
