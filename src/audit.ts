@@ -3,6 +3,7 @@ import { AsyncLocalStorage } from 'node:async_hooks';
 import type { Writable } from 'node:stream';
 import type { Principal } from './policy.js';
 import { RuntimeFailure } from './errors.js';
+import { hasReservedToolArgumentKey } from './input.js';
 import { McpServer } from '@modelcontextprotocol/server';
 import type { Transport } from '@modelcontextprotocol/server';
 export interface AuditEvent {
@@ -191,9 +192,24 @@ export class AuditedMcpServer extends McpServer {
       const onmessage = transport.onmessage;
       transport.onmessage = (message, extra) => {
         if ('method' in message && 'id' in message)
-          requests.run({ requestId: randomUUID(), toolOutcomeRecorded: false }, () =>
-            onmessage?.(message, extra),
-          );
+          requests.run({ requestId: randomUUID(), toolOutcomeRecorded: false }, () => {
+            if (
+              message.method === 'tools/call' &&
+              hasReservedToolArgumentKey(message.params?.arguments)
+            ) {
+              // Reject before the SDK's record parser silently drops this key.
+              // Use the wrapped send so audit acknowledgement still gates errors.
+              void transport
+                .send({
+                  jsonrpc: '2.0',
+                  id: message.id,
+                  error: { code: -32602, message: 'Invalid arguments' },
+                })
+                .catch(() => transport.onerror?.(new Error('Protocol rejection delivery failed')));
+              return;
+            }
+            onmessage?.(message, extra);
+          });
         else onmessage?.(message, extra);
       };
       await start.call(transport);

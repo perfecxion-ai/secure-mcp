@@ -166,6 +166,18 @@ for (const mode of ['modern', 'legacy'] as const) {
         ).error?.code,
         -32602,
       );
+      assert.deepEqual(
+        (
+          await session.request('private-client-reserved-key', 'tools/call', {
+            name: 'successful_tool',
+            arguments: JSON.parse('{"__proto__":{"private-input-canary":true}}') as Record<
+              string,
+              unknown
+            >,
+          })
+        ).error,
+        { code: -32602, message: 'Invalid arguments' },
+      );
       assert.equal(entered, 2, 'SDK validation must reject before calling a handler');
 
       const expected = [
@@ -174,6 +186,7 @@ for (const mode of ['modern', 'legacy'] as const) {
         ['private-client-tool-error', ['allowed', 'tool_error']],
         ['private-client-sdk-limit', ['tool_rejected']],
         ['private-client-sdk-params', ['invalid_params']],
+        ['private-client-reserved-key', ['invalid_params']],
       ] as const;
       const seen = new Set<string>();
       for (const [clientId, outcomes] of expected) {
@@ -188,14 +201,14 @@ for (const mode of ['modern', 'legacy'] as const) {
       }
       assert.equal(
         events.length,
-        8,
+        9,
         'Tool errors already have a terminal outcome, not a second rejection',
       );
       assert.equal(
         events.filter((event) => event.kind === 'tool' && event.outcome !== 'allowed').length,
         3,
       );
-      assert.equal(events.filter((event) => event.kind === 'protocol').length, 2);
+      assert.equal(events.filter((event) => event.kind === 'protocol').length, 3);
       assert.match(runtime.metrics(), /secure_mcp_calls_total\{outcome="denied"\} 1/);
       assert.match(runtime.metrics(), /secure_mcp_calls_total\{outcome="success"\} 1/);
       assert.match(runtime.metrics(), /secure_mcp_calls_total\{outcome="tool_error"\} 1/);
