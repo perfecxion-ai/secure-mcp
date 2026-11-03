@@ -6,6 +6,7 @@ const url = z
   .string()
   .url()
   .refine((value) => {
+    if (!URL.canParse(value)) return false;
     const parsed = new URL(value);
     return (
       !parsed.username &&
@@ -53,7 +54,7 @@ export const configSchema = z
             z
               .string()
               .url()
-              .refine((v) => new URL(v).origin === v),
+              .refine((v) => URL.canParse(v) && new URL(v).origin === v),
           )
           .max(32)
           .default([]),
@@ -70,13 +71,23 @@ export const configSchema = z
       .optional(),
   })
   .superRefine((value, ctx) => {
+    if (value.transport === 'http' && value.audit.maxPending < 3)
+      ctx.addIssue({
+        code: 'custom',
+        path: ['audit', 'maxPending'],
+        message: 'HTTP requires at least three pending audit records',
+      });
     if (value.transport === 'http' && !value.http)
       ctx.addIssue({
         code: 'custom',
         path: ['http'],
         message: 'HTTP requires an external issuer, JWKS URL, and resource URL',
       });
-    if (value.http && new URL(value.http.resource).pathname !== '/mcp')
+    if (
+      value.http &&
+      URL.canParse(value.http.resource) &&
+      new URL(value.http.resource).pathname !== '/mcp'
+    )
       ctx.addIssue({
         code: 'custom',
         path: ['http', 'resource'],
