@@ -1,8 +1,10 @@
 # Independent review follow-up
 
+This records the initial remediation plan. See the [completed regression work and remaining acceptance gates](2026-11-03-remediation.md) for the follow-up results. Current publication configuration is described in [npm preparation](../NPM_PUBLISHING.md); the initial disabled policy below is historical context, not the current setup state.
+
 The maintainer supplied the November 3 review and raw lab evidence at `secure-mcp-review-2026-11-03` on Spark. The downloaded tarball and SBOM hashes match the frozen alpha.2 record. The report evaluated source `42282c0`, with frozen package source `ba16751`; it reports successful confinement, authentication, authorization and audit-privacy probes, plus availability and operability findings. The full report and raw traces remain local. This summary tracks remediation and does not republish the review or its screenshots.
 
-Alpha.2 is held for remediation. Preserve its exact tarball and prior receipts; runtime changes target `2.0.0-alpha.3`. No alpha.3 candidate or digest is selected. The npm setup policy is disabled on the development branch, exact-artifact approval variables remain unset, and the existing hosted tag restriction is unchanged. Publication tooling remains pinned to the earlier candidate until a separately reviewed successor configuration is ready. No registry write, tag or release is authorized by these changes.
+Alpha.2 was held for remediation. Its exact tarball and prior receipts were preserved; runtime changes target `2.0.0-alpha.3`. At the start of this work, no alpha.3 candidate or digest was selected, the npm setup policy was disabled, exact-artifact approval variables were unset, and the hosted tag restriction was unchanged. Publication tooling remained pinned to the earlier candidate until successor configuration could be reviewed. No registry write, tag or release was authorized by that plan.
 
 | Finding | Work | Acceptance |
 | --- | --- | --- |

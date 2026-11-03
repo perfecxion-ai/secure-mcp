@@ -15,7 +15,7 @@ After the [installed-package setup](../README.md), copy the packaged `examples/h
 
 Terminate TLS in a reverse proxy and preserve the configured resource hostname in Host. The server ignores forwarded headers. Bind to loopback when the proxy is on the same host. HTTP URLs are accepted only for loopback lab endpoints; public issuer/resource/JWKS URLs must use HTTPS.
 
-The identity provider must issue asymmetric JWT access tokens with `typ: at+jwt`, `sub`, `iss`, exact resource `aud`, `iat`, `exp`, and a space-separated `scope`. Default algorithms: RS256. ES256 and EdDSA are explicit configuration choices. Default maximum token lifetime and age: 900 seconds. The resource server does not accept ID tokens as access tokens.
+The identity provider must issue asymmetric JWT access tokens with `typ: at+jwt` or `typ: application/at+jwt` (case-insensitive), `sub`, `iss`, exact resource `aud`, `iat`, `exp`, and a space-separated `scope`. Parameters, surrounding whitespace, other media types and a missing type are rejected. Default algorithms: RS256. ES256 and EdDSA are explicit configuration choices. Default maximum token lifetime and age: 900 seconds. The resource server does not accept ID tokens as access tokens. Clock tolerance is zero; synchronize issuer and runtime clocks before investigating intermittent future-issued token failures.
 
 JWKS keys are cached for up to five minutes, with a 30-second refresh cooldown and a three-second fetch timeout. Publish new keys before using them to sign tokens, and retain old public keys until their tokens expire. A newly introduced key can be rejected during cooldown; an issuer outage can be bridged by a fresh cache, but cold or stale caches fail closed. Removing a key from JWKS is not immediate revocation: the cached copy remains usable until refresh, subject to token expiry and maximum age. The regression suite exercises these transitions against a local JWKS endpoint with only wall time advanced.
 
@@ -65,7 +65,7 @@ Reaching the journal limit or losing delivery denies further work and latches th
 
 This local collector is a validation reference, with no automatic rotation, retention, remote replication, or tamper-resistant storage. File sync acknowledgements depend on the host filesystem and hardware. A privileged local attacker can alter the journal. Integrate and fault-test your production collector separately. `npm run test:audit` exercises the actual collector process, kill/restart persistence, journal limits, and blocked delivery.
 
-SIGINT, SIGTERM, and stdio EOF initiate shutdown. HTTP stops accepting requests, cancels active tools, and closes sockets. The process exits nonzero if trusted handlers fail to settle within the deadline. Library users must call `close()` and handle its remaining-work count.
+SIGINT, SIGTERM, and stdio EOF initiate shutdown. HTTP stops accepting requests, cancels active tools, and closes sockets. The process exits nonzero if trusted handlers fail to settle within the deadline, audit readiness is unhealthy, or shutdown fails. Library users must call `close()`, handle errors and the remaining-work count, and inspect audit health.
 
 ## Container
 

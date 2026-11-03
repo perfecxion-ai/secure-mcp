@@ -1,0 +1,753 @@
+{
+  "classification": "Local regression evidence, not independent acceptance, an isolated capacity comparison or an hour-long soak",
+  "loadContext": "The failed run overlapped an early burst probe; the fixed run did not. Other validation could run during either. A separate per-socket boundary reproduction established the cause.",
+  "runs": [
+    {
+      "phase": "before",
+      "sourceCommit": "b9137a6ea31686a98b4c153487eb361c81c929e5",
+      "node": "v24.22.1",
+      "npm": "11.19.1",
+      "platform": "linux/arm64",
+      "rawReportSha256": "df2873684a073111fd77d6f852e0ee9d2853038505592409412a42c676bdac6c",
+      "collectorSha256": "207d27bdde4d2cf7ebcde0eeb9ffa57fb0c93e7ebfa36d17a67cd005a34405b4",
+      "driverSha256": "41ab1a71151b7d66098477a0da0cdc7f8086e6d61312ecf4de0d75a493b88506",
+      "runtimeModules": {
+        "dist/audit.js": "ad8bba80114a17d3e6f340557b4e99f041d774fbef6bb850543d45d3455b4b49",
+        "dist/cli.js": "82da7820861e583d4e2d06c4b63f4e062424375bb30348828a823925afba8459",
+        "dist/collector.js": "fec836cf193d597ba3bc045e3e02bb670a530734a19e42f860588a014f513437",
+        "dist/config.js": "bfe347b96c5f572ff6a73ffcc6a959efa6bc07122960c21fe39ab9311a29e975",
+        "dist/errors.js": "af76f4cb2b27c84c7cfebae19dfcde21c524531072a5be4b5f941bd0a981cd50",
+        "dist/execution.js": "83db43ea5d70332738719d7bff891391d507c9f7b6c55953b0345a284dd6f9d1",
+        "dist/http.js": "ade9231569f549b22c24651235cdec1051dcb583d2c68847efadfb0c8e085fd6",
+        "dist/identity.js": "c02afb6b9864f2983a121a796d4dfc4f734737aa54f95382c74c1644c2ffc446",
+        "dist/index.js": "6dea6f8086c1cfce9ea22c7b25c293e80b933c5eaeac039c7a3753c631fdeed9",
+        "dist/input.js": "2c6aa227bdea5815ab7907404d0526173f66cb6d7d8b9f91e09114d78141c7ee",
+        "dist/node-version.js": "865d458c1555b6a95088b870db69a8443f7389de307bf781c26bfafe94588ae4",
+        "dist/policy.js": "23b3f3c42894e8849e5bda94a21db709906eac69b049d426c52b53889b326ac3",
+        "dist/runtime.js": "ec01a5b4d11459c8520f767e926db506122034f069f61df95b0491675c75b55f",
+        "dist/startup-diagnostics.js": "f6d1474e92f4aa6bab8fb3fd27b9e68dce891be7c1c96c6d82885c3e4755f674",
+        "dist/tools.js": "1abd5ebaa49e033605e465b64c70dc0912be780191f82c2bee63f1cc0cf2ea86"
+      },
+      "driverExit": 1,
+      "collectorExit": 0,
+      "serverExit": 0,
+      "journal": {
+        "records": 140923,
+        "bytes": 37776709,
+        "maximumBytes": 268435456,
+        "sha256": "cec424110161616ede39f4cfd24baf4baf1583f5fccaa04ee3eea47e3a50d02d",
+        "counts": {
+          "http:completed": 28333,
+          "http:received": 28333,
+          "http:response": 28333,
+          "protocol:invalid_params": 724,
+          "tool:allowed": 27600,
+          "tool:denied": 2111,
+          "tool:success": 25489
+        },
+        "contentCanariesAbsent": true,
+        "rawJournalRetained": false
+      },
+      "observations": {
+        "date": "2026-11-03T18:38:46.178Z",
+        "protocol": "2026-07-28",
+        "transport": "HTTP on loopback, no TLS",
+        "concurrency": 4,
+        "authentication": "Local ES256 JWT fixtures renewed every 120 seconds; real HTTP JWKS requests",
+        "auditState": {
+          "pending": 0,
+          "failures": 0,
+          "dropped": 0
+        },
+        "readinessStatus": 200,
+        "workerIntervalMs": 10,
+        "workload": "Three document readers, one policy-only subject; 10% expected denials per worker",
+        "durationSeconds": 300.059022772,
+        "calls": 28351,
+        "failures": 27,
+        "failureCounts": {
+          "request_error": 27
+        },
+        "failureSamples": [
+          {
+            "elapsedSeconds": 42,
+            "worker": 3,
+            "reason": "request_error",
+            "code": null,
+            "eventLoopMaxMs": 23.068671
+          },
+          {
+            "elapsedSeconds": 43,
+            "worker": 2,
+            "reason": "request_error",
+            "code": null,
+            "eventLoopMaxMs": 23.068671
+          },
+          {
+            "elapsedSeconds": 43,
+            "worker": 2,
+            "reason": "request_error",
+            "code": null,
+            "eventLoopMaxMs": 23.068671
+          },
+          {
+            "elapsedSeconds": 43,
+            "worker": 2,
+            "reason": "request_error",
+            "code": null,
+            "eventLoopMaxMs": 23.068671
+          },
+          {
+            "elapsedSeconds": 82,
+            "worker": 1,
+            "reason": "request_error",
+            "code": null,
+            "eventLoopMaxMs": 23.068671
+          },
+          {
+            "elapsedSeconds": 84,
+            "worker": 3,
+            "reason": "request_error",
+            "code": null,
+            "eventLoopMaxMs": 23.068671
+          },
+          {
+            "elapsedSeconds": 85,
+            "worker": 3,
+            "reason": "request_error",
+            "code": null,
+            "eventLoopMaxMs": 23.068671
+          },
+          {
+            "elapsedSeconds": 86,
+            "worker": 2,
+            "reason": "request_error",
+            "code": null,
+            "eventLoopMaxMs": 23.068671
+          },
+          {
+            "elapsedSeconds": 123,
+            "worker": 0,
+            "reason": "request_error",
+            "code": null,
+            "eventLoopMaxMs": 23.068671
+          },
+          {
+            "elapsedSeconds": 126,
+            "worker": 1,
+            "reason": "request_error",
+            "code": null,
+            "eventLoopMaxMs": 23.068671
+          },
+          {
+            "elapsedSeconds": 128,
+            "worker": 2,
+            "reason": "request_error",
+            "code": null,
+            "eventLoopMaxMs": 23.068671
+          },
+          {
+            "elapsedSeconds": 128,
+            "worker": 2,
+            "reason": "request_error",
+            "code": null,
+            "eventLoopMaxMs": 23.068671
+          },
+          {
+            "elapsedSeconds": 165,
+            "worker": 3,
+            "reason": "request_error",
+            "code": null,
+            "eventLoopMaxMs": 24.363007
+          },
+          {
+            "elapsedSeconds": 169,
+            "worker": 0,
+            "reason": "request_error",
+            "code": null,
+            "eventLoopMaxMs": 24.363007
+          },
+          {
+            "elapsedSeconds": 170,
+            "worker": 3,
+            "reason": "request_error",
+            "code": null,
+            "eventLoopMaxMs": 24.363007
+          },
+          {
+            "elapsedSeconds": 171,
+            "worker": 2,
+            "reason": "request_error",
+            "code": null,
+            "eventLoopMaxMs": 24.363007
+          },
+          {
+            "elapsedSeconds": 206,
+            "worker": 2,
+            "reason": "request_error",
+            "code": null,
+            "eventLoopMaxMs": 26.329087
+          },
+          {
+            "elapsedSeconds": 211,
+            "worker": 1,
+            "reason": "request_error",
+            "code": null,
+            "eventLoopMaxMs": 26.329087
+          },
+          {
+            "elapsedSeconds": 214,
+            "worker": 0,
+            "reason": "request_error",
+            "code": null,
+            "eventLoopMaxMs": 26.329087
+          },
+          {
+            "elapsedSeconds": 215,
+            "worker": 2,
+            "reason": "request_error",
+            "code": null,
+            "eventLoopMaxMs": 26.329087
+          }
+        ],
+        "driverHeapLimitMiB": "256",
+        "driverEventLoopDelayMs": {
+          "p50": 20.168703,
+          "p99": 21.381119,
+          "max": 26.329087
+        },
+        "deniedCalls": 2836,
+        "tokenIssues": 12,
+        "keyRequests": 2,
+        "memory": [
+          {
+            "elapsedSeconds": 0,
+            "rssKiB": 95720,
+            "descriptors": 27,
+            "clientRssKiB": 103688,
+            "clientHeapUsedKiB": 21536
+          },
+          {
+            "elapsedSeconds": 10,
+            "rssKiB": 157652,
+            "descriptors": 28,
+            "clientRssKiB": 160968,
+            "clientHeapUsedKiB": 33544
+          },
+          {
+            "elapsedSeconds": 20,
+            "rssKiB": 161604,
+            "descriptors": 28,
+            "clientRssKiB": 182728,
+            "clientHeapUsedKiB": 65887
+          },
+          {
+            "elapsedSeconds": 30,
+            "rssKiB": 162484,
+            "descriptors": 28,
+            "clientRssKiB": 222248,
+            "clientHeapUsedKiB": 73629
+          },
+          {
+            "elapsedSeconds": 40,
+            "rssKiB": 162516,
+            "descriptors": 28,
+            "clientRssKiB": 223048,
+            "clientHeapUsedKiB": 40136
+          },
+          {
+            "elapsedSeconds": 50,
+            "rssKiB": 164960,
+            "descriptors": 28,
+            "clientRssKiB": 224552,
+            "clientHeapUsedKiB": 45693
+          },
+          {
+            "elapsedSeconds": 60,
+            "rssKiB": 164108,
+            "descriptors": 28,
+            "clientRssKiB": 225032,
+            "clientHeapUsedKiB": 53615
+          },
+          {
+            "elapsedSeconds": 70,
+            "rssKiB": 164624,
+            "descriptors": 28,
+            "clientRssKiB": 225832,
+            "clientHeapUsedKiB": 66676
+          },
+          {
+            "elapsedSeconds": 80,
+            "rssKiB": 164948,
+            "descriptors": 28,
+            "clientRssKiB": 226152,
+            "clientHeapUsedKiB": 71718
+          },
+          {
+            "elapsedSeconds": 90,
+            "rssKiB": 165072,
+            "descriptors": 28,
+            "clientRssKiB": 227912,
+            "clientHeapUsedKiB": 76612
+          },
+          {
+            "elapsedSeconds": 100,
+            "rssKiB": 165304,
+            "descriptors": 28,
+            "clientRssKiB": 228372,
+            "clientHeapUsedKiB": 25181
+          },
+          {
+            "elapsedSeconds": 110,
+            "rssKiB": 166036,
+            "descriptors": 28,
+            "clientRssKiB": 228372,
+            "clientHeapUsedKiB": 30158
+          },
+          {
+            "elapsedSeconds": 120,
+            "rssKiB": 166480,
+            "descriptors": 28,
+            "clientRssKiB": 229172,
+            "clientHeapUsedKiB": 34378
+          },
+          {
+            "elapsedSeconds": 130,
+            "rssKiB": 166652,
+            "descriptors": 28,
+            "clientRssKiB": 229652,
+            "clientHeapUsedKiB": 36984
+          },
+          {
+            "elapsedSeconds": 140,
+            "rssKiB": 168440,
+            "descriptors": 29,
+            "clientRssKiB": 229652,
+            "clientHeapUsedKiB": 38064
+          },
+          {
+            "elapsedSeconds": 150,
+            "rssKiB": 168684,
+            "descriptors": 28,
+            "clientRssKiB": 229812,
+            "clientHeapUsedKiB": 38044
+          },
+          {
+            "elapsedSeconds": 160,
+            "rssKiB": 168776,
+            "descriptors": 28,
+            "clientRssKiB": 229548,
+            "clientHeapUsedKiB": 39744
+          },
+          {
+            "elapsedSeconds": 170,
+            "rssKiB": 169000,
+            "descriptors": 28,
+            "clientRssKiB": 230028,
+            "clientHeapUsedKiB": 40242
+          },
+          {
+            "elapsedSeconds": 180,
+            "rssKiB": 169164,
+            "descriptors": 28,
+            "clientRssKiB": 230348,
+            "clientHeapUsedKiB": 37627
+          },
+          {
+            "elapsedSeconds": 190,
+            "rssKiB": 171088,
+            "descriptors": 28,
+            "clientRssKiB": 230508,
+            "clientHeapUsedKiB": 34270
+          },
+          {
+            "elapsedSeconds": 200,
+            "rssKiB": 170800,
+            "descriptors": 28,
+            "clientRssKiB": 230508,
+            "clientHeapUsedKiB": 32771
+          },
+          {
+            "elapsedSeconds": 210,
+            "rssKiB": 171568,
+            "descriptors": 28,
+            "clientRssKiB": 230828,
+            "clientHeapUsedKiB": 34497
+          },
+          {
+            "elapsedSeconds": 220,
+            "rssKiB": 171704,
+            "descriptors": 28,
+            "clientRssKiB": 230704,
+            "clientHeapUsedKiB": 33452
+          },
+          {
+            "elapsedSeconds": 230,
+            "rssKiB": 170648,
+            "descriptors": 28,
+            "clientRssKiB": 230864,
+            "clientHeapUsedKiB": 33433
+          },
+          {
+            "elapsedSeconds": 240,
+            "rssKiB": 171408,
+            "descriptors": 28,
+            "clientRssKiB": 231024,
+            "clientHeapUsedKiB": 34323
+          },
+          {
+            "elapsedSeconds": 250,
+            "rssKiB": 170668,
+            "descriptors": 28,
+            "clientRssKiB": 231184,
+            "clientHeapUsedKiB": 35844
+          },
+          {
+            "elapsedSeconds": 260,
+            "rssKiB": 170668,
+            "descriptors": 28,
+            "clientRssKiB": 231184,
+            "clientHeapUsedKiB": 35668
+          },
+          {
+            "elapsedSeconds": 270,
+            "rssKiB": 175492,
+            "descriptors": 28,
+            "clientRssKiB": 231344,
+            "clientHeapUsedKiB": 34840
+          },
+          {
+            "elapsedSeconds": 280,
+            "rssKiB": 175912,
+            "descriptors": 28,
+            "clientRssKiB": 231264,
+            "clientHeapUsedKiB": 35947
+          },
+          {
+            "elapsedSeconds": 290,
+            "rssKiB": 176088,
+            "descriptors": 29,
+            "clientRssKiB": 231264,
+            "clientHeapUsedKiB": 37565
+          },
+          {
+            "elapsedSeconds": 300,
+            "rssKiB": 186896,
+            "descriptors": 29,
+            "clientRssKiB": 231184,
+            "clientHeapUsedKiB": 37423
+          },
+          {
+            "elapsedSeconds": 300,
+            "rssKiB": 186896,
+            "descriptors": 29,
+            "clientRssKiB": 231184,
+            "clientHeapUsedKiB": 37591
+          }
+        ]
+      }
+    },
+    {
+      "phase": "after",
+      "sourceCommit": "23d8647fe0dee1455f3f0f320f1399ff568198b8",
+      "node": "v24.22.1",
+      "npm": "11.19.1",
+      "platform": "linux/arm64",
+      "rawReportSha256": "a17910f528084e42a9705eac7f858c8eadb78b58da57d139753e397b0ea27938",
+      "collectorSha256": "207d27bdde4d2cf7ebcde0eeb9ffa57fb0c93e7ebfa36d17a67cd005a34405b4",
+      "driverSha256": "41ab1a71151b7d66098477a0da0cdc7f8086e6d61312ecf4de0d75a493b88506",
+      "runtimeModules": {
+        "dist/audit.js": "ad8bba80114a17d3e6f340557b4e99f041d774fbef6bb850543d45d3455b4b49",
+        "dist/cli.js": "82da7820861e583d4e2d06c4b63f4e062424375bb30348828a823925afba8459",
+        "dist/collector.js": "fec836cf193d597ba3bc045e3e02bb670a530734a19e42f860588a014f513437",
+        "dist/config.js": "bfe347b96c5f572ff6a73ffcc6a959efa6bc07122960c21fe39ab9311a29e975",
+        "dist/errors.js": "af76f4cb2b27c84c7cfebae19dfcde21c524531072a5be4b5f941bd0a981cd50",
+        "dist/execution.js": "83db43ea5d70332738719d7bff891391d507c9f7b6c55953b0345a284dd6f9d1",
+        "dist/http.js": "7321d7e361a0a8dec65f2db547c51c29226c87d81d1b5f8d64e6e6c05fab42e3",
+        "dist/identity.js": "c02afb6b9864f2983a121a796d4dfc4f734737aa54f95382c74c1644c2ffc446",
+        "dist/index.js": "6dea6f8086c1cfce9ea22c7b25c293e80b933c5eaeac039c7a3753c631fdeed9",
+        "dist/input.js": "2c6aa227bdea5815ab7907404d0526173f66cb6d7d8b9f91e09114d78141c7ee",
+        "dist/node-version.js": "865d458c1555b6a95088b870db69a8443f7389de307bf781c26bfafe94588ae4",
+        "dist/policy.js": "23b3f3c42894e8849e5bda94a21db709906eac69b049d426c52b53889b326ac3",
+        "dist/runtime.js": "ec01a5b4d11459c8520f767e926db506122034f069f61df95b0491675c75b55f",
+        "dist/startup-diagnostics.js": "f6d1474e92f4aa6bab8fb3fd27b9e68dce891be7c1c96c6d82885c3e4755f674",
+        "dist/tools.js": "1abd5ebaa49e033605e465b64c70dc0912be780191f82c2bee63f1cc0cf2ea86"
+      },
+      "driverExit": 0,
+      "collectorExit": 0,
+      "serverExit": 0,
+      "journal": {
+        "records": 139804,
+        "bytes": 37477627,
+        "maximumBytes": 268435456,
+        "sha256": "863b10991dfa82cc0663993e31307a103646462c979f5dc94401a15343cea1cd",
+        "counts": {
+          "http:completed": 28108,
+          "http:received": 28108,
+          "http:response": 28108,
+          "protocol:invalid_params": 718,
+          "tool:allowed": 27381,
+          "tool:denied": 2095,
+          "tool:success": 25286
+        },
+        "contentCanariesAbsent": true,
+        "rawJournalRetained": false
+      },
+      "observations": {
+        "date": "2026-11-03T18:53:28.821Z",
+        "protocol": "2026-07-28",
+        "transport": "HTTP on loopback, no TLS",
+        "concurrency": 4,
+        "authentication": "Local ES256 JWT fixtures renewed every 120 seconds; real HTTP JWKS requests",
+        "auditState": {
+          "pending": 0,
+          "failures": 0,
+          "dropped": 0
+        },
+        "readinessStatus": 200,
+        "workerIntervalMs": 10,
+        "workload": "Three document readers, one policy-only subject; 10% expected denials per worker",
+        "durationSeconds": 300.036220837,
+        "calls": 28099,
+        "failures": 0,
+        "failureCounts": {},
+        "failureSamples": [],
+        "driverHeapLimitMiB": "256",
+        "driverEventLoopDelayMs": {
+          "p50": 20.168703,
+          "p99": 21.250047,
+          "max": 26.689535
+        },
+        "deniedCalls": 2813,
+        "tokenIssues": 12,
+        "keyRequests": 2,
+        "memory": [
+          {
+            "elapsedSeconds": 0,
+            "rssKiB": 95544,
+            "descriptors": 27,
+            "clientRssKiB": 103680,
+            "clientHeapUsedKiB": 24502
+          },
+          {
+            "elapsedSeconds": 10,
+            "rssKiB": 157500,
+            "descriptors": 28,
+            "clientRssKiB": 161440,
+            "clientHeapUsedKiB": 33157
+          },
+          {
+            "elapsedSeconds": 20,
+            "rssKiB": 158180,
+            "descriptors": 28,
+            "clientRssKiB": 181600,
+            "clientHeapUsedKiB": 64444
+          },
+          {
+            "elapsedSeconds": 30,
+            "rssKiB": 160356,
+            "descriptors": 28,
+            "clientRssKiB": 223156,
+            "clientHeapUsedKiB": 35161
+          },
+          {
+            "elapsedSeconds": 40,
+            "rssKiB": 160388,
+            "descriptors": 28,
+            "clientRssKiB": 224116,
+            "clientHeapUsedKiB": 44830
+          },
+          {
+            "elapsedSeconds": 50,
+            "rssKiB": 161708,
+            "descriptors": 28,
+            "clientRssKiB": 227348,
+            "clientHeapUsedKiB": 51981
+          },
+          {
+            "elapsedSeconds": 60,
+            "rssKiB": 161568,
+            "descriptors": 28,
+            "clientRssKiB": 227988,
+            "clientHeapUsedKiB": 59032
+          },
+          {
+            "elapsedSeconds": 70,
+            "rssKiB": 160476,
+            "descriptors": 28,
+            "clientRssKiB": 228660,
+            "clientHeapUsedKiB": 64732
+          },
+          {
+            "elapsedSeconds": 80,
+            "rssKiB": 160680,
+            "descriptors": 28,
+            "clientRssKiB": 228660,
+            "clientHeapUsedKiB": 70500
+          },
+          {
+            "elapsedSeconds": 90,
+            "rssKiB": 160564,
+            "descriptors": 28,
+            "clientRssKiB": 229460,
+            "clientHeapUsedKiB": 73843
+          },
+          {
+            "elapsedSeconds": 100,
+            "rssKiB": 160988,
+            "descriptors": 28,
+            "clientRssKiB": 230100,
+            "clientHeapUsedKiB": 77666
+          },
+          {
+            "elapsedSeconds": 110,
+            "rssKiB": 166008,
+            "descriptors": 28,
+            "clientRssKiB": 230420,
+            "clientHeapUsedKiB": 23042
+          },
+          {
+            "elapsedSeconds": 120,
+            "rssKiB": 166172,
+            "descriptors": 28,
+            "clientRssKiB": 233332,
+            "clientHeapUsedKiB": 27395
+          },
+          {
+            "elapsedSeconds": 130,
+            "rssKiB": 166568,
+            "descriptors": 28,
+            "clientRssKiB": 233812,
+            "clientHeapUsedKiB": 27398
+          },
+          {
+            "elapsedSeconds": 140,
+            "rssKiB": 167764,
+            "descriptors": 28,
+            "clientRssKiB": 234292,
+            "clientHeapUsedKiB": 29767
+          },
+          {
+            "elapsedSeconds": 150,
+            "rssKiB": 165832,
+            "descriptors": 28,
+            "clientRssKiB": 234452,
+            "clientHeapUsedKiB": 31905
+          },
+          {
+            "elapsedSeconds": 160,
+            "rssKiB": 166392,
+            "descriptors": 28,
+            "clientRssKiB": 234612,
+            "clientHeapUsedKiB": 31442
+          },
+          {
+            "elapsedSeconds": 170,
+            "rssKiB": 166640,
+            "descriptors": 28,
+            "clientRssKiB": 234612,
+            "clientHeapUsedKiB": 30859
+          },
+          {
+            "elapsedSeconds": 180,
+            "rssKiB": 167328,
+            "descriptors": 28,
+            "clientRssKiB": 234772,
+            "clientHeapUsedKiB": 30219
+          },
+          {
+            "elapsedSeconds": 190,
+            "rssKiB": 166616,
+            "descriptors": 28,
+            "clientRssKiB": 234932,
+            "clientHeapUsedKiB": 28432
+          },
+          {
+            "elapsedSeconds": 200,
+            "rssKiB": 166892,
+            "descriptors": 28,
+            "clientRssKiB": 234932,
+            "clientHeapUsedKiB": 25925
+          },
+          {
+            "elapsedSeconds": 210,
+            "rssKiB": 175040,
+            "descriptors": 28,
+            "clientRssKiB": 235092,
+            "clientHeapUsedKiB": 27683
+          },
+          {
+            "elapsedSeconds": 220,
+            "rssKiB": 175376,
+            "descriptors": 29,
+            "clientRssKiB": 235252,
+            "clientHeapUsedKiB": 28387
+          },
+          {
+            "elapsedSeconds": 230,
+            "rssKiB": 175748,
+            "descriptors": 30,
+            "clientRssKiB": 235412,
+            "clientHeapUsedKiB": 26877
+          },
+          {
+            "elapsedSeconds": 240,
+            "rssKiB": 175812,
+            "descriptors": 28,
+            "clientRssKiB": 235368,
+            "clientHeapUsedKiB": 26933
+          },
+          {
+            "elapsedSeconds": 250,
+            "rssKiB": 176244,
+            "descriptors": 28,
+            "clientRssKiB": 235528,
+            "clientHeapUsedKiB": 24869
+          },
+          {
+            "elapsedSeconds": 260,
+            "rssKiB": 176876,
+            "descriptors": 28,
+            "clientRssKiB": 235528,
+            "clientHeapUsedKiB": 24880
+          },
+          {
+            "elapsedSeconds": 270,
+            "rssKiB": 179728,
+            "descriptors": 28,
+            "clientRssKiB": 235528,
+            "clientHeapUsedKiB": 24305
+          },
+          {
+            "elapsedSeconds": 280,
+            "rssKiB": 179784,
+            "descriptors": 28,
+            "clientRssKiB": 235848,
+            "clientHeapUsedKiB": 23763
+          },
+          {
+            "elapsedSeconds": 290,
+            "rssKiB": 185236,
+            "descriptors": 28,
+            "clientRssKiB": 235848,
+            "clientHeapUsedKiB": 75901
+          },
+          {
+            "elapsedSeconds": 300,
+            "rssKiB": 196440,
+            "descriptors": 29,
+            "clientRssKiB": 235848,
+            "clientHeapUsedKiB": 76197
+          },
+          {
+            "elapsedSeconds": 300,
+            "rssKiB": 196440,
+            "descriptors": 29,
+            "clientRssKiB": 235848,
+            "clientHeapUsedKiB": 76287
+          }
+        ]
+      }
+    }
+  ]
+}
