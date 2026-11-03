@@ -71,6 +71,12 @@ export const configSchema = z
       .optional(),
   })
   .superRefine((value, ctx) => {
+    if (value.transport === 'http' && value.audit.maxPending < 2)
+      ctx.addIssue({
+        code: 'custom',
+        path: ['audit', 'maxPending'],
+        message: 'HTTP requires at least two pending audit records',
+      });
     if (value.transport === 'http' && !value.http)
       ctx.addIssue({
         code: 'custom',

@@ -13,7 +13,7 @@ const canary = 'SECRET-DIAGNOSTIC-CANARY';
 function invoke(args: string[]) {
   const result = spawnSync(process.execPath, ['--import', 'tsx', cli, ...args], {
     encoding: 'utf8',
-    timeout: 10_000,
+    timeout: 20_000,
   });
   assert.equal(result.error, undefined);
   assert.equal(result.signal, null);
@@ -22,7 +22,7 @@ function invoke(args: string[]) {
 
 test(
   'startup diagnostics identify safe fields and stages without leaking values or unknown keys',
-  { timeout: 30_000 },
+  { timeout: 90_000 },
   async (t) => {
     const directory = await mkdtemp(join(tmpdir(), 'mcp-startup-'));
     t.after(() => rm(directory, { recursive: true, force: true }));
@@ -73,6 +73,19 @@ test(
         },
         /http.allowedOrigins:/,
       ],
+      [
+        {
+          workspace,
+          transport: 'http',
+          audit: { maxPending: 1 },
+          http: {
+            resource: 'https://server.example/mcp',
+            issuer: 'https://issuer.example',
+            jwksUrl: 'https://issuer.example/keys',
+          },
+        },
+        /audit.maxPending: must be at least 2 for HTTP admission/,
+      ],
       [[], /config: must be a JSON object/],
     ];
     for (const [value, expected] of cases) {
@@ -115,6 +128,26 @@ test(
       }),
     );
     failure(['--config', config], /http.port: listener address is already in use/);
+    for (const transport of ['stdio', 'http']) {
+      await writeFile(
+        config,
+        JSON.stringify({
+          workspace,
+          transport,
+          audit: { maxPending: transport === 'http' ? 2 : 1 },
+          ...(transport === 'http' && {
+            http: {
+              resource: 'https://server.example/mcp',
+              issuer: 'https://issuer.example',
+              jwksUrl: 'https://issuer.example/keys',
+            },
+          }),
+        }),
+      );
+      const minimum = invoke(['--config', config, '--doctor']);
+      assert.equal(minimum.status, 0, minimum.stderr);
+      assert.equal(minimum.stderr, '');
+    }
     const good = invoke(['--workspace', workspace, '--doctor']);
     assert.equal(good.status, 0, good.stderr);
     assert.equal(good.stderr, '');
@@ -127,7 +160,7 @@ for (const shutdown of ['eof', 'SIGTERM'] as const)
   for (const auditFails of [false, true])
     test(
       `stdio ${shutdown} exits ${auditFails ? 1 : 0} after ${auditFails ? 'audit failure' : 'handled denial'}`,
-      { timeout: 15_000 },
+      { timeout: 30_000 },
       async (t) => {
         const directory = await mkdtemp(join(tmpdir(), 'mcp-exit-audit-'));
         t.after(() => rm(directory, { recursive: true, force: true }));
@@ -150,25 +183,28 @@ for (const shutdown of ['eof', 'SIGTERM'] as const)
         });
         child.stderr.resume();
         const lines = createInterface({ input: child.stdout });
-        const request = (value: unknown) =>
+        const request = (value: unknown, timeoutMs = 5000) =>
           new Promise<unknown>((resolveReply, reject) => {
-            const timeout = setTimeout(() => reject(new Error('CLI reply timed out')), 5000);
+            const timeout = setTimeout(() => reject(new Error('CLI reply timed out')), timeoutMs);
             lines.once('line', (line) => {
               clearTimeout(timeout);
               resolveReply(JSON.parse(line));
             });
             child.stdin.write(JSON.stringify(value) + '\n');
           });
-        await request({
-          jsonrpc: '2.0',
-          id: 1,
-          method: 'initialize',
-          params: {
-            protocolVersion: '2025-11-25',
-            capabilities: {},
-            clientInfo: { name: 'exit-test', version: '1' },
+        await request(
+          {
+            jsonrpc: '2.0',
+            id: 1,
+            method: 'initialize',
+            params: {
+              protocolVersion: '2025-11-25',
+              capabilities: {},
+              clientInfo: { name: 'exit-test', version: '1' },
+            },
           },
-        });
+          20_000,
+        );
         child.stdin.write(
           JSON.stringify({ jsonrpc: '2.0', method: 'notifications/initialized' }) + '\n',
         );

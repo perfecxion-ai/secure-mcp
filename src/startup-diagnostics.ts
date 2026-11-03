@@ -33,6 +33,7 @@ const fields = new Set([
   'api.maxBytes',
 ]);
 const customReasons = new Map([
+  ['HTTP requires at least two pending audit records', 'must be at least 2 for HTTP admission'],
   [
     'HTTP requires an external issuer, JWKS URL, and resource URL',
     'requires an HTTP configuration block with resource, issuer and jwksUrl',
