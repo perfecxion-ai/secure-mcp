@@ -1,6 +1,6 @@
 {
   "dependencies": {
-    "oidc-provider": "9.13.3"
+    "oidc-provider": "9.15.0"
   },
   "name": "secure-mcp-oauth-lab",
   "private": true,
